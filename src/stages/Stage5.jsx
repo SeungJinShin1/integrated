@@ -135,20 +135,20 @@ export default function Stage5({ onToolUse }) {
 
     return (
         <div className="flex flex-col h-full">
-            <div className={`flex-1 flex flex-col items-center justify-center relative animate-fade-in transition-all ${grayscale ? 'scene-grayscale' : ''} overflow-hidden`}>
+            <div className={`flex-1 flex flex-col items-center justify-center relative animate-fade-in transition-all ${grayscale ? 'scene-grayscale' : ''} overflow-y-auto`}>
                 <img src={BG_IMAGES.crossroads} alt="갈림길" className="absolute inset-0 w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-black/30" />
                 <div className="z-10 flex flex-col items-center w-full px-4">
-                    <div className="text-xl font-bold text-white mb-1 drop-shadow-lg">🌲 Stage 5: 갈림길의 기억</div>
-                    <div className="text-sm text-white/80 mb-3 drop-shadow">통합 & 신뢰</div>
-                    <div className="flex gap-4 mb-3 items-start justify-center w-full max-w-lg">
+                    <div className="stage-title font-bold text-white mb-1 drop-shadow-lg">🌲 Stage 5: 갈림길의 기억</div>
+                    <div className="stage-subtitle text-white/80 mb-2 drop-shadow">통합 & 신뢰</div>
+                    <div className="flex gap-2 mb-2 items-start justify-center w-full max-w-lg">
                         <div className="text-center flex-shrink-0">
-                            <div className="w-32 h-40 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg overflow-hidden border border-white/30">
+                            <div className="char-card bg-white/20 backdrop-blur-sm shadow-lg border border-white/30">
                                 <img src={playerImg} alt={P} className="char-img" />
                             </div>
                             <p className="text-sm mt-1 font-medium text-white drop-shadow">{P}</p>
                         </div>
-                        <div className="flex-1 flex flex-col items-center justify-center min-h-[10rem] gap-2">
+                        <div className="minigame-area">
                             {showScratch && <ScratchFog bgImage={BG_IMAGES.map} onComplete={handleScratchComplete} />}
                             {step === 20 && !showFlashback && (
                                 <button onClick={triggerFlashback}
@@ -158,7 +158,7 @@ export default function Stage5({ onToolUse }) {
                             )}
                         </div>
                         <div className="text-center flex-shrink-0">
-                            <div className={`w-32 h-40 rounded-2xl flex items-center justify-center shadow-lg overflow-hidden border border-white/30 transition-all ${npcState === 'happy' ? 'bg-amber-500/20 backdrop-blur-sm' : 'bg-white/20 backdrop-blur-sm'}`}>
+                            <div className={`char-card shadow-lg border border-white/30 transition-all ${npcState === 'happy' ? 'bg-amber-500/20 backdrop-blur-sm' : 'bg-white/20 backdrop-blur-sm'}`}>
                                 <img src={npcImg} alt={N} className="char-img" />
                             </div>
                             <p className="text-sm mt-1 font-medium text-white drop-shadow">{N}</p>

@@ -40,18 +40,18 @@ export default function DialogueBox({ speaker, text, choices, onNext, npcName, p
     };
 
     return (
-        <div className="h-56 bg-white/95 backdrop-blur-sm border-t-2 border-indigo-100 p-5">
+        <div className="dialogue-box bg-white/95 backdrop-blur-sm border-t-2 border-indigo-100 px-3 py-2 flex-shrink-0">
             <div className="max-w-3xl mx-auto h-full flex flex-col">
-                <div className={`text-base font-bold mb-1 ${speakerColor}`}>{speaker}</div>
-                <div className="flex-1 text-slate-800 text-lg leading-relaxed overflow-y-auto">
+                <div className={`text-sm font-bold mb-0.5 ${speakerColor}`}>{speaker}</div>
+                <div className="flex-1 text-slate-800 text-sm leading-relaxed overflow-y-auto">
                     <span>{displayed}</span>
                     {!done && <span className="typewriter-cursor" />}
                 </div>
                 {done && choices && choices.length > 0 && (
-                    <div className="flex gap-2 mt-2 flex-wrap">
+                    <div className="flex gap-1.5 mt-1 flex-wrap">
                         {choices.map((c, i) => (
                             <button key={i} onClick={() => handleChoice(c)}
-                                className="px-4 py-2 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-xl text-base font-medium hover:bg-indigo-100 hover:-translate-y-0.5 transition-all cursor-pointer">
+                                className="px-3 py-1.5 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-lg text-xs font-medium hover:bg-indigo-100 hover:-translate-y-0.5 transition-all cursor-pointer">
                                 {c.text}
                             </button>
                         ))}
@@ -59,7 +59,7 @@ export default function DialogueBox({ speaker, text, choices, onNext, npcName, p
                 )}
                 {done && !choices && onNext && (
                     <button onClick={onNext}
-                        className="self-end mt-1 px-5 py-2 bg-indigo-100 text-indigo-700 rounded-lg text-base hover:bg-indigo-200 transition-all cursor-pointer">
+                        className="self-end mt-0.5 px-4 py-1.5 bg-indigo-100 text-indigo-700 rounded-lg text-sm hover:bg-indigo-200 transition-all cursor-pointer">
                         다음 ▸
                     </button>
                 )}

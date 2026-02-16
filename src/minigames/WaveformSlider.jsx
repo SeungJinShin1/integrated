@@ -3,7 +3,7 @@ import { useRef, useEffect, useState, useCallback } from 'react';
 export default function WaveformSlider({ onComplete }) {
     const canvasRef = useRef(null);
     const animRef = useRef(null);
-    const [volume, setVolume] = useState(100); // 0~100
+    const [volume, setVolume] = useState(100); // 0=조용, 100=시끄러움
     const volumeRef = useRef(100);
     const lastMoveTime = useRef(Date.now());
     const [stabilized, setStabilized] = useState(false);
@@ -60,7 +60,7 @@ export default function WaveformSlider({ onComplete }) {
         return () => cancelAnimationFrame(animRef.current);
     }, []);
 
-    // Calm 타이머: 볼륨이 10 이하로 1초 유지 시 안정화 표시 (자동 완료 아님)
+    // Calm 타이머: 볼륨 10 이하 1초 유지 시 안정화 표시
     useEffect(() => {
         if (stabilized || completed) return;
         if (volume <= 10) {
@@ -81,11 +81,13 @@ export default function WaveformSlider({ onComplete }) {
         onComplete();
     };
 
+    // 핵심 수정: 위=시끄러움(100), 아래=조용(0) → 그라데이션과 일치
     const updateVolume = useCallback((clientY) => {
         const slider = sliderRef.current;
         if (!slider || completed) return;
         const rect = slider.getBoundingClientRect();
-        const pct = Math.max(0, Math.min(100, ((clientY - rect.top) / rect.height) * 100));
+        // top → 100(loud), bottom → 0(calm): 그라데이션과 일치
+        const pct = Math.max(0, Math.min(100, (1 - (clientY - rect.top) / rect.height) * 100));
         const newVol = Math.round(pct);
 
         // 너무 빠르면 반발
@@ -113,7 +115,7 @@ export default function WaveformSlider({ onComplete }) {
     useEffect(() => {
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('mouseup', handleMouseUp);
-        window.addEventListener('touchmove', handleTouchMove);
+        window.addEventListener('touchmove', handleTouchMove, { passive: false });
         window.addEventListener('touchend', handleMouseUp);
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
@@ -123,17 +125,20 @@ export default function WaveformSlider({ onComplete }) {
         };
     }, [handleMouseMove, handleMouseUp, handleTouchMove]);
 
+    // 핸들 위치: volume=100은 위(top 작은 값), volume=0은 아래(top 큰 값)
+    const handleTop = (1 - volume / 100) * 100;
+
     return (
         <div className="w-full max-w-sm mx-auto animate-fade-in" style={{ touchAction: 'none' }}>
             <p className="text-center text-white/90 text-xs mb-2 drop-shadow">
-                🎧 슬라이더를 천천히 내려 파형을 안정시키세요!
+                🎧 슬라이더를 아래로 내려 소음을 줄이세요!
             </p>
             <div className="flex gap-3 items-stretch">
                 {/* 파형 Canvas */}
                 <canvas ref={canvasRef} width={240} height={120}
                     className="flex-1 rounded-xl bg-slate-900/80 backdrop-blur-sm border border-white/20 shadow-lg" />
 
-                {/* 슬라이더 */}
+                {/* 슬라이더: 위=시끄러움(빨강), 아래=조용(초록) */}
                 <div ref={sliderRef}
                     className="w-10 h-32 bg-slate-800/80 backdrop-blur-sm rounded-full border border-white/20 relative select-none shadow-lg"
                     onMouseDown={handleMouseDown}
@@ -142,8 +147,9 @@ export default function WaveformSlider({ onComplete }) {
                     <div className="absolute inset-1 rounded-full overflow-hidden">
                         <div className="w-full h-full bg-gradient-to-b from-red-500 via-amber-400 to-emerald-500 opacity-30" />
                     </div>
+                    {/* 핸들: volume=100→위, volume=0→아래 */}
                     <div className="absolute left-1/2 -translate-x-1/2 w-8 h-8 bg-white rounded-full shadow-xl border-2 border-indigo-400 flex items-center justify-center transition-[top] duration-75"
-                        style={{ top: `calc(${volume}% - 16px)` }}>
+                        style={{ top: `calc(${handleTop}% - 16px)` }}>
                         <span className="text-sm">🎧</span>
                     </div>
                     <div className="absolute -left-5 top-0 text-[9px] text-red-300">🔊</div>

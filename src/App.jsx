@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback, useState, useEffect } from 'react';
 import { useGame } from './GameContext';
 import Dashboard from './components/Dashboard';
 import Prologue from './stages/Prologue';
@@ -10,9 +10,39 @@ import Stage5 from './stages/Stage5';
 import Stage6 from './stages/Stage6';
 import Encyclopedia from './stages/Encyclopedia';
 
+function LandscapePrompt() {
+  return (
+    <div className="landscape-prompt">
+      <div className="text-center p-8 text-white">
+        <div className="text-6xl mb-4">📱🔄</div>
+        <h2 className="text-xl font-bold mb-2">화면을 가로로 돌려주세요!</h2>
+        <p className="text-sm text-white/80">이 앱은 가로 모드에서 최적화되어 있어요.</p>
+        <p className="text-xs text-white/60 mt-2">Landscape mode recommended</p>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const { state, setStage, logAttempt } = useGame();
   const toolHandlerRef = useRef(null);
+  const [isPortrait, setIsPortrait] = useState(false);
+
+  useEffect(() => {
+    const checkOrientation = () => {
+      // 모바일(768px 이하)에서 세로 모드면 안내
+      const isMobile = window.innerWidth < 768;
+      const portrait = window.innerHeight > window.innerWidth;
+      setIsPortrait(isMobile && portrait);
+    };
+    checkOrientation();
+    window.addEventListener('resize', checkOrientation);
+    window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 100));
+    return () => {
+      window.removeEventListener('resize', checkOrientation);
+      window.removeEventListener('orientationchange', checkOrientation);
+    };
+  }, []);
 
   const handleToolUse = useCallback((id) => {
     logAttempt();
@@ -42,15 +72,18 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-dvh w-screen bg-slate-50 font-sans overflow-hidden select-none">
-      <div className="flex-1 relative flex flex-col">
-        <div className="flex-1 relative overflow-hidden">
-          {renderStage()}
+    <>
+      {isPortrait && <LandscapePrompt />}
+      <div className="flex h-dvh w-screen bg-slate-50 font-sans overflow-hidden select-none">
+        <div className="flex-1 relative flex flex-col min-w-0">
+          <div className="flex-1 relative overflow-y-auto overflow-x-hidden">
+            {renderStage()}
+          </div>
         </div>
+        {!isPrologue && state.currentStage !== 'encyclopedia' && (
+          <Dashboard onToolUse={handleToolUse} onShowEncyclopedia={showEncyclopedia} />
+        )}
       </div>
-      {!isPrologue && state.currentStage !== 'encyclopedia' && (
-        <Dashboard onToolUse={handleToolUse} onShowEncyclopedia={showEncyclopedia} />
-      )}
-    </div>
+    </>
   );
 }

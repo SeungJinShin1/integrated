@@ -96,43 +96,52 @@ export default function Stage6({ onShowEncyclopedia }) {
         try {
             const canvas = await html2canvas(reportRef.current, {
                 backgroundColor: '#1e1b4b',
-                scale: 2,
+                scale: window.devicePixelRatio > 1 ? 1.5 : 2,
                 useCORS: true,
+                allowTaint: true,
                 logging: false,
+                // Tailwind v4 oklch 등 미지원 CSS 대응
+                onclone: (doc) => {
+                    const elements = doc.querySelectorAll('*');
+                    elements.forEach(el => {
+                        const cs = getComputedStyle(el);
+                        if (cs.color?.includes('oklch')) el.style.color = '#1e293b';
+                        if (cs.backgroundColor?.includes('oklch')) el.style.backgroundColor = 'transparent';
+                    });
+                },
             });
-            if (canvas.toBlob) {
-                canvas.toBlob((blob) => {
-                    if (!blob) { setSaving(false); return; }
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.download = `프리즘_보고서_${P}.png`;
-                    link.href = url;
-                    link.style.display = 'none';
-                    document.body.appendChild(link);
-                    link.click();
-                    setTimeout(() => {
-                        document.body.removeChild(link);
-                        URL.revokeObjectURL(url);
-                        setSaving(false);
-                    }, 100);
-                }, 'image/png');
-            } else {
-                // fallback for older browsers
+            // dataURL 방식이 더 호환성 높음
+            const dataUrl = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = `프리즘_보고서_${P}.png`;
+            link.href = dataUrl;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            setTimeout(() => {
+                document.body.removeChild(link);
+                setSaving(false);
+            }, 200);
+        } catch (err) {
+            console.error('Image save error:', err);
+            // 재시도: 더 간단한 옵션으로
+            try {
+                const canvas = await html2canvas(reportRef.current, {
+                    backgroundColor: '#ffffff',
+                    scale: 1,
+                    logging: false,
+                });
                 const dataUrl = canvas.toDataURL('image/png');
                 const link = document.createElement('a');
                 link.download = `프리즘_보고서_${P}.png`;
                 link.href = dataUrl;
-                link.style.display = 'none';
                 document.body.appendChild(link);
                 link.click();
-                setTimeout(() => {
-                    document.body.removeChild(link);
-                    setSaving(false);
-                }, 100);
+                document.body.removeChild(link);
+            } catch (e2) {
+                console.error('Retry also failed:', e2);
+                alert('이미지 저장에 실패했습니다. 스크린샷 기능을 사용해주세요.');
             }
-        } catch (err) {
-            console.error('Image save error:', err);
-            alert('이미지 저장 중 오류가 발생했습니다. 다시 시도해주세요.');
             setSaving(false);
         }
     };
