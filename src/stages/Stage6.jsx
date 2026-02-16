@@ -1,6 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { useGame } from '../GameContext';
 import { BG_IMAGES, getNpcImage, getPlayerImage } from '../assetMap';
+import { Radar } from 'react-chartjs-2';
+import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip } from 'chart.js';
+import html2canvas from 'html2canvas';
+
+ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip);
 
 const SYSTEM_PROMPT = `You are a friendly AI researcher at the "Prism Lab" in a Korean educational game about understanding autism spectrum disorder (ASD) for elementary school students (5th grade).
 
@@ -24,7 +29,9 @@ export default function Stage6() {
     ]);
     const [chatInput, setChatInput] = useState('');
     const [loading, setLoading] = useState(false);
+    const [saving, setSaving] = useState(false);
     const chatEndRef = useRef(null);
+    const reportRef = useRef(null);
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
 
     useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [chatMessages]);
@@ -36,7 +43,6 @@ export default function Stage6() {
     const callGemini = async (userMessage) => {
         if (!apiKey) return '⚠️ Gemini API 키가 설정되지 않았습니다. 프로젝트 루트의 .env 파일에 VITE_GEMINI_API_KEY를 설정해 주세요.';
         try {
-            // 대화 이력 구성 (첫 AI 환영 메시지 제외)
             const history = chatMessages.slice(1).map(m => ({
                 role: m.role === 'ai' ? 'model' : 'user',
                 parts: [{ text: m.text }]
@@ -78,14 +84,66 @@ export default function Stage6() {
 
     const handleKeyDown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } };
 
-
-
-    // 보고서 생성
     const generateReport = () => {
         setPhase('report');
     };
 
+    // html2canvas 이미지 저장
+    const handleSaveImage = async () => {
+        if (!reportRef.current || saving) return;
+        setSaving(true);
+        try {
+            const canvas = await html2canvas(reportRef.current, {
+                backgroundColor: '#1e1b4b',
+                scale: 2,
+                useCORS: true,
+            });
+            const link = document.createElement('a');
+            link.download = `프리즘_보고서_${P}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        } catch (err) {
+            console.error('Image save error:', err);
+        }
+        setSaving(false);
+    };
+
     const stats = state.stats;
+    const prismScore = Math.round((stats.understanding + stats.trust + stats.communication + stats.patience) / 4);
+    const grade = prismScore >= 80 ? '🏆 S등급 - 프리즘 마스터' : prismScore >= 60 ? '🥇 A등급 - 프리즘 요원' : prismScore >= 40 ? '🥈 B등급 - 프리즘 수습생' : '🥉 C등급 - 프리즘 입문자';
+
+    // 레이더 차트 데이터
+    const radarData = {
+        labels: ['이해', '신뢰', '소통', '인내'],
+        datasets: [{
+            label: '역량',
+            data: [stats.understanding, stats.trust, stats.communication, stats.patience],
+            backgroundColor: 'rgba(99, 102, 241, 0.25)',
+            borderColor: 'rgba(99, 102, 241, 0.8)',
+            borderWidth: 2,
+            pointBackgroundColor: '#6366f1',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 1,
+            pointRadius: 4,
+        }]
+    };
+
+    const radarOptions = {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { tooltip: { enabled: false } },
+        scales: {
+            r: {
+                min: 0,
+                max: 100,
+                ticks: { stepSize: 20, display: false },
+                pointLabels: { font: { size: 13, weight: 'bold' }, color: '#475569' },
+                grid: { color: 'rgba(100, 116, 139, 0.15)' },
+                angleLines: { color: 'rgba(100, 116, 139, 0.15)' },
+            }
+        }
+    };
+
     const suggestions = [
         '자폐는 병이야?',
         '왜 눈을 안 마주쳐?',
@@ -101,7 +159,7 @@ export default function Stage6() {
             <div className="relative z-10 flex flex-col h-full p-4">
                 <div className="text-center mb-3">
                     <h1 className="text-xl font-bold text-white drop-shadow-lg">🔬 Stage 6: 프리즘 연구소</h1>
-                    <p className="text-sm text-indigo-200">AI 회고 & 심화 학습</p>
+                    <p className="text-sm text-indigo-200">AI 회고 & 공유</p>
                 </div>
 
                 {/* ── Phase 1: 일지 작성 ── */}
@@ -112,10 +170,10 @@ export default function Stage6() {
                                 <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">🔬</div>
                                 <div>
                                     <p className="text-sm text-slate-500">AI 연구원</p>
-                                    <p className="text-slate-700">"오늘 알게 된 {N}의 특징이나, 내가 잘한 점을 적어보세요."</p>
+                                    <p className="text-slate-700">"오늘 {N}(이)와 함께하며 느낀 점은?"</p>
                                 </div>
                             </div>
-                            <textarea value={journal} onChange={e => setJournal(e.target.value)} placeholder={`오늘 ${N}(이)와의 하루를 돌아보며...`}
+                            <textarea value={journal} onChange={e => setJournal(e.target.value)} placeholder={`오늘 알게 된 ${N}의 특징이나, 내가 잘한 점을 적어보세요.`}
                                 className="w-full h-32 p-3 rounded-xl border-2 border-slate-200 focus:border-indigo-500 focus:outline-none resize-none text-slate-800 text-sm" />
                             <button onClick={() => { if (journal.trim()) setPhase('chat'); }}
                                 disabled={!journal.trim()}
@@ -129,14 +187,12 @@ export default function Stage6() {
                 {/* ── Phase 2: AI 챗봇 ── */}
                 {phase === 'chat' && (
                     <div className="flex-1 flex flex-col animate-fade-in overflow-hidden">
-                        {/* API Key 경고 */}
                         {!apiKey && (
                             <div className="bg-amber-50 border border-amber-300 rounded-xl p-3 mb-2 text-sm text-amber-800">
                                 ⚠️ <code>.env</code> 파일에 <code>VITE_GEMINI_API_KEY</code>를 설정해 주세요. 설정 후 서버를 재시작하세요.
                             </div>
                         )}
 
-                        {/* 채팅 영역 */}
                         <div className="flex-1 overflow-y-auto space-y-3 mb-3 rounded-2xl bg-white/90 backdrop-blur-sm p-4">
                             {chatMessages.map((m, i) => (
                                 <div key={i} className={`flex gap-2 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
@@ -157,7 +213,6 @@ export default function Stage6() {
                             <div ref={chatEndRef} />
                         </div>
 
-                        {/* 추천 질문 */}
                         {chatMessages.length <= 2 && (
                             <div className="flex gap-2 mb-2 flex-wrap">
                                 {suggestions.map((s, i) => (
@@ -169,7 +224,6 @@ export default function Stage6() {
                             </div>
                         )}
 
-                        {/* 입력 */}
                         <div className="flex gap-2">
                             <input type="text" value={chatInput} onChange={e => setChatInput(e.target.value)} onKeyDown={handleKeyDown}
                                 placeholder={`${N} 같은 친구에 대해 궁금한 점을 물어보세요...`}
@@ -179,16 +233,17 @@ export default function Stage6() {
                         </div>
                         <button onClick={generateReport}
                             className="mt-2 w-full py-3 bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-xl font-medium hover:bg-white/30 transition-all cursor-pointer">
-                            📊 보고서 확인 & 엔딩
+                            📊 결과 카드 확인 & 엔딩
                         </button>
                     </div>
                 )}
 
-                {/* ── Phase 3: 보고서 ── */}
+                {/* ── Phase 3: 결과 카드 ── */}
                 {phase === 'report' && (
                     <div className="flex-1 overflow-y-auto animate-fade-in">
-                        <div className="bg-white/95 rounded-2xl p-6 max-w-md mx-auto shadow-2xl">
-                            <h2 className="text-lg font-bold text-slate-800 mb-4 text-center">📋 프리즘 보고서</h2>
+                        <div ref={reportRef} className="bg-white/95 rounded-2xl p-6 max-w-md mx-auto shadow-2xl">
+                            <h2 className="text-lg font-bold text-slate-800 mb-1 text-center">🌈 프리즘 결과 카드</h2>
+                            <p className="text-xs text-slate-400 text-center mb-4">Hidden Piece: The Secret Agent of Our Class</p>
 
                             {/* 캐릭터 */}
                             <div className="flex gap-4 justify-center mb-4">
@@ -203,12 +258,30 @@ export default function Stage6() {
                                 </div>
                             </div>
 
-                            {/* 스탯 */}
-                            <div className="grid grid-cols-2 gap-2 mb-4">
-                                {Object.entries(stats).map(([key, val]) => (
-                                    <div key={key} className="bg-slate-50 rounded-lg p-2 text-center">
-                                        <p className="text-xs text-slate-500">{key === 'communication' ? '소통' : key === 'understanding' ? '이해' : key === 'patience' ? '인내' : '신뢰'}</p>
-                                        <p className="text-lg font-bold text-indigo-600">{val}</p>
+                            {/* 등급 */}
+                            <div className="bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl p-3 text-center text-white mb-4">
+                                <p className="text-sm opacity-80">프리즘 점수: {prismScore}</p>
+                                <p className="text-lg font-bold">{grade}</p>
+                            </div>
+
+                            {/* 레이더 차트 */}
+                            <div className="mb-4 flex justify-center">
+                                <div style={{ width: 220, height: 220 }}>
+                                    <Radar data={radarData} options={radarOptions} />
+                                </div>
+                            </div>
+
+                            {/* 4대 역량 수치 */}
+                            <div className="grid grid-cols-4 gap-2 mb-4">
+                                {[
+                                    { label: '이해', val: stats.understanding, emoji: '💡' },
+                                    { label: '신뢰', val: stats.trust, emoji: '🤝' },
+                                    { label: '소통', val: stats.communication, emoji: '💬' },
+                                    { label: '인내', val: stats.patience, emoji: '🧘' },
+                                ].map(s => (
+                                    <div key={s.label} className="bg-slate-50 rounded-lg p-2 text-center">
+                                        <p className="text-xs text-slate-500">{s.emoji} {s.label}</p>
+                                        <p className="text-lg font-bold text-indigo-600">{s.val}</p>
                                     </div>
                                 ))}
                             </div>
@@ -222,7 +295,7 @@ export default function Stage6() {
                             {/* AI 대화 요약 */}
                             {chatMessages.length > 1 && (
                                 <div className="bg-indigo-50 rounded-xl p-4 mb-4 border border-indigo-200">
-                                    <p className="text-sm font-medium text-indigo-800 mb-2">🤖 AI 연구원과의 대화</p>
+                                    <p className="text-sm font-medium text-indigo-800 mb-2">🤖 AI 멘토링 요약</p>
                                     {chatMessages.slice(1).map((m, i) => (
                                         <p key={i} className={`text-xs mb-1 ${m.role === 'user' ? 'text-indigo-600' : 'text-slate-600'}`}>
                                             <span className="font-medium">{m.role === 'user' ? P : 'AI'}:</span> {m.text.slice(0, 80)}{m.text.length > 80 ? '...' : ''}
@@ -231,10 +304,18 @@ export default function Stage6() {
                                 </div>
                             )}
 
-                            <div className="bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl p-4 text-center text-white mb-4">
-                                <p className="text-base font-bold">"우리는 서로 달라서, 서로에게 필요한 존재입니다."</p>
+                            <div className="bg-gradient-to-r from-indigo-100 to-purple-100 rounded-xl p-3 text-center mb-4">
+                                <p className="text-sm font-bold text-indigo-700">"우리는 서로 달라서, 서로에게 필요한 존재입니다."</p>
                             </div>
+                        </div>
 
+                        {/* 버튼들 (캡처 영역 밖) */}
+                        <div className="max-w-md mx-auto mt-4 space-y-2 pb-4">
+                            <button onClick={handleSaveImage} disabled={saving}
+                                className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all cursor-pointer disabled:opacity-50">
+                                {saving ? '⏳ 저장 중...' : '📸 이미지로 저장'}
+                            </button>
+                            <p className="text-xs text-indigo-200 text-center">저장된 이미지를 선생님이 안내해주신 패들렛/띠커벨에 올려서 친구들과 공유하세요.</p>
                             <button onClick={() => setStage('ending')}
                                 className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all cursor-pointer">
                                 🏆 엔딩 보기

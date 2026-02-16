@@ -30,9 +30,9 @@ export default function Stage2({ onToolUse }) {
                     speaker: P,
                     text: `(${N} 표정이 안 좋은데... 밥도 안 먹고 숟가락을 딱딱거리고 있어. 왜 저러지?)`,
                     choices: [
-                        { text: '🍴 "밥 안 먹어? 빨리 먹어."', action: () => { setStep(1); } },
-                        { text: '😟 "어디 아파?"', action: () => { addStat('understanding', 5); setStep(1); } },
-                        { text: '👂 주변 소음을 유심히 들어본다', action: () => { addStat('understanding', 10); setStep(1); } },
+                        { text: '🍴 "밥 안 먹어? 빨리 먹어." (재촉)', action: () => { setStep(1); } },
+                        { text: '😟 "어디 아파?" (질문)', action: () => { addStat('understanding', 5); setStep(1); } },
+                        { text: '👂 주변 소음을 유심히 들어본다 (관찰)', action: () => { addStat('understanding', 10); setStep(1); } },
                     ]
                 });
                 break;
@@ -55,9 +55,9 @@ export default function Stage2({ onToolUse }) {
                     speaker: P,
                     text: '(밀쳐져서 엉덩방아를 찧음) "아, 진짜 아프네!"',
                     choices: [
-                        { text: '😡 "너 미쳤어? 왜 사람을 때려!"', action: () => setStep(10) },
-                        { text: '🏃 선생님을 부르러 뛰어간다', action: () => setStep(20) },
-                        { text: '👀 승주의 상태(귀를 막고 있음)를 확인한다', action: () => setStep(30) },
+                        { text: '😡 "너 미쳤어? 왜 사람을 때려!" (같이 화냄)', action: () => setStep(10) },
+                        { text: '🏃 선생님을 부르러 뛰어간다 (회피)', action: () => setStep(20) },
+                        { text: `👀 ${N}의 상태(귀를 막고 있음)를 확인한다`, action: () => setStep(30) },
                     ]
                 });
                 break;
@@ -114,7 +114,7 @@ export default function Stage2({ onToolUse }) {
                 break;
             case 51:
                 setNpcState('calm'); setPlayerPose('talk');
-                setDialogue({ speaker: N, text: '"(거친 숨을 몰아쉬다가 진정함) ...미안해. 소리가... 너무 아파서..."', onNext: () => setStep(52) });
+                setDialogue({ speaker: N, text: '(거친 숨을 몰아쉬다가 진정함) "...아파. 소리. 아파."', onNext: () => setStep(52) });
                 break;
             case 52:
                 setDialogue({ speaker: P, text: '"나를 때리려던 게 아니었구나. 소리 때문에 도망치려던 거였어."', onNext: () => setStep(53) });

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useGame } from '../GameContext';
 import DialogueBox from '../components/DialogueBox';
 import TimerDial from '../minigames/TimerDial';
+import SquishyBreath from '../minigames/SquishyBreath';
 import { getNpcImage, getPlayerImage, BG_IMAGES } from '../assetMap';
 
 export default function Stage3({ onToolUse }) {
@@ -14,6 +15,7 @@ export default function Stage3({ onToolUse }) {
     const [npcEmotion, setNpcEmotion] = useState('happy');
     const [playerPose, setPlayerPose] = useState('talk');
     const [showDial, setShowDial] = useState(false);
+    const [showSquishy, setShowSquishy] = useState(false);
 
     useEffect(() => { addInventory('timer'); }, []);
     useEffect(() => { advanceStep(); }, [step]);
@@ -84,7 +86,7 @@ export default function Stage3({ onToolUse }) {
                 });
                 break;
 
-            /* ── Step 3: 미니게임 ── */
+            /* ── Step 3: 1차 미니게임 - 타이머 ── */
             case 30:
                 setDialogue({
                     speaker: '시스템',
@@ -93,7 +95,7 @@ export default function Stage3({ onToolUse }) {
                 setShowDial(true);
                 break;
 
-            /* ── 성공 ── */
+            /* ── 타이머 성공 → 추가 갈등 ── */
             case 40:
                 setShowDial(false);
                 setPlayerPose('talk');
@@ -103,18 +105,47 @@ export default function Stage3({ onToolUse }) {
                     onNext: () => setStep(41)
                 });
                 break;
+
+            /* ── 추가 갈등: 불안 행동 ── */
             case 41:
-                setNpcState('calm'); setNpcEmotion('happy');
+                setNpcEmotion('anxious');
                 setDialogue({
                     speaker: N,
-                    text: '(타이머가 울리자 벌떡 일어남) "운행 종료. 교실역으로 출발합니다. 칙칙폭폭."',
+                    text: '"5분 길어. 지금? 아니야? 으으으..." (손톱을 물어뜯으며 다리를 떤다)',
                     onNext: () => setStep(42)
                 });
                 break;
             case 42:
+                addInventory('squishy');
                 setDialogue({
                     speaker: '시스템',
-                    text: `🏅 약속의 시계 획득! 갑작스러운 변화가 힘든 친구에게는 미리 준비할 시간과 흥미로운 제안이 효과적이에요.`,
+                    text: `😰 기다리는 시간은 지루하고 불안합니다. [말랑이]로 긴장을 풀어주세요!`
+                });
+                setShowSquishy(true);
+                break;
+
+            /* ── 말랑이 성공 ── */
+            case 50:
+                setShowSquishy(false);
+                setNpcState('calm'); setNpcEmotion('happy');
+                setDialogue({
+                    speaker: N,
+                    text: '(타이머 종료. 차분하게 일어남) "종점. 교실역. 출발."',
+                    onNext: () => setStep(51)
+                });
+                break;
+            case 51:
+                setPlayerPose('talk');
+                setDialogue({
+                    speaker: P,
+                    text: '"기다려줘서 고마워! 늦지 않게 전속력으로 가자!"',
+                    onNext: () => setStep(52)
+                });
+                break;
+            case 52:
+                setDialogue({
+                    speaker: '시스템',
+                    text: `🏅 약속의 시계 획득! 갑작스러운 변화가 힘든 친구에게는 미리 준비할 시간과 감각 조절 도구가 효과적이에요.`,
                     onNext: () => setStage('stage-4')
                 });
                 break;
@@ -127,9 +158,18 @@ export default function Stage3({ onToolUse }) {
         setStep(40);
     };
 
+    const handleSquishyComplete = () => {
+        useTool('squishy');
+        addStat('patience', 10); addStat('trust', 10);
+        setStep(50);
+    };
+
     useEffect(() => {
         if (!onToolUse) return;
-        onToolUse.current = (id) => { if (id === 'timer' && step === 30) handleDialComplete(); };
+        onToolUse.current = (id) => {
+            if (id === 'timer' && step === 30) handleDialComplete();
+            if (id === 'squishy' && step === 42) handleSquishyComplete();
+        };
     }, [step]);
 
     const npcImg = getNpcImage(state.npc.gender, npcEmotion);
@@ -142,7 +182,7 @@ export default function Stage3({ onToolUse }) {
                 <div className="absolute inset-0 bg-black/30" />
                 <div className="z-10 flex flex-col items-center w-full px-4">
                     <div className="text-xl font-bold text-white mb-1 drop-shadow-lg">🚂 Stage 3: 기차는 멈추지 않아</div>
-                    <div className="text-sm text-white/80 mb-4 drop-shadow">전이 & 시각적 지원</div>
+                    <div className="text-sm text-white/80 mb-4 drop-shadow">전이 & 감각 조절</div>
                     <div className="flex gap-6 mb-4 items-end">
                         <div className="text-center">
                             <div className="w-44 h-56 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg overflow-hidden border border-white/30">
@@ -175,6 +215,7 @@ export default function Stage3({ onToolUse }) {
                         </div>
                     )}
                     {showDial && <TimerDial onComplete={handleDialComplete} />}
+                    {showSquishy && <SquishyBreath onComplete={handleSquishyComplete} />}
                 </div>
             </div>
             {dialogue && <DialogueBox speaker={dialogue.speaker} text={dialogue.text} choices={dialogue.choices} onNext={dialogue.onNext} npcName={N} playerName={P} />}

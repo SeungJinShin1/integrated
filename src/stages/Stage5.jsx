@@ -38,7 +38,7 @@ export default function Stage5({ onToolUse }) {
                 setNpcEmotion('memory');
                 setDialogue({
                     speaker: N,
-                    text: '(제자리에 멈춰 서서) "왼쪽 아님. 왼쪽 아님. 노란 리본 없음."',
+                    text: '(제자리에 멈춰 서서 고개를 저음) "왼쪽 아님. 리본 없음."',
                     onNext: () => setStep(2)
                 });
                 break;
@@ -48,8 +48,8 @@ export default function Stage5({ onToolUse }) {
                     speaker: P,
                     text: '"여기가 더 넓잖아! 내 감을 믿어, 빨리 와!"',
                     choices: [
-                        { text: '🚶 승주를 억지로 끌고 왼쪽 길로 간다', action: () => setStep(10) },
-                        { text: '🤔 "노란 리본? 그게 무슨 말이야?"', action: () => setStep(20) },
+                        { text: '🚶 승주를 억지로 끌고 왼쪽 길로 간다 (Bad)', action: () => setStep(10) },
+                        { text: `🤔 "리본? ${N}아, 아까 뭘 본 거야?" (승주를 믿는다)`, action: () => setStep(20) },
                     ]
                 });
                 break;
@@ -77,7 +77,7 @@ export default function Stage5({ onToolUse }) {
                 addStat('trust', 10); addStat('understanding', 10);
                 setDialogue({
                     speaker: '시스템',
-                    text: `🧩 ${N}는 입구에서 봤던 [안내도]를 기억하고 있습니다. [회상(Flashback)] 버튼을 눌러 확인하세요!`
+                    text: `🧩 ${N}는 입구의 안내판을 사진처럼 기억하고 있습니다. ${N}의 기억을 확인해 보세요!`
                 });
                 break;
 
@@ -96,7 +96,7 @@ export default function Stage5({ onToolUse }) {
                 setNpcState('happy'); setNpcEmotion('happy');
                 setDialogue({
                     speaker: N,
-                    text: '(오른쪽 덤불 숲을 가리키며) "저기. 노란 리본. 30미터 앞."',
+                    text: '(오른쪽 덤불 숲을 가리키며) "저기. 리본. 30미터."',
                     onNext: () => setStep(41)
                 });
                 break;
@@ -104,7 +104,7 @@ export default function Stage5({ onToolUse }) {
                 setPlayerPose('talk');
                 setDialogue({
                     speaker: P,
-                    text: `"와... 진짜네? 아까 입구에서 본 걸 다 기억하고 있었어? ${N}아, 네가 우리 반 내비게이션이다!"`,
+                    text: `"와... 진짜네? 아까 스쳐 지나간 걸 다 기억하고 있었어? ${N}아, 네가 우리 팀 내비게이션이다!"`,
                     onNext: () => setStep(42)
                 });
                 break;
@@ -140,7 +140,7 @@ export default function Stage5({ onToolUse }) {
                 <div className="absolute inset-0 bg-black/30" />
                 <div className="z-10 flex flex-col items-center w-full px-4">
                     <div className="text-xl font-bold text-white mb-1 drop-shadow-lg">🌲 Stage 5: 갈림길의 기억</div>
-                    <div className="text-sm text-white/80 mb-4 drop-shadow">통합 & 기억</div>
+                    <div className="text-sm text-white/80 mb-4 drop-shadow">통합 & 신뢰</div>
                     <div className="flex gap-6 mb-4 items-end">
                         <div className="text-center">
                             <div className="w-44 h-56 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg overflow-hidden border border-white/30">

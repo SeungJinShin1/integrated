@@ -238,3 +238,10 @@
 .slot-glow {
   animation: slot-glow 1.5s ease-in-out infinite;
 }
+
+/* PRD v11: 드래그 미니게임 스크롤 방지 */
+.minigame-noscroll {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}

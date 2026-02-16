@@ -29,9 +29,9 @@ export default function Stage1({ onToolUse }) {
                     speaker: P,
                     text: `(${N}(이)가 자리에서 몸을 앞뒤로 흔들며 허공을 보고 있다. 새 짝꿍이라 말을 걸어보고 싶다. 어떻게 할까?)`,
                     choices: [
-                        { text: '👋 어깨를 툭 치며 부른다', action: () => { addStat('trust', -5); setStep(1); } },
-                        { text: '✋ 앞에 가서 손을 흔든다', action: () => { setStep(1); } },
-                        { text: '🪑 조용히 옆에 앉아 기다린다', action: () => { addStat('patience', 10); setStep(1); } },
+                        { text: '👋 어깨를 툭 치며 부른다 (접촉)', action: () => { addStat('trust', -5); setStep(1); } },
+                        { text: '✋ 앞에 가서 손을 흔든다 (시각)', action: () => { setStep(1); } },
+                        { text: '🪑 조용히 옆에 앉아 기다린다 (관찰)', action: () => { addStat('patience', 10); setStep(1); } },
                     ]
                 });
                 break;
@@ -43,7 +43,7 @@ export default function Stage1({ onToolUse }) {
                 break;
             case 2:
                 setNpcState('shaking'); setNpcEmotion('anxious');
-                setDialogue({ speaker: N, text: '(눈을 마주치지 않고 빠른 속도로) "안녕 너 이름이 뭐야. 안녕 너 이름이 뭐야."', onNext: () => setStep(3) });
+                setDialogue({ speaker: N, text: '(눈을 마주치지 않고) "이름이 뭐야. 이름이 뭐야."', onNext: () => setStep(3) });
                 break;
 
             /* ── Step 3: 갈등 - 잘못된 접근 ── */
@@ -73,7 +73,7 @@ export default function Stage1({ onToolUse }) {
                 setVignetteRed(true); setShowStress(true); setStress(60);
                 setNpcState('stressed'); setNpcEmotion('pain');
                 addStat('trust', -20);
-                setDialogue({ speaker: N, text: '(양손으로 귀를 꽉 막으며) "아악! 시끄러워! 삐-- 소리! 삐-- 소리!"', onNext: () => setStep(21) });
+                setDialogue({ speaker: N, text: '(비명) "아악! 삐-- 소리! 삐-- 소리!"', onNext: () => setStep(21) });
                 break;
             case 21:
                 setDialogue({
@@ -87,7 +87,7 @@ export default function Stage1({ onToolUse }) {
             case 30:
                 addStat('patience', 10);
                 setNpcEmotion('calm');
-                setDialogue({ speaker: N, text: '(조그맣게) "...이름이 뭐야. 이름이 뭐야..." (진정됨)', onNext: () => setStep(31) });
+                setDialogue({ speaker: N, text: '(작은 목소리로) "이름이 뭐야... 이름이 뭐야..."', onNext: () => setStep(31) });
                 break;
             case 31:
                 setDialogue({
@@ -112,7 +112,7 @@ export default function Stage1({ onToolUse }) {
                 setNpcState('calm'); setNpcEmotion('calm');
                 setDialogue({
                     speaker: N,
-                    text: `(태블릿을 보며 비로소 눈을 맞춤) "...${N === '승주' || N === '성민' ? N : N}. 안녕."`,
+                    text: `(태블릿을 보며 비로소 눈을 맞춤) "...${N}. 안녕."`,
                     onNext: () => setStep(51)
                 });
                 break;

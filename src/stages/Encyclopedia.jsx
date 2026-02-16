@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useGame } from '../GameContext';
 import { TOOLS } from '../gameData';
-import { FaArrowLeft, FaTabletScreenButton, FaHeadphones, FaHourglassHalf, FaImages, FaMap, FaRibbon } from 'react-icons/fa6';
+import { FaArrowLeft, FaTabletScreenButton, FaHeadphones, FaHourglassHalf, FaImages, FaHandSparkles } from 'react-icons/fa6';
 
-const ICON_MAP = { FaTabletScreenButton, FaHeadphones, FaHourglassHalf, FaImages, FaMap, FaRibbon };
+const ICON_MAP = { FaTabletScreenButton, FaHeadphones, FaHourglassHalf, FaImages, FaHandSparkles };
 
 export default function Encyclopedia({ onBack }) {
     const { state } = useGame();

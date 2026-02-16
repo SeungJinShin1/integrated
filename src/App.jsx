@@ -44,7 +44,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen w-screen bg-slate-50 font-sans overflow-hidden select-none">
+    <div className="flex h-dvh w-screen bg-slate-50 font-sans overflow-hidden select-none">
       <div className="flex-1 relative flex flex-col">
         <div className="flex-1 relative overflow-hidden">
           {renderStage()}
