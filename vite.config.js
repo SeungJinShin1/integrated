@@ -3,6 +3,6 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  base: '/integrated/',
+  base: process.env.GITHUB_PAGES ? '/integrated/' : '/',
   plugins: [react(), tailwindcss()],
 })
