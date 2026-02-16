@@ -3,12 +3,9 @@ import { useRef, useEffect, useState, useCallback } from 'react';
 export default function WaveformSlider({ onComplete }) {
     const canvasRef = useRef(null);
     const animRef = useRef(null);
-    const [volume, setVolume] = useState(100); // 0=조용, 100=시끄러움
+    const [volume, setVolume] = useState(100); // 0=조용(아래), 100=시끄러움(위)
     const volumeRef = useRef(100);
-    const lastMoveTime = useRef(Date.now());
-    const [stabilized, setStabilized] = useState(false);
     const [completed, setCompleted] = useState(false);
-    const calmTimer = useRef(null);
     const isDragging = useRef(false);
     const sliderRef = useRef(null);
 
@@ -26,7 +23,6 @@ export default function WaveformSlider({ onComplete }) {
             const amplitude = vol * (h / 2 - 10);
             const freq = 0.02 + vol * 0.03;
 
-            // 그라데이션 색상: 빨강(높음) → 초록(낮음)
             const r = Math.round(239 * vol + 34 * (1 - vol));
             const g = Math.round(68 * vol + 197 * (1 - vol));
             const b = Math.round(68 * vol + 94 * (1 - vol));
@@ -44,7 +40,6 @@ export default function WaveformSlider({ onComplete }) {
             ctx.stroke();
             ctx.shadowBlur = 0;
 
-            // 중앙선 표시 (목표를 나타냄)
             if (vol < 0.15) {
                 ctx.strokeStyle = 'rgba(34,197,94,0.3)';
                 ctx.lineWidth = 1;
@@ -60,49 +55,24 @@ export default function WaveformSlider({ onComplete }) {
         return () => cancelAnimationFrame(animRef.current);
     }, []);
 
-    // Calm 타이머: 볼륨 10 이하 1초 유지 시 안정화 표시
+    // 단순화: 볼륨이 5 이하 → 자동 성공
     useEffect(() => {
-        if (stabilized || completed) return;
-        if (volume <= 10) {
-            if (!calmTimer.current) {
-                calmTimer.current = setTimeout(() => {
-                    setStabilized(true);
-                }, 1200);
-            }
-        } else {
-            if (calmTimer.current) { clearTimeout(calmTimer.current); calmTimer.current = null; }
-            setStabilized(false);
+        if (completed) return;
+        if (volume <= 5) {
+            setCompleted(true);
+            setTimeout(() => onComplete(), 600);
         }
-        return () => { if (calmTimer.current) clearTimeout(calmTimer.current); };
-    }, [volume, stabilized, completed]);
+    }, [volume, completed, onComplete]);
 
-    const handleConfirm = () => {
-        setCompleted(true);
-        onComplete();
-    };
-
-    // 핵심 수정: 위=시끄러움(100), 아래=조용(0) → 그라데이션과 일치
     const updateVolume = useCallback((clientY) => {
         const slider = sliderRef.current;
         if (!slider || completed) return;
         const rect = slider.getBoundingClientRect();
-        // top → 100(loud), bottom → 0(calm): 그라데이션과 일치
+        // 위=100(시끄러움), 아래=0(조용)
         const pct = Math.max(0, Math.min(100, (1 - (clientY - rect.top) / rect.height) * 100));
         const newVol = Math.round(pct);
-
-        // 너무 빠르면 반발
-        const now = Date.now();
-        const dt = now - lastMoveTime.current;
-        const diff = volumeRef.current - newVol;
-        if (diff > 0 && dt < 50 && diff > 8) {
-            const bounced = Math.min(100, newVol + Math.round(diff * 0.5));
-            volumeRef.current = bounced;
-            setVolume(bounced);
-        } else {
-            volumeRef.current = newVol;
-            setVolume(newVol);
-        }
-        lastMoveTime.current = now;
+        volumeRef.current = newVol;
+        setVolume(newVol);
     }, [completed]);
 
     const handleMouseDown = (e) => { isDragging.current = true; updateVolume(e.clientY); };
@@ -125,55 +95,44 @@ export default function WaveformSlider({ onComplete }) {
         };
     }, [handleMouseMove, handleMouseUp, handleTouchMove]);
 
-    // 핸들 위치: volume=100은 위(top 작은 값), volume=0은 아래(top 큰 값)
     const handleTop = (1 - volume / 100) * 100;
 
     return (
         <div className="w-full max-w-sm mx-auto animate-fade-in" style={{ touchAction: 'none' }}>
             <p className="text-center text-white/90 text-xs mb-2 drop-shadow">
-                🎧 슬라이더를 아래로 내려 소음을 줄이세요!
+                🎧 슬라이더를 맨 아래로 내려 소음을 없애세요!
             </p>
-            <div className="flex gap-3 items-stretch">
+            <div className="flex gap-3 items-stretch justify-center">
                 {/* 파형 Canvas */}
-                <canvas ref={canvasRef} width={240} height={120}
-                    className="flex-1 rounded-xl bg-slate-900/80 backdrop-blur-sm border border-white/20 shadow-lg" />
+                <canvas ref={canvasRef} width={200} height={100}
+                    className="flex-1 max-w-[200px] rounded-xl bg-slate-900/80 backdrop-blur-sm border border-white/20 shadow-lg" />
 
-                {/* 슬라이더: 위=시끄러움(빨강), 아래=조용(초록) */}
+                {/* 슬라이더 */}
                 <div ref={sliderRef}
-                    className="w-10 h-32 bg-slate-800/80 backdrop-blur-sm rounded-full border border-white/20 relative select-none shadow-lg"
+                    className="w-10 h-28 bg-slate-800/80 backdrop-blur-sm rounded-full border border-white/20 relative select-none shadow-lg"
                     onMouseDown={handleMouseDown}
                     onTouchStart={handleTouchStart}
                 >
                     <div className="absolute inset-1 rounded-full overflow-hidden">
                         <div className="w-full h-full bg-gradient-to-b from-red-500 via-amber-400 to-emerald-500 opacity-30" />
                     </div>
-                    {/* 핸들: volume=100→위, volume=0→아래 */}
-                    <div className="absolute left-1/2 -translate-x-1/2 w-8 h-8 bg-white rounded-full shadow-xl border-2 border-indigo-400 flex items-center justify-center transition-[top] duration-75"
-                        style={{ top: `calc(${handleTop}% - 16px)` }}>
-                        <span className="text-sm">🎧</span>
+                    <div className="absolute left-1/2 -translate-x-1/2 w-7 h-7 bg-white rounded-full shadow-xl border-2 border-indigo-400 flex items-center justify-center transition-[top] duration-75"
+                        style={{ top: `calc(${handleTop}% - 14px)` }}>
+                        <span className="text-xs">🎧</span>
                     </div>
-                    <div className="absolute -left-5 top-0 text-[9px] text-red-300">🔊</div>
-                    <div className="absolute -left-5 bottom-0 text-[9px] text-emerald-300">🔇</div>
+                    <div className="absolute -left-4 top-0 text-[8px] text-red-300">🔊</div>
+                    <div className="absolute -left-4 bottom-0 text-[8px] text-emerald-300">🔇</div>
                 </div>
             </div>
 
-            {/* 안정화 후 확인 버튼 */}
-            {stabilized && !completed && (
-                <div className="text-center mt-3 animate-fade-in">
-                    <button onClick={handleConfirm}
-                        className="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer text-sm">
-                        ✅ 소음이 줄어들었다!
-                    </button>
-                </div>
-            )}
             {completed && (
                 <p className="text-center text-emerald-300 font-bold mt-2 animate-fade-in drop-shadow text-sm">
                     ✅ 안정화 완료! 고요해졌어요...
                 </p>
             )}
-            {!stabilized && !completed && volume <= 30 && (
-                <p className="text-center text-amber-300 text-xs mt-2 animate-pulse drop-shadow">
-                    조금만 더... 천천히 내려주세요!
+            {!completed && volume <= 30 && (
+                <p className="text-center text-amber-300 text-xs mt-1 animate-pulse drop-shadow">
+                    조금만 더... 끝까지 내려주세요!
                 </p>
             )}
         </div>

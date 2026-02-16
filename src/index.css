@@ -257,18 +257,33 @@
   justify-content: center;
 }
 
-/* ─── Dialogue Box: responsive compact ─── */
+/* ─── Dashboard panel ─── */
+.dashboard-panel {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 220px;
+  overflow-y: auto;
+  z-index: 50;
+}
+
+.dashboard-close {
+  display: block;
+}
+
+/* ─── Dialogue Box ─── */
 .dialogue-box {
-  max-height: 30vh;
-  min-height: 60px;
+  max-height: 28vh;
+  min-height: 50px;
   overflow-y: auto;
 }
 
-/* ─── Character cards: viewport-based sizing ─── */
+/* ─── Character cards: DEFAULT = phone-friendly ─── */
 .char-card {
-  width: clamp(4rem, 12vw, 8rem);
-  height: clamp(5rem, 16vw, 10rem);
-  border-radius: 1rem;
+  width: 4.5rem;
+  height: 5.5rem;
+  border-radius: 0.75rem;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -276,16 +291,16 @@
   flex-shrink: 0;
 }
 
-/* ─── Stage titles: responsive text ─── */
+/* ─── Stage titles ─── */
 .stage-title {
-  font-size: clamp(0.875rem, 2.5vw, 1.25rem);
+  font-size: 0.9rem;
 }
 
 .stage-subtitle {
-  font-size: clamp(0.625rem, 1.5vw, 0.875rem);
+  font-size: 0.7rem;
 }
 
-/* ─── Minigame area: flexible ─── */
+/* ─── Minigame area ─── */
 .minigame-area {
   flex: 1;
   display: flex;
@@ -297,34 +312,92 @@
   gap: 0.5rem;
 }
 
-/* ─── Responsive overrides ─── */
-@media (max-height: 500px) {
-  .dialogue-box {
-    max-height: 25vh;
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
-  }
-
+/* ═══════════════════════════════════
+   TABLET (768px ~ 1023px)
+   11~15인치 태블릿 최적화
+   ═══════════════════════════════════ */
+@media (min-width: 768px) {
   .char-card {
-    width: clamp(3rem, 10vw, 5rem);
-    height: clamp(4rem, 13vw, 6rem);
+    width: 7rem;
+    height: 9rem;
+    border-radius: 1rem;
   }
-}
 
-@media (max-width: 640px) {
+  .stage-title {
+    font-size: 1.15rem;
+  }
+
+  .stage-subtitle {
+    font-size: 0.85rem;
+  }
+
   .dialogue-box {
-    max-height: 28vh;
+    max-height: 30vh;
+  }
+
+  .dashboard-panel {
+    width: 250px;
   }
 }
 
-/* Large screens: give more space */
+/* ═══════════════════════════════════
+   PC / 큰 모니터 (1024px+)
+   데스크탑 최적화
+   ═══════════════════════════════════ */
 @media (min-width: 1024px) {
   .char-card {
-    width: clamp(6rem, 10vw, 10rem);
-    height: clamp(7.5rem, 12vw, 12rem);
+    width: 8rem;
+    height: 10rem;
+    border-radius: 1rem;
+  }
+
+  .stage-title {
+    font-size: 1.25rem;
+  }
+
+  .stage-subtitle {
+    font-size: 0.875rem;
   }
 
   .dialogue-box {
     max-height: 35vh;
+    min-height: 80px;
+  }
+
+  /* PC에서는 사이드바 고정 */
+  .dashboard-panel {
+    position: relative;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    width: 280px;
+  }
+
+  .dashboard-close {
+    display: none;
+  }
+}
+
+/* ═══════════════════════════════════
+   매우 짧은 화면 (세로 500px 이하, 가로 모드 스마트폰)
+   ═══════════════════════════════════ */
+@media (max-height: 500px) {
+  .dialogue-box {
+    max-height: 22vh;
+    padding-top: 0.125rem;
+    padding-bottom: 0.125rem;
+  }
+
+  .char-card {
+    width: 3.5rem;
+    height: 4.5rem;
+  }
+
+  .stage-title {
+    font-size: 0.8rem;
+  }
+
+  .stage-subtitle {
+    font-size: 0.6rem;
   }
 }
