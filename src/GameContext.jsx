@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useCallback, useEffect } from 'react';
+import { createContext, useContext, useReducer, useCallback, useEffect, useState } from 'react';
 
 const initialState = {
     currentStage: 'prologue',
@@ -61,12 +61,29 @@ export function GameProvider({ children }) {
         return saved ? { ...initialState, ...JSON.parse(saved) } : initialState;
     });
 
+    // 스테이지 전환 시 대기 상태 (전환 애니메이션용)
+    const [pendingStage, setPendingStage] = useState(null);
+
     useEffect(() => {
         localStorage.setItem('hiddenPiece', JSON.stringify(state));
     }, [state]);
 
     const addStat = useCallback((key, value) => dispatch({ type: 'ADD_STAT', payload: { key, value } }), []);
-    const setStage = useCallback((stage) => dispatch({ type: 'SET_STAGE', payload: stage }), []);
+    // setStage: 전환 효과가 필요한 stage는 pendingStage에 저장, prologue/encyclopedia는 즉시 이동
+    const setStage = useCallback((stage) => {
+        if (stage === 'prologue' || stage === 'encyclopedia') {
+            dispatch({ type: 'SET_STAGE', payload: stage });
+        } else {
+            setPendingStage(stage);
+        }
+    }, []);
+    // confirmStage: 전환 애니메이션 완료 후 호출하여 실제 stage 변경
+    const confirmStage = useCallback(() => {
+        if (pendingStage) {
+            dispatch({ type: 'SET_STAGE', payload: pendingStage });
+            setPendingStage(null);
+        }
+    }, [pendingStage]);
     const addInventory = useCallback((id) => dispatch({ type: 'ADD_INVENTORY', payload: id }), []);
     const useTool = useCallback((id) => dispatch({ type: 'USE_TOOL', payload: id }), []);
     const logAttempt = useCallback(() => dispatch({ type: 'LOG_TOOL_ATTEMPT' }), []);
@@ -82,7 +99,7 @@ export function GameProvider({ children }) {
 
     return (
         <GameContext.Provider value={{
-            state, dispatch, addStat, setStage, addInventory, useTool,
+            state, dispatch, addStat, setStage, confirmStage, pendingStage, addInventory, useTool,
             logAttempt, logAccuracy, logWaiting, setStress, resetGame
         }}>
             {children}

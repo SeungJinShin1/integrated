@@ -5,6 +5,7 @@ import { BG_IMAGES, getNpcImage, getPlayerImage } from '../assetMap';
 import { TOOLS } from '../gameData';
 import { Radar } from 'react-chartjs-2';
 import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip } from 'chart.js';
+import html2canvas from 'html2canvas';
 
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip);
 
@@ -89,83 +90,20 @@ export default function Stage6({ onShowEncyclopedia }) {
         setPhase('report');
     };
 
-    // 이미지 저장 — 네이티브 Canvas 2D API (html2canvas 의존 없음)
+    // 이미지 저장 — html2canvas로 실제 결과 카드 DOM 캡처
     const handleSaveImage = async () => {
-        if (saving) return;
+        if (saving || !reportRef.current) return;
         setSaving(true);
-        const st = state.stats;
         try {
-            const w = 600, h = 800;
-            const canvas = document.createElement('canvas');
-            canvas.width = w; canvas.height = h;
-            const ctx = canvas.getContext('2d');
-
-            // 배경 그라데이션
-            const bg = ctx.createLinearGradient(0, 0, 0, h);
-            bg.addColorStop(0, '#1e1b4b'); bg.addColorStop(0.5, '#312e81'); bg.addColorStop(1, '#4338ca');
-            ctx.fillStyle = bg; ctx.fillRect(0, 0, w, h);
-
-            // 상단 카드
-            ctx.fillStyle = 'rgba(255,255,255,0.08)';
-            roundRect(ctx, 30, 30, w - 60, h - 60, 20);
-            ctx.fill();
-
-            // 제목
-            ctx.fillStyle = '#ffffff'; ctx.font = 'bold 28px "Noto Sans KR", sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('🔮 프리즘 리포트', w / 2, 85);
-            ctx.font = '14px "Noto Sans KR", sans-serif'; ctx.fillStyle = '#a5b4fc';
-            ctx.fillText(`${P}의 모험 기록`, w / 2, 115);
-
-            // 구분선
-            ctx.strokeStyle = 'rgba(255,255,255,0.15)'; ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.moveTo(60, 135); ctx.lineTo(w - 60, 135); ctx.stroke();
-
-            // 프리즘 점수
-            const prism = Math.round((st.understanding + st.trust + st.communication + st.patience) / 4);
-            ctx.font = 'bold 48px "Noto Sans KR", sans-serif'; ctx.fillStyle = '#fbbf24'; ctx.textAlign = 'center';
-            ctx.fillText(`${prism}점`, w / 2, 200);
-            ctx.font = '13px "Noto Sans KR", sans-serif'; ctx.fillStyle = '#c4b5fd';
-            ctx.fillText('프리즘 종합 점수', w / 2, 225);
-
-            // 능력치 바
-            const statItems = [
-                { label: '💡 이해력', value: st.understanding, color: '#818cf8' },
-                { label: '🤝 신뢰도', value: st.trust, color: '#34d399' },
-                { label: '💬 소통력', value: st.communication, color: '#60a5fa' },
-                { label: '🧘 인내심', value: st.patience, color: '#f472b6' },
-            ];
-            let y = 270;
-            statItems.forEach(({ label, value, color }) => {
-                ctx.font = '14px "Noto Sans KR", sans-serif'; ctx.fillStyle = '#e2e8f0'; ctx.textAlign = 'left';
-                ctx.fillText(label, 70, y);
-                ctx.fillText(`${value}`, w - 70 - ctx.measureText(`${value}`).width, y);
-                // 바 배경
-                ctx.fillStyle = 'rgba(255,255,255,0.1)';
-                roundRect(ctx, 70, y + 8, w - 140, 12, 6); ctx.fill();
-                // 바 값
-                ctx.fillStyle = color;
-                roundRect(ctx, 70, y + 8, Math.max(0, (w - 140) * (value / 100)), 12, 6); ctx.fill();
-                y += 50;
+            const canvas = await html2canvas(reportRef.current, {
+                scale: 2,
+                backgroundColor: '#1e1b4b',
+                useCORS: true,
+                logging: false,
             });
-
-            // 도구 사용
-            ctx.font = 'bold 14px "Noto Sans KR", sans-serif'; ctx.fillStyle = '#fbbf24'; ctx.textAlign = 'left';
-            ctx.fillText('🧰 사용한 도구', 70, y + 20);
-            ctx.font = '13px "Noto Sans KR", sans-serif'; ctx.fillStyle = '#cbd5e1';
-            const toolNames = state.usedTools.map(id => TOOLS[id]?.name).filter(Boolean).join(', ') || '없음';
-            ctx.fillText(toolNames, 70, y + 45);
-
-            // 하단 정보
-            ctx.font = '12px "Noto Sans KR", sans-serif'; ctx.fillStyle = '#6366f1'; ctx.textAlign = 'center';
-            ctx.fillText('프리즘: 함께 빛나는 우리의 교실', w / 2, h - 60);
-            ctx.font = '10px "Noto Sans KR", sans-serif'; ctx.fillStyle = '#64748b';
-            ctx.fillText(new Date().toLocaleDateString('ko-KR'), w / 2, h - 42);
-
-            // 다운로드
             const dataUrl = canvas.toDataURL('image/png');
             const link = document.createElement('a');
-            link.download = `프리즘_보고서_${P}.png`;
+            link.download = `프리즘_결과카드_${P}.png`;
             link.href = dataUrl;
             document.body.appendChild(link);
             link.click();
@@ -176,21 +114,6 @@ export default function Stage6({ onShowEncyclopedia }) {
         }
         setSaving(false);
     };
-
-    // 둥근 사각형 그리기 헬퍼
-    function roundRect(ctx, x, y, w, h, r) {
-        ctx.beginPath();
-        ctx.moveTo(x + r, y);
-        ctx.lineTo(x + w - r, y);
-        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-        ctx.lineTo(x + w, y + h - r);
-        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-        ctx.lineTo(x + r, y + h);
-        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-        ctx.lineTo(x, y + r);
-        ctx.quadraticCurveTo(x, y, x + r, y);
-        ctx.closePath();
-    }
 
     const stats = state.stats;
     const prismScore = Math.round((stats.understanding + stats.trust + stats.communication + stats.patience) / 4);

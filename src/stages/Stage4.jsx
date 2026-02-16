@@ -6,7 +6,7 @@ import MosaicPuzzle from '../minigames/MosaicPuzzle';
 import { getNpcImage, getPlayerImage, BG_IMAGES } from '../assetMap';
 
 export default function Stage4({ onToolUse }) {
-    const { state, addStat, addInventory, useTool, logAccuracy, setStage } = useGame();
+    const { state, addStat, addInventory, useTool, logAccuracy, setStage, logWaiting } = useGame();
     const N = state.npc.name;
     const P = state.player.name;
     const [step, setStep] = useState(0);
@@ -63,8 +63,8 @@ export default function Stage4({ onToolUse }) {
                     text: `(${N}(이)가 조각을 들고 무언가 보여주려 하고 있다...)`,
                     choices: [
                         { text: `🤫 "그래 ${N}아, 넌 가만히 있는 게 도와주는 거야." (배제)`, action: () => setStep(10) },
-                        { text: `✋ "${N}가 뭘 하려는지 한번 볼까?" (관찰)`, action: () => setStep(20) },
-                        { text: `🔍 "${N}아, 이거 네가 해볼래?" (참여 유도)`, action: () => setStep(30) },
+                        { text: `✋ "${N}가 뭘 하려는지 한번 볼까?" (관찰)`, action: () => { logWaiting(); setStep(20); } },
+                        { text: `🔍 "${N}아, 이거 네가 해볼래?" (참여 유도)`, action: () => { logWaiting(); setStep(30); } },
                     ]
                 });
                 break;

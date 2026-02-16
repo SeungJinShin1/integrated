@@ -5,7 +5,7 @@ import CardPuzzle from '../minigames/CardPuzzle';
 import { getNpcImage, getPlayerImage, BG_IMAGES } from '../assetMap';
 
 export default function Stage1({ onToolUse }) {
-    const { state, addStat, addInventory, useTool, logAccuracy, setStress, setStage } = useGame();
+    const { state, addStat, addInventory, useTool, logAccuracy, setStress, setStage, logWaiting } = useGame();
     const N = state.npc.name;
     const P = state.player.name;
     const [step, setStep] = useState(0);
@@ -31,7 +31,7 @@ export default function Stage1({ onToolUse }) {
                     choices: [
                         { text: '👋 어깨를 툭 치며 부른다 (접촉)', action: () => { addStat('trust', -5); setStep(1); } },
                         { text: '✋ 앞에 가서 손을 흔든다 (시각)', action: () => { setStep(1); } },
-                        { text: '🪑 조용히 옆에 앉아 기다린다 (관찰)', action: () => { addStat('patience', 10); setStep(1); } },
+                        { text: '🪑 조용히 옆에 앉아 기다린다 (관찰)', action: () => { addStat('patience', 10); logWaiting(); setStep(1); } },
                     ]
                 });
                 break;
@@ -55,7 +55,7 @@ export default function Stage1({ onToolUse }) {
                     choices: [
                         { text: '😡 "야! 너 왜 자꾸 나 따라 해? 장난치지 마!"', action: () => setStep(10) },
                         { text: '📢 "이! 름! 이! 뭐! 냐! 고!"', action: () => setStep(20) },
-                        { text: '😐 (당황스럽지만 일단 가만히 있는다)', action: () => setStep(30) },
+                        { text: '😐 (당황스럽지만 일단 가만히 있는다)', action: () => { logWaiting(); setStep(30); } },
                     ]
                 });
                 break;

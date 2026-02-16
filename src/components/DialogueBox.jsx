@@ -43,7 +43,7 @@ export default function DialogueBox({ speaker, text, choices, onNext, npcName, p
         <div className="dialogue-box bg-white/95 backdrop-blur-sm border-t-2 border-indigo-100 px-3 py-2 flex-shrink-0">
             <div className="max-w-3xl mx-auto h-full flex flex-col">
                 <div className={`text-sm font-bold mb-0.5 ${speakerColor}`}>{speaker}</div>
-                <div className="flex-1 text-slate-800 text-sm leading-relaxed overflow-y-auto">
+                <div className="flex-1 text-slate-800 text-sm leading-relaxed overflow-y-auto" style={{ minHeight: '2.5rem' }}>
                     <span>{displayed}</span>
                     {!done && <span className="typewriter-cursor" />}
                 </div>

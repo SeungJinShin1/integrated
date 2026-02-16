@@ -6,7 +6,7 @@ import { FaClockRotateLeft } from 'react-icons/fa6';
 import { getNpcImage, getPlayerImage, BG_IMAGES } from '../assetMap';
 
 export default function Stage5({ onToolUse }) {
-    const { state, addStat, addInventory, useTool, logAccuracy, setStage } = useGame();
+    const { state, addStat, addInventory, useTool, logAccuracy, setStage, logWaiting } = useGame();
     const N = state.npc.name;
     const P = state.player.name;
     const [step, setStep] = useState(0);
@@ -49,7 +49,7 @@ export default function Stage5({ onToolUse }) {
                     text: '"여기가 더 넓잖아! 내 감을 믿어, 빨리 와!"',
                     choices: [
                         { text: '🚶 승주를 억지로 끌고 왼쪽 길로 간다 (Bad)', action: () => setStep(10) },
-                        { text: `🤔 "리본? ${N}아, 아까 뭘 본 거야?" (승주를 믿는다)`, action: () => setStep(20) },
+                        { text: `🤔 "리본? ${N}아, 아까 뭘 본 거야?" (승주를 믿는다)`, action: () => { logWaiting(); setStep(20); } },
                     ]
                 });
                 break;

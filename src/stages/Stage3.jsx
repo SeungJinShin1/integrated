@@ -6,7 +6,7 @@ import SquishyBreath from '../minigames/SquishyBreath';
 import { getNpcImage, getPlayerImage, BG_IMAGES } from '../assetMap';
 
 export default function Stage3({ onToolUse }) {
-    const { state, addStat, addInventory, useTool, logAccuracy, setStage } = useGame();
+    const { state, addStat, addInventory, useTool, logAccuracy, setStage, logWaiting } = useGame();
     const N = state.npc.name;
     const P = state.player.name;
     const [step, setStep] = useState(0);
@@ -38,7 +38,7 @@ export default function Stage3({ onToolUse }) {
                     text: `점심시간이 끝났는데 ${N}(이)가 운동장 바닥에 그림을 그리고 있습니다.`,
                     choices: [
                         { text: '🏃 "야, 종 쳤어! 가자!" (잡아끈다)', action: () => setStep(10) },
-                        { text: '🚂 "우와, 이거 지하철 노선도야?"', action: () => setStep(20) },
+                        { text: '🚂 "우와, 이거 지하철 노선도야?"', action: () => { logWaiting(); setStep(20); } },
                     ]
                 });
                 break;

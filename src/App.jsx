@@ -1,6 +1,7 @@
 import { useRef, useCallback, useState, useEffect } from 'react';
 import { useGame } from './GameContext';
 import Dashboard from './components/Dashboard';
+import StageTransition from './components/StageTransition';
 import Prologue from './stages/Prologue';
 import Stage1 from './stages/Stage1';
 import Stage2 from './stages/Stage2';
@@ -24,13 +25,12 @@ function LandscapePrompt() {
 }
 
 export default function App() {
-  const { state, setStage, logAttempt } = useGame();
+  const { state, setStage, logAttempt, pendingStage, confirmStage } = useGame();
   const toolHandlerRef = useRef(null);
   const [isPortrait, setIsPortrait] = useState(false);
 
   useEffect(() => {
     const checkOrientation = () => {
-      // 모바일(768px 이하)에서 세로 모드면 안내
       const isMobile = window.innerWidth < 768;
       const portrait = window.innerHeight > window.innerWidth;
       setIsPortrait(isMobile && portrait);
@@ -74,6 +74,12 @@ export default function App() {
   return (
     <>
       {isPortrait && <LandscapePrompt />}
+      {pendingStage && (
+        <StageTransition
+          targetStage={pendingStage}
+          onComplete={confirmStage}
+        />
+      )}
       <div className="flex h-dvh w-screen bg-slate-50 font-sans overflow-hidden select-none">
         <div className="flex-1 relative flex flex-col min-w-0">
           <div className="flex-1 relative overflow-y-auto overflow-x-hidden">

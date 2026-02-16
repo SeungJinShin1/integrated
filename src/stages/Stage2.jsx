@@ -6,7 +6,7 @@ import { FaVolumeHigh } from 'react-icons/fa6';
 import { getNpcImage, getPlayerImage, BG_IMAGES } from '../assetMap';
 
 export default function Stage2({ onToolUse }) {
-    const { state, addStat, addInventory, useTool, logAccuracy, setStress, setStage } = useGame();
+    const { state, addStat, addInventory, useTool, logAccuracy, setStress, setStage, logWaiting } = useGame();
     const N = state.npc.name;
     const P = state.player.name;
     const [step, setStep] = useState(0);
@@ -32,7 +32,7 @@ export default function Stage2({ onToolUse }) {
                     choices: [
                         { text: '🍴 "밥 안 먹어? 빨리 먹어." (재촉)', action: () => { setStep(1); } },
                         { text: '😟 "어디 아파?" (질문)', action: () => { addStat('understanding', 5); setStep(1); } },
-                        { text: '👂 주변 소음을 유심히 들어본다 (관찰)', action: () => { addStat('understanding', 10); setStep(1); } },
+                        { text: '👂 주변 소음을 유심히 들어본다 (관찰)', action: () => { addStat('understanding', 10); logWaiting(); setStep(1); } },
                     ]
                 });
                 break;
@@ -57,7 +57,7 @@ export default function Stage2({ onToolUse }) {
                     choices: [
                         { text: '😡 "너 미쳤어? 왜 사람을 때려!" (같이 화냄)', action: () => setStep(10) },
                         { text: '🏃 선생님을 부르러 뛰어간다 (회피)', action: () => setStep(20) },
-                        { text: `👀 ${N}의 상태(귀를 막고 있음)를 확인한다`, action: () => setStep(30) },
+                        { text: `👀 ${N}의 상태(귀를 막고 있음)를 확인한다`, action: () => { logWaiting(); setStep(30); } },
                     ]
                 });
                 break;

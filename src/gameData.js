@@ -13,6 +13,7 @@ export const STAGE_NAMES = {
     'stage-3': 'Stage 3: 기차는 멈추지 않아',
     'stage-4': 'Stage 4: 사라진 퍼즐 조각',
     'stage-5': 'Stage 5: 갈림길의 기억',
+    'stage-6': 'Stage 6: 프리즘 연구소',
     ending: 'Ending',
     encyclopedia: '도감'
 };
