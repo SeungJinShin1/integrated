@@ -5,7 +5,7 @@ import { BG_IMAGES, getNpcImage, getPlayerImage } from '../assetMap';
 import { TOOLS } from '../gameData';
 import { Radar } from 'react-chartjs-2';
 import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip } from 'chart.js';
-import html2canvas from 'html2canvas';
+
 
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip);
 
@@ -91,47 +91,279 @@ export default function Stage6({ onShowEncyclopedia }) {
         setPhase('report');
     };
 
-    // 이미지 저장 — Chart.js canvas를 정적 이미지로 변환 후 html2canvas로 캡처
+    // 이미지 로드 헬퍼
+    const loadImg = (src) => new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => resolve(img);
+        img.onerror = () => resolve(null);
+        img.src = src;
+    });
+
+    // 캔버스에 둥근 사각형 그리기
+    const roundRect = (ctx, x, y, w, h, r) => {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+    };
+
+    // 이미지 저장 — 순수 Canvas API로 결과 카드 직접 그리기
     const handleSaveImage = async () => {
-        if (saving || !reportRef.current) return;
+        if (saving) return;
         setSaving(true);
-        let placeholderImg = null;
-        let chartCanvas = null;
         try {
-            // Chart.js canvas를 정적 이미지로 교체 (html2canvas 호환성)
+            const W = 800, pad = 40;
+            const contentW = W - pad * 2;
+
+            // 이미지 로드
+            const [pImg, nImg] = await Promise.all([loadImg(playerImg), loadImg(npcImg)]);
+
+            // Chart.js 캔버스를 이미지로 변환
+            let chartImgData = null;
             const chartInstance = chartRef.current;
             if (chartInstance) {
-                chartCanvas = chartInstance.canvas;
-                const dataUrl = chartInstance.toBase64Image();
-                placeholderImg = document.createElement('img');
-                placeholderImg.src = dataUrl;
-                placeholderImg.style.width = chartCanvas.style.width || chartCanvas.offsetWidth + 'px';
-                placeholderImg.style.height = chartCanvas.style.height || chartCanvas.offsetHeight + 'px';
-                chartCanvas.parentNode.insertBefore(placeholderImg, chartCanvas);
-                chartCanvas.style.display = 'none';
+                chartImgData = chartInstance.toBase64Image();
+            }
+            const chartImg = chartImgData ? await loadImg(chartImgData) : null;
+
+            // 높이 계산
+            let H = 60; // 상단 여백
+            H += 30 + 20 + 20; // 타이틀
+            H += 100 + 20; // 캐릭터
+            H += 70 + 20; // 등급
+            H += 240 + 20; // 레이더 차트
+            H += 80 + 20; // 4대 역량
+            // 일지
+            const journalLines = [];
+            const jWords = journal.split('');
+            let jLine = '';
+            for (const ch of jWords) {
+                if (ctx_measureText(jLine + ch) > contentW - 40) { journalLines.push(jLine); jLine = ch; }
+                else jLine += ch;
+            }
+            if (jLine) journalLines.push(jLine);
+            H += 40 + journalLines.length * 22 + 20;
+            // 배지
+            if (badges.length > 0) H += 70 + 20;
+            // 통계
+            H += 90 + 20;
+            // 명언
+            H += 60 + 20;
+            H += 40; // 하단 여백
+
+            // 텍스트 측정용 임시 캔버스
+            function ctx_measureText(text) {
+                const tmp = document.createElement('canvas').getContext('2d');
+                tmp.font = '14px sans-serif';
+                return tmp.measureText(text).width;
             }
 
-            const canvas = await html2canvas(reportRef.current, {
-                scale: 2,
-                backgroundColor: '#1e1b4b',
-                useCORS: true,
-                allowTaint: true,
-                logging: false,
+            // 캔버스 생성
+            const canvas = document.createElement('canvas');
+            canvas.width = W * 2;
+            canvas.height = H * 2;
+            const ctx = canvas.getContext('2d');
+            ctx.scale(2, 2);
+
+            // 배경
+            const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+            bgGrad.addColorStop(0, '#1e1b4b');
+            bgGrad.addColorStop(1, '#312e81');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, W, H);
+
+            // 카드 배경
+            roundRect(ctx, pad - 10, 30, contentW + 20, H - 60, 20);
+            ctx.fillStyle = 'rgba(255,255,255,0.95)';
+            ctx.fill();
+
+            let y = 60;
+
+            // 타이틀
+            ctx.fillStyle = '#1e293b';
+            ctx.font = 'bold 22px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('🌈 프리즘 결과 카드', W / 2, y);
+            y += 28;
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '12px sans-serif';
+            ctx.fillText('Hidden Piece: The Secret Agent of Our Class', W / 2, y);
+            y += 30;
+
+            // 캐릭터
+            const charW = 64, charH = 80;
+            const centerX = W / 2;
+            if (pImg) {
+                roundRect(ctx, centerX - 80 - charW / 2, y, charW, charH, 10);
+                ctx.fillStyle = '#eef2ff';
+                ctx.fill();
+                ctx.save();
+                ctx.clip();
+                const pAspect = pImg.width / pImg.height;
+                const drawH = charH;
+                const drawW = drawH * pAspect;
+                ctx.drawImage(pImg, centerX - 80 - drawW / 2, y, drawW, drawH);
+                ctx.restore();
+            }
+            ctx.fillStyle = '#475569';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(P, centerX - 80, y + charH + 16);
+
+            ctx.font = '24px sans-serif';
+            ctx.fillText('🤝', centerX, y + charH / 2 + 8);
+
+            if (nImg) {
+                roundRect(ctx, centerX + 80 - charW / 2, y, charW, charH, 10);
+                ctx.fillStyle = '#fffbeb';
+                ctx.fill();
+                ctx.save();
+                ctx.clip();
+                const nAspect = nImg.width / nImg.height;
+                const ndrawH = charH;
+                const ndrawW = ndrawH * nAspect;
+                ctx.drawImage(nImg, centerX + 80 - ndrawW / 2, y, ndrawW, ndrawH);
+                ctx.restore();
+            }
+            ctx.fillStyle = '#475569';
+            ctx.font = '12px sans-serif';
+            ctx.fillText(N, centerX + 80, y + charH + 16);
+            y += charH + 30;
+
+            // 등급 배경
+            const gradeGrad = ctx.createLinearGradient(pad, y, pad + contentW, y);
+            gradeGrad.addColorStop(0, '#6366f1');
+            gradeGrad.addColorStop(1, '#a855f7');
+            roundRect(ctx, pad, y, contentW, 60, 12);
+            ctx.fillStyle = gradeGrad;
+            ctx.fill();
+            ctx.fillStyle = 'rgba(255,255,255,0.8)';
+            ctx.font = '13px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`프리즘 점수: ${prismScore}`, W / 2, y + 24);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 18px sans-serif';
+            ctx.fillText(grade, W / 2, y + 48);
+            y += 80;
+
+            // 레이더 차트
+            if (chartImg) {
+                const cSize = 220;
+                ctx.drawImage(chartImg, (W - cSize) / 2, y, cSize, cSize);
+                y += cSize + 20;
+            } else {
+                y += 20;
+            }
+
+            // 4대 역량
+            const statItems = [
+                { label: '💡 이해', val: stats.understanding },
+                { label: '🤝 신뢰', val: stats.trust },
+                { label: '💬 소통', val: stats.communication },
+                { label: '🧘 인내', val: stats.patience },
+            ];
+            const statW = (contentW - 30) / 4;
+            statItems.forEach((s, i) => {
+                const sx = pad + 5 + i * (statW + 10);
+                roundRect(ctx, sx, y, statW, 65, 8);
+                ctx.fillStyle = '#f8fafc';
+                ctx.fill();
+                ctx.fillStyle = '#64748b';
+                ctx.font = '11px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(s.label, sx + statW / 2, y + 22);
+                ctx.fillStyle = '#4f46e5';
+                ctx.font = 'bold 20px sans-serif';
+                ctx.fillText(String(s.val), sx + statW / 2, y + 50);
             });
-            const imgDataUrl = canvas.toDataURL('image/png');
+            y += 85;
+
+            // 일지
+            roundRect(ctx, pad, y, contentW, 30 + journalLines.length * 22 + 10, 12);
+            ctx.fillStyle = '#fffbeb';
+            ctx.fill();
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.fillStyle = '#92400e';
+            ctx.font = 'bold 13px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('📝 나의 탐구 일지', pad + 16, y + 22);
+            ctx.fillStyle = '#b45309';
+            ctx.font = '13px sans-serif';
+            journalLines.forEach((line, i) => {
+                ctx.fillText(line, pad + 16, y + 42 + i * 22);
+            });
+            y += 40 + journalLines.length * 22 + 20;
+
+            // 배지
+            if (badges.length > 0) {
+                roundRect(ctx, pad, y, contentW, 60, 12);
+                ctx.fillStyle = '#fffbeb';
+                ctx.fill();
+                ctx.strokeStyle = '#fbbf24';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.fillStyle = '#92400e';
+                ctx.font = 'bold 13px sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('🎖️ 획득한 배지', pad + 16, y + 22);
+                ctx.fillStyle = '#92400e';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(badges.join('  '), W / 2, y + 46);
+                y += 80;
+            }
+
+            // 통계
+            roundRect(ctx, pad, y, contentW, 80, 12);
+            ctx.fillStyle = '#f8fafc';
+            ctx.fill();
+            ctx.font = '13px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#64748b';
+            ctx.fillText(`⏳ 기다려준 횟수`, pad + 16, y + 24);
+            ctx.fillText(`🎯 도구 정확도`, pad + 16, y + 48);
+            ctx.fillText(`🧰 사용한 도구`, pad + 16, y + 72);
+            ctx.textAlign = 'right';
+            ctx.fillStyle = '#334155';
+            ctx.font = 'bold 13px sans-serif';
+            ctx.fillText(`${state.logs.waiting_count}회`, pad + contentW - 16, y + 24);
+            ctx.fillText(`${accuracy}%`, pad + contentW - 16, y + 48);
+            ctx.fillText(`${state.usedTools.length}개`, pad + contentW - 16, y + 72);
+            y += 100;
+
+            // 명언
+            const quoteGrad = ctx.createLinearGradient(pad, y, pad + contentW, y);
+            quoteGrad.addColorStop(0, '#eef2ff');
+            quoteGrad.addColorStop(1, '#f3e8ff');
+            roundRect(ctx, pad, y, contentW, 44, 12);
+            ctx.fillStyle = quoteGrad;
+            ctx.fill();
+            ctx.fillStyle = '#4338ca';
+            ctx.font = 'bold 13px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('"우리는 서로 달라서, 서로에게 필요한 존재입니다."', W / 2, y + 28);
+
+            // 다운로드
+            const dataUrl = canvas.toDataURL('image/png');
             const link = document.createElement('a');
             link.download = `프리즘_결과카드_${P}.png`;
-            link.href = imgDataUrl;
+            link.href = dataUrl;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         } catch (err) {
             console.error('Image generation error:', err);
-            alert('이미지 생성 중 오류가 발생했습니다.');
-        } finally {
-            // Chart.js canvas 복원
-            if (chartCanvas) chartCanvas.style.display = '';
-            if (placeholderImg && placeholderImg.parentNode) placeholderImg.parentNode.removeChild(placeholderImg);
+            alert('이미지 생성 중 오류가 발생했습니다. 다시 시도해 주세요.');
         }
         setSaving(false);
     };

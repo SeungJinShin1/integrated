@@ -240,7 +240,7 @@ export default function MosaicPuzzle({ onComplete }) {
                     <div className="text-center mt-2 animate-fade-in">
                         <div className="text-3xl mb-1" style={{ animation: 'pulse 0.5s ease-in-out 3' }}>✨🎉✨</div>
                         <p className="text-sm font-bold text-emerald-600">착! 완벽한 매칭!</p>
-                        <p className="text-xs text-slate-500">벽화 전체에서 빛이 납니다! 완성된 그림은 '우리 반 단체 사진' 모자이크!</p>
+                        <p className="text-xs text-slate-500">벽화 전체에서 빛이 납니다! 함께 힘을 모아 성공!</p>
                     </div>
                 )}
             </div>
