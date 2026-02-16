@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useGame } from '../GameContext';
 import DialogueBox from '../components/DialogueBox';
+import PecsCardPuzzle from '../minigames/PecsCardPuzzle';
 import MosaicPuzzle from '../minigames/MosaicPuzzle';
 import { getNpcImage, getPlayerImage, BG_IMAGES } from '../assetMap';
 
@@ -13,6 +14,7 @@ export default function Stage4({ onToolUse }) {
     const [npcState, setNpcState] = useState('observing');
     const [npcEmotion, setNpcEmotion] = useState('default');
     const [playerPose, setPlayerPose] = useState('thinking');
+    const [showPecs, setShowPecs] = useState(false);
     const [showMosaic, setShowMosaic] = useState(false);
 
     useEffect(() => { addInventory('pecs'); }, []);
@@ -98,23 +100,32 @@ export default function Stage4({ onToolUse }) {
                 });
                 break;
 
-            /* ── Step 4: PECS 카드 확인 ── */
+            /* ── Step 3: PECS 카드 조합 (미니게임1) ── */
             case 40:
                 setNpcState('focused'); setNpcEmotion('discover');
                 setDialogue({
                     speaker: '시스템',
-                    text: `💬 ${N}(이)가 주머니에서 PECS 카드 뭉치를 꺼냅니다. [나] + [할 수 있다]`,
-                    choices: [
-                        { text: '👍 "그래, 네가 해봐!"', action: () => setStep(41) },
-                    ]
+                    text: `💬 ${N}(이)가 주머니에서 PECS 카드 뭉치를 꺼냅니다. 카드를 확인하세요!`,
+                });
+                setShowPecs(true);
+                break;
+
+            /* ── PECS 성공 후 반응 ── */
+            case 41:
+                setShowPecs(false);
+                setPlayerPose('talk');
+                setDialogue({
+                    speaker: P,
+                    text: `"뭐? 네가 할 수 있다고? 그래, 한번 해봐!"`,
+                    onNext: () => setStep(42),
                 });
                 break;
 
-            /* ── Step 5: 미니게임 시작 ── */
-            case 41:
+            /* ── Step 4: 모자이크 퍼즐 (미니게임2) ── */
+            case 42:
                 setDialogue({
                     speaker: '시스템',
-                    text: `🧩 ${N}(이)가 조각을 들고 벽화 앞에 섰습니다. 조각을 회전시켜 빈칸에 맞춰주세요!`
+                    text: `🧩 ${N}(이)의 눈에는 미세한 색깔의 차이가 선명한 패턴으로 보입니다. 조각을 돌려 맞추세요!`,
                 });
                 setShowMosaic(true);
                 break;
@@ -143,15 +154,21 @@ export default function Stage4({ onToolUse }) {
         }
     };
 
+    const handlePecsComplete = () => {
+        addStat('communication', 10);
+        setStep(41);
+    };
+
     const handleMosaicComplete = () => {
         logAccuracy(); useTool('pecs');
         addStat('understanding', 20); addStat('trust', 20);
+        setShowMosaic(false);
         setStep(50);
     };
 
     useEffect(() => {
         if (!onToolUse) return;
-        onToolUse.current = (id) => { if (id === 'pecs' && step === 41) handleMosaicComplete(); };
+        onToolUse.current = (id) => { if (id === 'pecs' && step === 42) handleMosaicComplete(); };
     }, [step]);
 
     const npcImg = getNpcImage(state.npc.gender, npcEmotion);
@@ -173,6 +190,7 @@ export default function Stage4({ onToolUse }) {
                             <p className="text-sm mt-1 font-medium text-white drop-shadow">{P}</p>
                         </div>
                         <div className="flex-1 flex items-center justify-center min-h-[10rem]">
+                            {showPecs && <PecsCardPuzzle npcName={N} onComplete={handlePecsComplete} />}
                             {showMosaic && <MosaicPuzzle onComplete={handleMosaicComplete} />}
                         </div>
                         <div className="text-center flex-shrink-0">

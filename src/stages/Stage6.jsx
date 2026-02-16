@@ -98,22 +98,43 @@ export default function Stage6({ onShowEncyclopedia }) {
                 backgroundColor: '#1e1b4b',
                 scale: 2,
                 useCORS: true,
+                logging: false,
             });
-            canvas.toBlob((blob) => {
-                if (!blob) return;
-                const url = URL.createObjectURL(blob);
+            if (canvas.toBlob) {
+                canvas.toBlob((blob) => {
+                    if (!blob) { setSaving(false); return; }
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.download = `프리즘_보고서_${P}.png`;
+                    link.href = url;
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    setTimeout(() => {
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(url);
+                        setSaving(false);
+                    }, 100);
+                }, 'image/png');
+            } else {
+                // fallback for older browsers
+                const dataUrl = canvas.toDataURL('image/png');
                 const link = document.createElement('a');
                 link.download = `프리즘_보고서_${P}.png`;
-                link.href = url;
+                link.href = dataUrl;
+                link.style.display = 'none';
                 document.body.appendChild(link);
                 link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(url);
-            }, 'image/png');
+                setTimeout(() => {
+                    document.body.removeChild(link);
+                    setSaving(false);
+                }, 100);
+            }
         } catch (err) {
             console.error('Image save error:', err);
+            alert('이미지 저장 중 오류가 발생했습니다. 다시 시도해주세요.');
+            setSaving(false);
         }
-        setSaving(false);
     };
 
     const stats = state.stats;

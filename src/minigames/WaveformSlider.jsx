@@ -6,6 +6,7 @@ export default function WaveformSlider({ onComplete }) {
     const [volume, setVolume] = useState(100); // 0~100
     const volumeRef = useRef(100);
     const lastMoveTime = useRef(Date.now());
+    const [stabilized, setStabilized] = useState(false);
     const [completed, setCompleted] = useState(false);
     const calmTimer = useRef(null);
     const isDragging = useRef(false);
@@ -59,21 +60,26 @@ export default function WaveformSlider({ onComplete }) {
         return () => cancelAnimationFrame(animRef.current);
     }, []);
 
-    // Calm 타이머: 볼륨이 10 이하로 1초 유지 시 완료
+    // Calm 타이머: 볼륨이 10 이하로 1초 유지 시 안정화 표시 (자동 완료 아님)
     useEffect(() => {
-        if (completed) return;
+        if (stabilized || completed) return;
         if (volume <= 10) {
             if (!calmTimer.current) {
                 calmTimer.current = setTimeout(() => {
-                    setCompleted(true);
-                    onComplete();
+                    setStabilized(true);
                 }, 1200);
             }
         } else {
             if (calmTimer.current) { clearTimeout(calmTimer.current); calmTimer.current = null; }
+            setStabilized(false);
         }
         return () => { if (calmTimer.current) clearTimeout(calmTimer.current); };
-    }, [volume, completed, onComplete]);
+    }, [volume, stabilized, completed]);
+
+    const handleConfirm = () => {
+        setCompleted(true);
+        onComplete();
+    };
 
     const updateVolume = useCallback((clientY) => {
         const slider = sliderRef.current;
@@ -87,7 +93,6 @@ export default function WaveformSlider({ onComplete }) {
         const dt = now - lastMoveTime.current;
         const diff = volumeRef.current - newVol;
         if (diff > 0 && dt < 50 && diff > 8) {
-            // 반발: 볼륨 일부 되돌리기
             const bounced = Math.min(100, newVol + Math.round(diff * 0.5));
             volumeRef.current = bounced;
             setVolume(bounced);
@@ -119,42 +124,49 @@ export default function WaveformSlider({ onComplete }) {
     }, [handleMouseMove, handleMouseUp, handleTouchMove]);
 
     return (
-        <div className="w-full max-w-lg mx-auto animate-fade-in">
-            <p className="text-center text-white/90 text-sm mb-3 drop-shadow">
-                🎧 슬라이더를 천천히 내려 파형을 안정시키세요! (너무 빠르면 튕겨요)
+        <div className="w-full max-w-sm mx-auto animate-fade-in" style={{ touchAction: 'none' }}>
+            <p className="text-center text-white/90 text-xs mb-2 drop-shadow">
+                🎧 슬라이더를 천천히 내려 파형을 안정시키세요!
             </p>
-            <div className="flex gap-4 items-stretch">
+            <div className="flex gap-3 items-stretch">
                 {/* 파형 Canvas */}
-                <canvas ref={canvasRef} width={320} height={160}
+                <canvas ref={canvasRef} width={240} height={120}
                     className="flex-1 rounded-xl bg-slate-900/80 backdrop-blur-sm border border-white/20 shadow-lg" />
 
                 {/* 슬라이더 */}
                 <div ref={sliderRef}
-                    className="w-12 h-40 bg-slate-800/80 backdrop-blur-sm rounded-full border border-white/20 relative select-none shadow-lg"
+                    className="w-10 h-32 bg-slate-800/80 backdrop-blur-sm rounded-full border border-white/20 relative select-none shadow-lg"
                     onMouseDown={handleMouseDown}
                     onTouchStart={handleTouchStart}
                 >
-                    {/* 트랙 그라데이션 */}
                     <div className="absolute inset-1 rounded-full overflow-hidden">
                         <div className="w-full h-full bg-gradient-to-b from-red-500 via-amber-400 to-emerald-500 opacity-30" />
                     </div>
-                    {/* 핸들 */}
-                    <div className="absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-white rounded-full shadow-xl border-2 border-indigo-400 flex items-center justify-center transition-[top] duration-75"
-                        style={{ top: `calc(${volume}% - 20px)` }}>
-                        <span className="text-lg">🎧</span>
+                    <div className="absolute left-1/2 -translate-x-1/2 w-8 h-8 bg-white rounded-full shadow-xl border-2 border-indigo-400 flex items-center justify-center transition-[top] duration-75"
+                        style={{ top: `calc(${volume}% - 16px)` }}>
+                        <span className="text-sm">🎧</span>
                     </div>
-                    {/* 레이블 */}
-                    <div className="absolute -left-6 top-0 text-[10px] text-red-300">🔊</div>
-                    <div className="absolute -left-6 bottom-0 text-[10px] text-emerald-300">🔇</div>
+                    <div className="absolute -left-5 top-0 text-[9px] text-red-300">🔊</div>
+                    <div className="absolute -left-5 bottom-0 text-[9px] text-emerald-300">🔇</div>
                 </div>
             </div>
+
+            {/* 안정화 후 확인 버튼 */}
+            {stabilized && !completed && (
+                <div className="text-center mt-3 animate-fade-in">
+                    <button onClick={handleConfirm}
+                        className="px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer text-sm">
+                        ✅ 소음이 줄어들었다!
+                    </button>
+                </div>
+            )}
             {completed && (
-                <p className="text-center text-emerald-300 font-bold mt-3 animate-fade-in drop-shadow">
+                <p className="text-center text-emerald-300 font-bold mt-2 animate-fade-in drop-shadow text-sm">
                     ✅ 안정화 완료! 고요해졌어요...
                 </p>
             )}
-            {!completed && volume <= 30 && (
-                <p className="text-center text-amber-300 text-sm mt-2 animate-pulse drop-shadow">
+            {!stabilized && !completed && volume <= 30 && (
+                <p className="text-center text-amber-300 text-xs mt-2 animate-pulse drop-shadow">
                     조금만 더... 천천히 내려주세요!
                 </p>
             )}
