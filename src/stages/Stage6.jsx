@@ -34,6 +34,7 @@ export default function Stage6({ onShowEncyclopedia }) {
     const [saving, setSaving] = useState(false);
     const chatEndRef = useRef(null);
     const reportRef = useRef(null);
+    const chartRef = useRef(null);
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
 
     useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [chatMessages]);
@@ -90,27 +91,47 @@ export default function Stage6({ onShowEncyclopedia }) {
         setPhase('report');
     };
 
-    // 이미지 저장 — html2canvas로 실제 결과 카드 DOM 캡처
+    // 이미지 저장 — Chart.js canvas를 정적 이미지로 변환 후 html2canvas로 캡처
     const handleSaveImage = async () => {
         if (saving || !reportRef.current) return;
         setSaving(true);
+        let placeholderImg = null;
+        let chartCanvas = null;
         try {
+            // Chart.js canvas를 정적 이미지로 교체 (html2canvas 호환성)
+            const chartInstance = chartRef.current;
+            if (chartInstance) {
+                chartCanvas = chartInstance.canvas;
+                const dataUrl = chartInstance.toBase64Image();
+                placeholderImg = document.createElement('img');
+                placeholderImg.src = dataUrl;
+                placeholderImg.style.width = chartCanvas.style.width || chartCanvas.offsetWidth + 'px';
+                placeholderImg.style.height = chartCanvas.style.height || chartCanvas.offsetHeight + 'px';
+                chartCanvas.parentNode.insertBefore(placeholderImg, chartCanvas);
+                chartCanvas.style.display = 'none';
+            }
+
             const canvas = await html2canvas(reportRef.current, {
                 scale: 2,
                 backgroundColor: '#1e1b4b',
                 useCORS: true,
+                allowTaint: true,
                 logging: false,
             });
-            const dataUrl = canvas.toDataURL('image/png');
+            const imgDataUrl = canvas.toDataURL('image/png');
             const link = document.createElement('a');
             link.download = `프리즘_결과카드_${P}.png`;
-            link.href = dataUrl;
+            link.href = imgDataUrl;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         } catch (err) {
             console.error('Image generation error:', err);
             alert('이미지 생성 중 오류가 발생했습니다.');
+        } finally {
+            // Chart.js canvas 복원
+            if (chartCanvas) chartCanvas.style.display = '';
+            if (placeholderImg && placeholderImg.parentNode) placeholderImg.parentNode.removeChild(placeholderImg);
         }
         setSaving(false);
     };
@@ -282,7 +303,7 @@ export default function Stage6({ onShowEncyclopedia }) {
                             {/* 레이더 차트 */}
                             <div className="mb-4 flex justify-center">
                                 <div style={{ width: 220, height: 220 }}>
-                                    <Radar data={radarData} options={radarOptions} />
+                                    <Radar ref={chartRef} data={radarData} options={radarOptions} />
                                 </div>
                             </div>
 

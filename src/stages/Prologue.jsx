@@ -59,7 +59,7 @@ export default function Prologue() {
     };
 
     return (
-        <div className="absolute inset-0 flex items-center justify-center z-10 overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center z-10 overflow-y-auto py-4">
             {/* 배경 이미지 */}
             <img src={BG_IMAGES.dataworld} alt="데이터 세상" className="absolute inset-0 w-full h-full object-cover" />
             <div className="absolute inset-0 bg-indigo-950/70" />
