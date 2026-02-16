@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useGame } from '../GameContext';
+import { FaBook, FaRotateLeft } from 'react-icons/fa6';
 import { BG_IMAGES, getNpcImage, getPlayerImage } from '../assetMap';
 import { Radar } from 'react-chartjs-2';
 import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip } from 'chart.js';
@@ -18,8 +19,8 @@ RULES:
 - Always emphasize that autism is not a disease, but a different way of experiencing the world.
 - Keep responses under 150 words.`;
 
-export default function Stage6() {
-    const { state, setStage } = useGame();
+export default function Stage6({ onShowEncyclopedia }) {
+    const { state, resetGame } = useGame();
     const N = state.npc.name;
     const P = state.player.name;
     const [phase, setPhase] = useState('journal'); // 'journal' | 'chat' | 'report'
@@ -88,7 +89,7 @@ export default function Stage6() {
         setPhase('report');
     };
 
-    // html2canvas 이미지 저장
+    // html2canvas 이미지 저장 — Blob 방식으로 PC/모바일 모두 지원
     const handleSaveImage = async () => {
         if (!reportRef.current || saving) return;
         setSaving(true);
@@ -98,10 +99,17 @@ export default function Stage6() {
                 scale: 2,
                 useCORS: true,
             });
-            const link = document.createElement('a');
-            link.download = `프리즘_보고서_${P}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
+            canvas.toBlob((blob) => {
+                if (!blob) return;
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = `프리즘_보고서_${P}.png`;
+                link.href = url;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }, 'image/png');
         } catch (err) {
             console.error('Image save error:', err);
         }
@@ -110,7 +118,15 @@ export default function Stage6() {
 
     const stats = state.stats;
     const prismScore = Math.round((stats.understanding + stats.trust + stats.communication + stats.patience) / 4);
+    const accuracy = state.logs.tool_attempts > 0 ? Math.round((state.logs.tool_accuracy / state.logs.tool_attempts) * 100) : 100;
     const grade = prismScore >= 80 ? '🏆 S등급 - 프리즘 마스터' : prismScore >= 60 ? '🥇 A등급 - 프리즘 요원' : prismScore >= 40 ? '🥈 B등급 - 프리즘 수습생' : '🥉 C등급 - 프리즘 입문자';
+
+    const badges = [];
+    if (state.usedTools.includes('aac')) badges.push('🏅 소통의 배지');
+    if (state.usedTools.includes('headset')) badges.push('🛡️ 배려의 방패');
+    if (state.usedTools.includes('timer')) badges.push('⏰ 약속의 시계');
+    if (state.usedTools.includes('pecs')) badges.push('💡 협력의 전구');
+    if (state.usedTools.includes('ribbon') || state.usedTools.includes('map')) badges.push('🌈 프리즘 팀');
 
     // 레이더 차트 데이터
     const radarData = {
@@ -304,6 +320,25 @@ export default function Stage6() {
                                 </div>
                             )}
 
+                            {/* 배지 */}
+                            {badges.length > 0 && (
+                                <div className="bg-amber-50 rounded-xl p-3 mb-4 border border-amber-200">
+                                    <p className="text-sm font-medium text-amber-800 mb-2">🎖️ 획득한 배지</p>
+                                    <div className="flex flex-wrap gap-2 justify-center">
+                                        {badges.map((b, i) => (
+                                            <span key={i} className="px-3 py-1 bg-amber-100 rounded-full text-sm text-amber-800">{b}</span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* 상세 통계 */}
+                            <div className="bg-slate-50 rounded-xl p-3 mb-4 text-sm">
+                                <div className="flex justify-between mb-1"><span className="text-slate-500">⏳ 기다려준 횟수</span><span className="font-bold text-slate-700">{state.logs.waiting_count}회</span></div>
+                                <div className="flex justify-between mb-1"><span className="text-slate-500">🎯 도구 정확도</span><span className="font-bold text-slate-700">{accuracy}%</span></div>
+                                <div className="flex justify-between"><span className="text-slate-500">🧰 사용한 도구</span><span className="font-bold text-slate-700">{state.usedTools.length}개</span></div>
+                            </div>
+
                             <div className="bg-gradient-to-r from-indigo-100 to-purple-100 rounded-xl p-3 text-center mb-4">
                                 <p className="text-sm font-bold text-indigo-700">"우리는 서로 달라서, 서로에게 필요한 존재입니다."</p>
                             </div>
@@ -316,10 +351,16 @@ export default function Stage6() {
                                 {saving ? '⏳ 저장 중...' : '📸 이미지로 저장'}
                             </button>
                             <p className="text-xs text-indigo-200 text-center">저장된 이미지를 선생님이 안내해주신 패들렛/띠커벨에 올려서 친구들과 공유하세요.</p>
-                            <button onClick={() => setStage('ending')}
-                                className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all cursor-pointer">
-                                🏆 엔딩 보기
-                            </button>
+                            <div className="flex gap-3">
+                                <button onClick={onShowEncyclopedia}
+                                    className="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-all cursor-pointer">
+                                    <FaBook className="inline mr-2" />도감 보기
+                                </button>
+                                <button onClick={resetGame}
+                                    className="flex-1 py-3 bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-xl font-bold hover:bg-white/30 transition-all cursor-pointer">
+                                    <FaRotateLeft className="inline mr-2" />다시 시작
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}

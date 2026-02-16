@@ -32,7 +32,7 @@ export default function Stage4({ onToolUse }) {
             case 1:
                 setDialogue({
                     speaker: '조원 A',
-                    text: '"아, 이게 다 똑같은 파란색이지 뭐야? 도대체 뭐가 맞는 조각이야? (짜증)"',
+                    text: '"아, 이게 다 똑같은 파란색이지 뭐야? 도대체 뭐가 맞는 조각이야?"',
                     onNext: () => setStep(2)
                 });
                 break;
@@ -40,7 +40,7 @@ export default function Stage4({ onToolUse }) {
                 setNpcEmotion('memory');
                 setDialogue({
                     speaker: N,
-                    text: '(바닥에 떨어진 수많은 조각 중 하나를 집어 들고, 벽화의 빈 곳을 번갈아 춰다본다)',
+                    text: '(바닥에 떨어진 수많은 조각 중 하나를 집어 들고, 벽화의 빈 곳을 번갈아 쳐다본다)',
                     onNext: () => setStep(3)
                 });
                 break;
@@ -49,7 +49,7 @@ export default function Stage4({ onToolUse }) {
             case 3:
                 setDialogue({
                     speaker: '조원 B',
-                    text: `"${N}아, 그거 내려놔. 섞이면 더 골치 아파져. 그냥 앉아 있어." (조원 B가 ${N}의 손을 툭 친다)`,
+                    text: `"${N}아, 그거 내려놔. 섞이면 더 골치 아파져. 그냥 앉아 있어."`,
                     onNext: () => setStep(4)
                 });
                 break;
@@ -60,8 +60,8 @@ export default function Stage4({ onToolUse }) {
                     speaker: P,
                     text: `(${N}(이)가 조각을 들고 무언가 보여주려 하고 있다...)`,
                     choices: [
-                        { text: `🤫 "그래 ${N}아, 넌 가만히 있는 게 도와주는 거야." (무시)`, action: () => setStep(10) },
-                        { text: `✋ "${N}가 뭘 하려는지 한번 볼까?" (중재)`, action: () => setStep(20) },
+                        { text: `🤫 "그래 ${N}아, 넌 가만히 있는 게 도와주는 거야." (배제)`, action: () => setStep(10) },
+                        { text: `✋ "${N}가 뭘 하려는지 한번 볼까?" (관찰)`, action: () => setStep(20) },
                         { text: `🔍 "${N}아, 이거 네가 해볼래?" (참여 유도)`, action: () => setStep(30) },
                     ]
                 });
@@ -98,12 +98,23 @@ export default function Stage4({ onToolUse }) {
                 });
                 break;
 
-            /* ── Step 4: PECS + 미니게임 ── */
+            /* ── Step 4: PECS 카드 확인 ── */
             case 40:
                 setNpcState('focused'); setNpcEmotion('discover');
                 setDialogue({
                     speaker: '시스템',
-                    text: `💬 ${N}(이)가 주머니에서 PECS 카드 뭉치를 꺼냅니다. [나] + [할 수 있다]`
+                    text: `💬 ${N}(이)가 주머니에서 PECS 카드 뭉치를 꺼냅니다. [나] + [할 수 있다]`,
+                    choices: [
+                        { text: '👍 "그래, 네가 해봐!"', action: () => setStep(41) },
+                    ]
+                });
+                break;
+
+            /* ── Step 5: 미니게임 시작 ── */
+            case 41:
+                setDialogue({
+                    speaker: '시스템',
+                    text: `🧩 ${N}(이)가 조각을 들고 벽화 앞에 섰습니다. 조각을 회전시켜 빈칸에 맞춰주세요!`
                 });
                 setShowMosaic(true);
                 break;
@@ -140,7 +151,7 @@ export default function Stage4({ onToolUse }) {
 
     useEffect(() => {
         if (!onToolUse) return;
-        onToolUse.current = (id) => { if (id === 'pecs' && step === 40) handleMosaicComplete(); };
+        onToolUse.current = (id) => { if (id === 'pecs' && step === 41) handleMosaicComplete(); };
     }, [step]);
 
     const npcImg = getNpcImage(state.npc.gender, npcEmotion);
@@ -153,24 +164,26 @@ export default function Stage4({ onToolUse }) {
                 <div className="absolute inset-0 bg-black/30" />
                 <div className="z-10 flex flex-col items-center w-full px-4">
                     <div className="text-xl font-bold text-white mb-1 text-center drop-shadow-lg">🧩 Stage 4: 사라진 퍼즐 조각</div>
-                    <div className="text-sm text-white/80 mb-4 text-center drop-shadow">강점 & 주체성</div>
-                    <div className="flex gap-6 mb-4 items-end justify-center">
-                        <div className="text-center">
-                            <div className="w-44 h-56 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg overflow-hidden border border-white/30">
+                    <div className="text-sm text-white/80 mb-3 text-center drop-shadow">강점 & 주체성</div>
+                    <div className="flex gap-4 mb-3 items-start justify-center w-full max-w-lg">
+                        <div className="text-center flex-shrink-0">
+                            <div className="w-32 h-40 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg overflow-hidden border border-white/30">
                                 <img src={playerImg} alt={P} className="char-img" />
                             </div>
-                            <p className="text-sm mt-2 font-medium text-white drop-shadow">{P}</p>
+                            <p className="text-sm mt-1 font-medium text-white drop-shadow">{P}</p>
                         </div>
-                        <div className="text-center">
-                            <div className={`w-44 h-56 rounded-2xl flex items-center justify-center shadow-lg overflow-hidden border border-white/30 transition-all ${npcState === 'focused' ? 'animate-pulse bg-amber-500/30 backdrop-blur-sm' :
+                        <div className="flex-1 flex items-center justify-center min-h-[10rem]">
+                            {showMosaic && <MosaicPuzzle onComplete={handleMosaicComplete} />}
+                        </div>
+                        <div className="text-center flex-shrink-0">
+                            <div className={`w-32 h-40 rounded-2xl flex items-center justify-center shadow-lg overflow-hidden border border-white/30 transition-all ${npcState === 'focused' ? 'animate-pulse bg-amber-500/30 backdrop-blur-sm' :
                                 npcState === 'proud' ? 'bg-emerald-500/20 backdrop-blur-sm' :
                                     'bg-white/20 backdrop-blur-sm'}`}>
                                 <img src={npcImg} alt={N} className="char-img" />
                             </div>
-                            <p className="text-sm mt-2 font-medium text-white drop-shadow">{N}</p>
+                            <p className="text-sm mt-1 font-medium text-white drop-shadow">{N}</p>
                         </div>
                     </div>
-                    {showMosaic && <MosaicPuzzle onComplete={handleMosaicComplete} />}
                 </div>
             </div>
             {dialogue && <DialogueBox speaker={dialogue.speaker} text={dialogue.text} choices={dialogue.choices} onNext={dialogue.onNext} npcName={N} playerName={P} />}

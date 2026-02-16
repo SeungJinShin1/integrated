@@ -182,40 +182,42 @@ export default function Stage3({ onToolUse }) {
                 <div className="absolute inset-0 bg-black/30" />
                 <div className="z-10 flex flex-col items-center w-full px-4">
                     <div className="text-xl font-bold text-white mb-1 drop-shadow-lg">🚂 Stage 3: 기차는 멈추지 않아</div>
-                    <div className="text-sm text-white/80 mb-4 drop-shadow">전이 & 감각 조절</div>
-                    <div className="flex gap-6 mb-4 items-end">
-                        <div className="text-center">
-                            <div className="w-44 h-56 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg overflow-hidden border border-white/30">
+                    <div className="text-sm text-white/80 mb-3 drop-shadow">전이 & 감각 조절</div>
+                    <div className="flex gap-4 mb-3 items-start justify-center w-full max-w-lg">
+                        <div className="text-center flex-shrink-0">
+                            <div className="w-32 h-40 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg overflow-hidden border border-white/30">
                                 <img src={playerImg} alt={P} className="char-img" />
                             </div>
-                            <p className="text-sm mt-2 font-medium text-white drop-shadow">{P}</p>
+                            <p className="text-sm mt-1 font-medium text-white drop-shadow">{P}</p>
                         </div>
-                        <div className="text-center">
-                            <div className={`w-44 h-56 rounded-2xl flex items-center justify-center shadow-lg overflow-hidden border border-white/30 transition-all ${npcState === 'stressed' ? 'animate-shake bg-red-500/30 backdrop-blur-sm' :
+                        <div className="flex-1 flex flex-col items-center justify-center min-h-[10rem] gap-2">
+                            {/* 지하철 노선도 */}
+                            {(npcState === 'playing' && step < 30) && (
+                                <div className="w-full max-w-[16rem] h-8 bg-white/80 backdrop-blur-sm rounded-full border-2 border-white/50 relative overflow-hidden">
+                                    <div className="absolute inset-0 flex items-center justify-between px-3 z-10">
+                                        {['사당', '낙성대', '서울대', '봉천', '신림'].map((st, i) => (
+                                            <div key={i} className="flex flex-col items-center">
+                                                <div className="w-2.5 h-2.5 rounded-full bg-green-500 border border-white" />
+                                                <span className="text-[8px] text-slate-600 mt-0.5">{st}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="absolute top-1/2 left-2 right-2 h-0.5 bg-green-400 -translate-y-1/2" />
+                                </div>
+                            )}
+                            {showDial && <TimerDial onComplete={handleDialComplete} />}
+                            {showSquishy && <SquishyBreath onComplete={handleSquishyComplete} />}
+                        </div>
+                        <div className="text-center flex-shrink-0">
+                            <div className={`w-32 h-40 rounded-2xl flex items-center justify-center shadow-lg overflow-hidden border border-white/30 transition-all ${npcState === 'stressed' ? 'animate-shake bg-red-500/30 backdrop-blur-sm' :
                                 npcState === 'playing' ? 'animate-pulse bg-amber-500/15 backdrop-blur-sm' :
                                     npcState === 'calm' ? 'bg-emerald-500/20 backdrop-blur-sm' :
                                         'bg-white/20 backdrop-blur-sm'}`}>
                                 <img src={npcImg} alt={N} className="char-img" />
                             </div>
-                            <p className="text-sm mt-2 font-medium text-white drop-shadow">{N}</p>
+                            <p className="text-sm mt-1 font-medium text-white drop-shadow">{N}</p>
                         </div>
                     </div>
-                    {/* 지하철 노선도 */}
-                    {(npcState === 'playing' && step < 30) && (
-                        <div className="w-64 h-8 bg-white/80 backdrop-blur-sm rounded-full border-2 border-white/50 relative mb-4 overflow-hidden">
-                            <div className="absolute inset-0 flex items-center justify-between px-3 z-10">
-                                {['사당', '낙성대', '서울대', '봉천', '신림'].map((st, i) => (
-                                    <div key={i} className="flex flex-col items-center">
-                                        <div className="w-2.5 h-2.5 rounded-full bg-green-500 border border-white" />
-                                        <span className="text-[8px] text-slate-600 mt-0.5">{st}</span>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="absolute top-1/2 left-2 right-2 h-0.5 bg-green-400 -translate-y-1/2" />
-                        </div>
-                    )}
-                    {showDial && <TimerDial onComplete={handleDialComplete} />}
-                    {showSquishy && <SquishyBreath onComplete={handleSquishyComplete} />}
                 </div>
             </div>
             {dialogue && <DialogueBox speaker={dialogue.speaker} text={dialogue.text} choices={dialogue.choices} onNext={dialogue.onNext} npcName={N} playerName={P} />}

@@ -8,7 +8,6 @@ import Stage3 from './stages/Stage3';
 import Stage4 from './stages/Stage4';
 import Stage5 from './stages/Stage5';
 import Stage6 from './stages/Stage6';
-import Ending from './stages/Ending';
 import Encyclopedia from './stages/Encyclopedia';
 
 export default function App() {
@@ -22,7 +21,7 @@ export default function App() {
 
   const showEncyclopedia = useCallback(() => setStage('encyclopedia'), [setStage]);
   const goBackFromEncyclopedia = useCallback(() => {
-    if (state.usedTools.length >= 5) setStage('ending');
+    if (state.usedTools.length >= 5) setStage('stage-6');
     else setStage('prologue');
   }, [state.usedTools, setStage]);
 
@@ -36,8 +35,7 @@ export default function App() {
       case 'stage-3': return <Stage3 onToolUse={toolHandlerRef} />;
       case 'stage-4': return <Stage4 onToolUse={toolHandlerRef} />;
       case 'stage-5': return <Stage5 onToolUse={toolHandlerRef} />;
-      case 'stage-6': return <Stage6 />;
-      case 'ending': return <Ending onShowEncyclopedia={showEncyclopedia} />;
+      case 'stage-6': return <Stage6 onShowEncyclopedia={showEncyclopedia} />;
       case 'encyclopedia': return <Encyclopedia onBack={goBackFromEncyclopedia} />;
       default: return <Prologue />;
     }

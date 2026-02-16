@@ -140,28 +140,30 @@ export default function Stage5({ onToolUse }) {
                 <div className="absolute inset-0 bg-black/30" />
                 <div className="z-10 flex flex-col items-center w-full px-4">
                     <div className="text-xl font-bold text-white mb-1 drop-shadow-lg">🌲 Stage 5: 갈림길의 기억</div>
-                    <div className="text-sm text-white/80 mb-4 drop-shadow">통합 & 신뢰</div>
-                    <div className="flex gap-6 mb-4 items-end">
-                        <div className="text-center">
-                            <div className="w-44 h-56 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg overflow-hidden border border-white/30">
+                    <div className="text-sm text-white/80 mb-3 drop-shadow">통합 & 신뢰</div>
+                    <div className="flex gap-4 mb-3 items-start justify-center w-full max-w-lg">
+                        <div className="text-center flex-shrink-0">
+                            <div className="w-32 h-40 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg overflow-hidden border border-white/30">
                                 <img src={playerImg} alt={P} className="char-img" />
                             </div>
-                            <p className="text-sm mt-2 font-medium text-white drop-shadow">{P}</p>
+                            <p className="text-sm mt-1 font-medium text-white drop-shadow">{P}</p>
                         </div>
-                        <div className="text-center">
-                            <div className={`w-44 h-56 rounded-2xl flex items-center justify-center shadow-lg overflow-hidden border border-white/30 transition-all ${npcState === 'happy' ? 'bg-amber-500/20 backdrop-blur-sm' : 'bg-white/20 backdrop-blur-sm'}`}>
+                        <div className="flex-1 flex flex-col items-center justify-center min-h-[10rem] gap-2">
+                            {showScratch && <ScratchFog bgImage={BG_IMAGES.map} onComplete={handleScratchComplete} />}
+                            {step === 20 && !showFlashback && (
+                                <button onClick={triggerFlashback}
+                                    className="px-5 py-2.5 bg-slate-800/80 backdrop-blur-sm text-white rounded-xl font-medium hover:bg-slate-700 transition-all cursor-pointer animate-fade-in border border-white/20 text-sm">
+                                    <FaClockRotateLeft className="inline mr-2" />회상 (Flashback)
+                                </button>
+                            )}
+                        </div>
+                        <div className="text-center flex-shrink-0">
+                            <div className={`w-32 h-40 rounded-2xl flex items-center justify-center shadow-lg overflow-hidden border border-white/30 transition-all ${npcState === 'happy' ? 'bg-amber-500/20 backdrop-blur-sm' : 'bg-white/20 backdrop-blur-sm'}`}>
                                 <img src={npcImg} alt={N} className="char-img" />
                             </div>
-                            <p className="text-sm mt-2 font-medium text-white drop-shadow">{N}</p>
+                            <p className="text-sm mt-1 font-medium text-white drop-shadow">{N}</p>
                         </div>
                     </div>
-                    {showScratch && <ScratchFog bgImage={BG_IMAGES.map} onComplete={handleScratchComplete} />}
-                    {step === 20 && !showFlashback && (
-                        <button onClick={triggerFlashback}
-                            className="mt-4 px-6 py-3 bg-slate-800/80 backdrop-blur-sm text-white rounded-xl font-medium hover:bg-slate-700 transition-all cursor-pointer animate-fade-in border border-white/20">
-                            <FaClockRotateLeft className="inline mr-2" />회상 (Flashback)
-                        </button>
-                    )}
                 </div>
                 {showFlashback && (
                     <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30">

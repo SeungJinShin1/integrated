@@ -149,33 +149,35 @@ export default function Stage1({ onToolUse }) {
                 {vignetteRed && <div className="absolute inset-0 vignette-red pointer-events-none z-20 animate-pulse" />}
                 <div className="z-10 flex flex-col items-center w-full px-4">
                     <div className="text-xl font-bold text-white mb-1 drop-shadow-lg">🦜 Stage 1: 앵무새의 숲</div>
-                    <div className="text-sm text-white/80 mb-4 drop-shadow">반향어 & 소통</div>
-                    <div className="flex gap-6 mb-4 items-end">
-                        <div className="text-center">
-                            <div className="w-44 h-56 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg overflow-hidden border border-white/30">
+                    <div className="text-sm text-white/80 mb-3 drop-shadow">반향어 & 소통</div>
+                    <div className="flex gap-4 mb-3 items-start justify-center w-full max-w-lg">
+                        <div className="text-center flex-shrink-0">
+                            <div className="w-32 h-40 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg overflow-hidden border border-white/30">
                                 <img src={playerImg} alt={P} className="char-img" />
                             </div>
-                            <p className="text-sm mt-2 font-medium text-white drop-shadow">{P}</p>
+                            <p className="text-sm mt-1 font-medium text-white drop-shadow">{P}</p>
                         </div>
-                        <div className="text-center">
-                            <div className={`w-44 h-56 rounded-2xl flex items-center justify-center shadow-lg overflow-hidden border border-white/30 transition-all ${npcState === 'stressed' ? 'animate-shake bg-red-500/30 backdrop-blur-sm' :
+                        <div className="flex-1 flex flex-col items-center justify-center min-h-[10rem]">
+                            {showPuzzle && <CardPuzzle onComplete={handlePuzzleComplete} />}
+                            {showStress && (
+                                <div className="w-full max-w-[12rem] mt-2 animate-fade-in">
+                                    <div className="text-xs text-red-300 mb-1 font-medium drop-shadow">😤 {N}의 불안도</div>
+                                    <div className="h-2 rounded-full bg-white/30 overflow-hidden">
+                                        <div className="h-full rounded-full bg-gradient-to-r from-amber-400 to-red-500 transition-all duration-500" style={{ width: `${Math.min(100, state.stressGauge)}%` }} />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        <div className="text-center flex-shrink-0">
+                            <div className={`w-32 h-40 rounded-2xl flex items-center justify-center shadow-lg overflow-hidden border border-white/30 transition-all ${npcState === 'stressed' ? 'animate-shake bg-red-500/30 backdrop-blur-sm' :
                                 npcState === 'rocking' ? 'animate-pulse bg-amber-500/10 backdrop-blur-sm' :
                                     npcState === 'calm' ? 'bg-emerald-500/20 backdrop-blur-sm' :
                                         'bg-white/20 backdrop-blur-sm'}`}>
                                 <img src={npcImg} alt={N} className="char-img" />
                             </div>
-                            <p className="text-sm mt-2 font-medium text-white drop-shadow">{N}</p>
+                            <p className="text-sm mt-1 font-medium text-white drop-shadow">{N}</p>
                         </div>
                     </div>
-                    {showStress && (
-                        <div className="w-64 mb-4 animate-fade-in">
-                            <div className="text-xs text-red-300 mb-1 font-medium drop-shadow">😤 {N}의 불안도</div>
-                            <div className="h-2 rounded-full bg-white/30 overflow-hidden">
-                                <div className="h-full rounded-full bg-gradient-to-r from-amber-400 to-red-500 transition-all duration-500" style={{ width: `${Math.min(100, state.stressGauge)}%` }} />
-                            </div>
-                        </div>
-                    )}
-                    {showPuzzle && <CardPuzzle onComplete={handlePuzzleComplete} />}
                 </div>
             </div>
             {dialogue && <DialogueBox speaker={dialogue.speaker} text={dialogue.text} choices={dialogue.choices} onNext={dialogue.onNext} npcName={N} playerName={P} />}
