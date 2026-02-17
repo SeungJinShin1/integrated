@@ -35,23 +35,22 @@ export default function Stage6({ onShowEncyclopedia }) {
     const chatEndRef = useRef(null);
     const reportRef = useRef(null);
     const chartRef = useRef(null);
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
+
 
     useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [chatMessages]);
 
     const npcImg = getNpcImage(state.npc.gender, 'happy');
     const playerImg = getPlayerImage(state.player.gender, 'talk');
 
-    // Gemini API 호출
+    // Gemini API 호출 (서버리스 프록시 사용)
     const callGemini = async (userMessage) => {
-        if (!apiKey) return '⚠️ Gemini API 키가 설정되지 않았습니다. 프로젝트 루트의 .env 파일에 VITE_GEMINI_API_KEY를 설정해 주세요.';
         try {
             const history = chatMessages.slice(1).map(m => ({
                 role: m.role === 'ai' ? 'model' : 'user',
                 parts: [{ text: m.text }]
             }));
 
-            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+            const res = await fetch('/api/gemini', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -65,7 +64,7 @@ export default function Stage6({ onShowEncyclopedia }) {
             const data = await res.json();
             if (data.error) {
                 console.error('Gemini API error:', data.error);
-                return `⚠️ API 오류: ${data.error.message}`;
+                return `⚠️ API 오류: ${data.error.message || data.error}`;
             }
             return data.candidates?.[0]?.content?.parts?.[0]?.text || '답변을 생성하지 못했어요. 다시 질문해 주세요!';
         } catch (err) {
@@ -455,11 +454,7 @@ export default function Stage6({ onShowEncyclopedia }) {
                 {/* ── Phase 2: AI 챗봇 ── */}
                 {phase === 'chat' && (
                     <div className="flex-1 flex flex-col animate-fade-in overflow-hidden">
-                        {!apiKey && (
-                            <div className="bg-amber-50 border border-amber-300 rounded-xl p-3 mb-2 text-sm text-amber-800">
-                                ⚠️ <code>.env</code> 파일에 <code>VITE_GEMINI_API_KEY</code>를 설정해 주세요. 설정 후 서버를 재시작하세요.
-                            </div>
-                        )}
+
 
                         <div className="flex-1 overflow-y-auto space-y-3 mb-3 rounded-2xl bg-white/90 backdrop-blur-sm p-4">
                             {chatMessages.map((m, i) => (

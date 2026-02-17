@@ -39,7 +39,7 @@ import bg_cafeteria from './assets/5_CH4_배경_급식실.png';
 import bg_noise from './assets/5_CH5_배경_소음.png';
 import bg_playground from './assets/5_CH6_배경_운동장.png';
 import bg_ktx from './assets/5_CH7_배경_KTX.png';
-import bg_sciencelab from './assets/5_CH8_배경_과학실.png';
+import bg_sciencelab from './assets/5_CH8_배경_미술실.png';
 import bg_crossroads from './assets/5_CH9_배경_갈림길.png';
 import bg_map from './assets/5_CH10_배경_안내도.png';
 import bg_exit from './assets/5_CH11_배경_출구.png';
