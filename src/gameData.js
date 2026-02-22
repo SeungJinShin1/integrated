@@ -15,5 +15,11 @@ export const STAGE_NAMES = {
     'stage-5': 'Stage 5: 갈림길의 기억',
     'stage-6': 'Stage 6: 프리즘 연구소',
     ending: 'Ending',
-    encyclopedia: '도감'
+    encyclopedia: '도감',
+    'low_intro': '새싹 요원',
+    'low_stage1': '먼저 물어봐주기',
+    'low_stage2': '귀가 아파요',
+    'low_stage3': '기다려주기',
+    'low_stage4': '쉽게 말해주기',
+    'low_ending': '수료증 발급'
 };

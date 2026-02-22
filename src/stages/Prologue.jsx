@@ -4,7 +4,7 @@ import { FaUserSecret, FaMars, FaVenus, FaPlay } from 'react-icons/fa6';
 import { BG_IMAGES } from '../assetMap';
 
 export default function Prologue() {
-    const { state, dispatch, setStage } = useGame();
+    const { state, dispatch, setStage, setGradeMode } = useGame();
     const [playerName, setPlayerName] = useState(state.player.name === '나' ? '' : state.player.name);
     const [playerGender, setPlayerGender] = useState(state.player.gender);
     const [npcName, setNpcName] = useState(state.npc.name);
@@ -80,10 +80,19 @@ export default function Prologue() {
                             "우리 반에는 조금 특별한 OS(운영체제)를 가진 친구가 있다. 보통의 방법으로는 접속할 수 없는 이 친구... 과연 우리는 '원팀'이 될 수 있을까?"
                         </p>
                     </div>
-                    <button onClick={() => setPhase('setup')}
-                        className="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all cursor-pointer">
-                        접속 시작 ▸
-                    </button>
+                    <div className="flex gap-3">
+                        <button onClick={() => {
+                            setGradeMode(null);
+                            setStage('mode_select');
+                        }}
+                            className="px-6 py-4 rounded-xl border-2 border-indigo-500/30 text-indigo-400 font-bold hover:bg-indigo-900/50 hover:text-indigo-200 hover:border-indigo-400 transition-all cursor-pointer shadow-sm">
+                            이전
+                        </button>
+                        <button onClick={() => setPhase('setup')}
+                            className="flex-1 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all cursor-pointer">
+                            접속 시작 ▸
+                        </button>
+                    </div>
                 </div>
             ) : (
                 <div className="bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl p-8 max-w-lg w-full mx-4 border border-indigo-100 animate-fade-in max-h-[90vh] overflow-y-auto z-10">

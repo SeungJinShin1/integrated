@@ -1,7 +1,9 @@
 import { createContext, useContext, useReducer, useCallback, useEffect, useState } from 'react';
 
 const initialState = {
-    currentStage: 'prologue',
+    currentStage: 'mode_select', // changed from 'prologue'
+    gradeMode: null, // 'low_grade' | 'high_grade'
+    hearts: 0, // low-grade reward points
     player: { name: '나', gender: 'male' },
     npc: { name: '승주', gender: 'female' },
     stats: { understanding: 20, trust: 20, communication: 20, patience: 20 },
@@ -22,6 +24,10 @@ function reducer(state, action) {
             return { ...state, npc: { ...state.npc, ...action.payload } };
         case 'SET_STAGE':
             return { ...state, currentStage: action.payload };
+        case 'SET_GRADE_MODE':
+            return { ...state, gradeMode: action.payload };
+        case 'ADD_HEART':
+            return { ...state, hearts: state.hearts + 1 };
         case 'ADD_STAT': {
             const { key, value } = action.payload;
             return { ...state, stats: { ...state.stats, [key]: Math.min(100, Math.max(0, state.stats[key] + value)) } };
@@ -69,9 +75,9 @@ export function GameProvider({ children }) {
     }, [state]);
 
     const addStat = useCallback((key, value) => dispatch({ type: 'ADD_STAT', payload: { key, value } }), []);
-    // setStage: 전환 효과가 필요한 stage는 pendingStage에 저장, prologue/encyclopedia는 즉시 이동
+    // setStage: 전환 효과가 필요한 stage는 pendingStage에 저장, mode_select/prologue/encyclopedia/low_intro는 즉시 이동
     const setStage = useCallback((stage) => {
-        if (stage === 'prologue' || stage === 'encyclopedia') {
+        if (stage === 'mode_select' || stage === 'prologue' || stage === 'encyclopedia' || stage === 'low_intro') {
             dispatch({ type: 'SET_STAGE', payload: stage });
         } else {
             setPendingStage(stage);
@@ -90,6 +96,8 @@ export function GameProvider({ children }) {
     const logAccuracy = useCallback(() => dispatch({ type: 'LOG_TOOL_ACCURACY' }), []);
     const logWaiting = useCallback(() => dispatch({ type: 'LOG_WAITING' }), []);
     const setStress = useCallback((v) => dispatch({ type: 'SET_STRESS', payload: v }), []);
+    const setGradeMode = useCallback((mode) => dispatch({ type: 'SET_GRADE_MODE', payload: mode }), []);
+    const addHeart = useCallback(() => dispatch({ type: 'ADD_HEART' }), []);
     const resetGame = useCallback(() => {
         if (confirm('진행 상황이 모두 초기화됩니다. 계속할까요?')) {
             localStorage.removeItem('hiddenPiece');
@@ -100,7 +108,7 @@ export function GameProvider({ children }) {
     return (
         <GameContext.Provider value={{
             state, dispatch, addStat, setStage, confirmStage, pendingStage, addInventory, useTool,
-            logAttempt, logAccuracy, logWaiting, setStress, resetGame
+            logAttempt, logAccuracy, logWaiting, setStress, resetGame, setGradeMode, addHeart
         }}>
             {children}
         </GameContext.Provider>

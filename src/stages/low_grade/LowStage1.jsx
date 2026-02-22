@@ -1,0 +1,90 @@
+import { useState } from 'react';
+import { useGame } from '../../GameContext';
+import useTTS from '../../utils/useTTS';
+import { LOW_BG_IMAGES, getLowNpcImage } from '../../assetMap';
+
+export default function LowStage1() {
+    const { state, setStage, addHeart } = useGame();
+    const [isComplete, setIsComplete] = useState(false);
+
+    // TTS Text
+    const text = isComplete
+        ? "잘했어! 친구도 기뻐하는 것 같네."
+        : `${state.npc.name}가 혼자 클레이 놀이를 하고 있어요. 다가가서 먼저 인사를 건네볼까요? '같이 놀자' 말풍선을 눌러주세요.`;
+
+    useTTS(text, true);
+
+    const handleTap = () => {
+        if (isComplete) return;
+        setIsComplete(true);
+        addHeart();
+    };
+
+    const handleNext = () => {
+        setStage('low_stage2');
+    };
+
+    return (
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-100 overflow-hidden">
+            {/* Background */}
+            <img src={LOW_BG_IMAGES.stages} alt="미술실" className="absolute inset-0 w-full h-full object-cover opacity-80" />
+
+            {/* Main Interactive Area */}
+            <div className="relative z-10 w-full h-full flex flex-col items-center justify-between p-8">
+
+                {/* Instruction Text Box */}
+                <div className="bg-white/90 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-lg border-2 border-indigo-200 mt-8 max-w-2xl text-center min-h-[100px] flex items-center justify-center">
+                    <p className="text-2xl font-bold text-slate-800 break-keep">
+                        {isComplete ? (
+                            <span className="text-green-600">성공! 친구와 함께 놀게 되었어요.</span>
+                        ) : (
+                            "친구에게 먼저 다가가 볼까요?"
+                        )}
+                    </p>
+                </div>
+
+                {/* Character and Interaction */}
+                <div className="flex-1 w-full flex items-end justify-center relative pb-10">
+
+                    {/* Consistent Character Container */}
+                    <div className="h-[55vh] flex flex-col justify-end items-center relative">
+                        <img
+                            src={getLowNpcImage(state.npc.gender, isComplete ? 'happy' : 'default')}
+                            alt={state.npc.name}
+                            className={`h-full object-contain transition-transform duration-500 ${!isComplete && 'hover:scale-105'}`}
+                        />
+
+                        {/* Speech Bubble to Tap */}
+                        {!isComplete && (
+                            <div
+                                onClick={handleTap}
+                                className="absolute top-0 right-[-100px] p-6 bg-white rounded-[2rem] rounded-bl-sm shadow-xl border-4 border-indigo-400 cursor-pointer hover:bg-indigo-50 hover:scale-110 active:scale-95 transition-all text-center animate-bounce z-20"
+                            >
+                                <span className="text-3xl font-bold text-indigo-700 whitespace-nowrap">같이 놀자! 👋</span>
+                            </div>
+                        )}
+
+                        {/* Success Effect */}
+                        {isComplete && (
+                            <div className="absolute top-1/4 right-[-40px] animate-ping z-20 pointer-events-none">
+                                <span className="text-6xl">💖</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Next Button Overlay */}
+                {isComplete && (
+                    <div className="absolute bottom-10 right-10 z-30 animate-fade-in-up">
+                        <button
+                            onClick={handleNext}
+                            className="bg-green-500 hover:bg-green-600 text-white rounded-full px-8 py-4 text-xl font-bold shadow-lg transition-transform transform hover:-translate-y-1 cursor-pointer"
+                        >
+                            다음으로 가기 ▸
+                        </button>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}

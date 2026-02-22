@@ -409,17 +409,8 @@
   0% {
     opacity: 0;
   }
-
-  20% {
-    opacity: 1;
-  }
-
-  80% {
-    opacity: 1;
-  }
-
   100% {
-    opacity: 0;
+    opacity: 1;
   }
 }
 
@@ -428,20 +419,9 @@
     opacity: 0;
     transform: translateY(20px) scale(0.9);
   }
-
-  25% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-
-  75% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-
   100% {
-    opacity: 0;
-    transform: translateY(-10px) scale(1.02);
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -454,10 +434,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  animation: stageTransitionIn 2s ease-in-out forwards;
+  animation: stageTransitionIn 0.5s ease-out forwards;
   pointer-events: all;
 }
 
 .stage-transition-text {
-  animation: stageTransitionText 2s ease-in-out forwards;
+  animation: stageTransitionText 0.5s ease-out forwards;
 }
