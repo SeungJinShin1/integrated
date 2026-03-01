@@ -34,20 +34,33 @@ export default function LowStage2() {
             />
             <div className={`absolute inset-0 transition-colors duration-1000 ${isComplete ? 'bg-green-100/50' : 'bg-red-900/40'}`} />
 
-            <div className="relative z-10 w-full h-full flex flex-col items-center justify-between p-8">
+            <div className="relative z-10 w-full h-full flex flex-col items-center justify-between p-3 sm:p-5 md:p-8">
 
                 {/* Instruction */}
-                <div className={`bg-white/95 backdrop-blur-md px-8 py-5 rounded-3xl shadow-2xl border-4 max-w-3xl min-h-[100px] flex items-center justify-center transition-colors duration-500 mt-4 ${isComplete ? 'border-green-400' : 'border-red-400'}`}>
-                    <h2 className={`text-2xl md:text-3xl font-bold break-keep ${isComplete ? 'text-green-700' : 'text-red-700'}`}>
+                <div className={`bg-white/95 backdrop-blur-md px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-5 rounded-3xl shadow-2xl border-4 max-w-3xl w-full min-h-[60px] sm:min-h-[80px] md:min-h-[100px] flex items-center justify-center transition-colors duration-500 mt-2 sm:mt-4 ${isComplete ? 'border-green-400' : 'border-red-400'}`}>
+                    <h2 className={`text-lg sm:text-2xl md:text-3xl font-bold break-keep ${isComplete ? 'text-green-700' : 'text-red-700'}`}>
                         {isComplete ? "헤드폰을 씌워주었어요!" : `${state.npc.name}가 시끄러운 소리 때문에 힘들어해요!`}
                     </h2>
                 </div>
 
-                {/* Center Visuals */}
-                <div className="flex-1 w-full flex items-center justify-center gap-12 sm:gap-24 relative pb-10">
+                {/* Center Visuals - vertical on mobile, horizontal on larger */}
+                <div className="flex-1 w-full flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 md:gap-12 relative pb-4 sm:pb-10">
+
+                    {/* Interactive Item - above character on mobile */}
+                    {!isComplete && (
+                        <div className="order-first sm:order-last">
+                            <div
+                                onClick={handleTap}
+                                className="bg-white/80 p-4 sm:p-6 md:p-8 rounded-full shadow-[0_0_30px_rgba(239,68,68,0.6)] cursor-pointer hover:bg-white hover:scale-110 active:scale-95 transition-all flex flex-col items-center justify-center gap-2 sm:gap-4 border-4 border-red-300 animate-pulse z-20"
+                            >
+                                <img src={ITEM_IMAGES.headset} alt="헤드폰" className="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 object-contain drop-shadow-lg" />
+                                <span className="text-base sm:text-lg md:text-xl font-bold text-slate-700 bg-white/90 px-3 py-1 sm:px-4 rounded-full whitespace-nowrap">눌러서 씌워주기</span>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Consistent Character Container */}
-                    <div className="h-[55vh] flex flex-col justify-end items-center relative">
+                    <div className="h-[30vh] sm:h-[40vh] md:h-[55vh] flex flex-col justify-end items-center relative">
                         <img
                             src={getLowNpcImage(state.npc.gender, isComplete ? 'happy' : 'earblock')}
                             alt={state.npc.name}
@@ -55,28 +68,17 @@ export default function LowStage2() {
                         />
                         {/* Fake Headphone Overlay */}
                         {isComplete && (
-                            <img src={ITEM_IMAGES.headset} alt="장착된 헤드폰" className="absolute top-[20%] right-[-20px] w-32 h-32 object-contain animate-bounce z-20" />
+                            <img src={ITEM_IMAGES.headset} alt="장착된 헤드폰" className="absolute top-[20%] right-[-10px] sm:right-[-20px] w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 object-contain animate-bounce z-20" />
                         )}
                     </div>
-
-                    {/* Interactive Item */}
-                    {!isComplete && (
-                        <div
-                            onClick={handleTap}
-                            className="bg-white/80 p-8 rounded-full shadow-[0_0_30px_rgba(239,68,68,0.6)] cursor-pointer hover:bg-white hover:scale-110 active:scale-95 transition-all flex flex-col items-center justify-center gap-4 border-4 border-red-300 animate-pulse z-20"
-                        >
-                            <img src={ITEM_IMAGES.headset} alt="헤드폰" className="w-32 h-32 object-contain drop-shadow-lg" />
-                            <span className="text-xl font-bold text-slate-700 bg-white/90 px-4 py-1 rounded-full whitespace-nowrap">눌러서 씌워주기</span>
-                        </div>
-                    )}
                 </div>
 
-                {/* Next Button Overlay */}
+                {/* Next Button - in flow, bottom center */}
                 {isComplete && (
-                    <div className="absolute bottom-10 right-10 z-30 animate-fade-in-up">
+                    <div className="w-full flex justify-center pb-4 sm:pb-6 z-30 animate-fade-in-up">
                         <button
                             onClick={handleNext}
-                            className="bg-green-500 hover:bg-green-600 text-white rounded-full px-8 py-4 text-xl font-bold shadow-lg transition-transform transform hover:-translate-y-1 cursor-pointer"
+                            className="bg-green-500 hover:bg-green-600 text-white rounded-full px-6 py-3 text-lg sm:px-8 sm:py-4 sm:text-xl font-bold shadow-lg transition-transform transform hover:-translate-y-1 cursor-pointer"
                         >
                             다음으로 가기 ▸
                         </button>

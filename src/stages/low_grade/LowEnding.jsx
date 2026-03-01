@@ -67,7 +67,7 @@ export default function LowEnding() {
         // 하트 렌더링
         ctx.fillStyle = '#ec4899'; // pink-500
         ctx.font = '60px Arial';
-        const heartCount = state.hearts; // Should be 4, but we use the state just in case
+        const heartCount = state.hearts;
         let heartsStr = '';
         for (let i = 0; i < Math.max(1, heartCount); i++) heartsStr += '💖 ';
         ctx.fillText(heartsStr, canvas.width / 2, 500);
@@ -99,72 +99,72 @@ export default function LowEnding() {
     };
 
     return (
-        <div className="absolute inset-0 flex items-center justify-center bg-green-50 overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center bg-green-50 overflow-hidden overflow-y-auto">
             <img src={LOW_BG_IMAGES.ending} alt="배경" className="absolute inset-0 w-full h-full object-cover opacity-10" />
 
             {/* Hidden Canvas for Image Generation */}
             <canvas ref={canvasRef} style={{ display: 'none' }} />
 
-            <div className="relative z-10 w-full max-w-4xl p-8 flex flex-col items-center">
+            <div className="relative z-10 w-full max-w-4xl p-3 sm:p-5 md:p-8 flex flex-col items-center">
 
-                <div className="bg-white/90 backdrop-blur-md px-10 py-6 rounded-3xl shadow-xl flex flex-col items-center w-full min-h-[500px] border-4 border-green-300">
+                <div className="bg-white/90 backdrop-blur-md px-4 py-4 sm:px-6 sm:py-5 md:px-10 md:py-6 rounded-3xl shadow-xl flex flex-col items-center w-full border-4 border-green-300">
 
                     {!selectedSticker ? (
                         <>
-                            <div className="text-6xl mb-6">🎉</div>
-                            <h2 className="text-3xl font-bold text-green-800 mb-4 font-['CookieRun_Regular']">모든 미션 완료!</h2>
-                            <div className="flex items-center gap-2 bg-pink-50 px-6 py-2 rounded-full border border-pink-200 mb-8">
-                                <span className="font-bold text-pink-700">모은 하트:</span>
+                            <div className="text-4xl sm:text-5xl md:text-6xl mb-4 sm:mb-6">🎉</div>
+                            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-green-800 mb-3 sm:mb-4 font-['CookieRun_Regular']">모든 미션 완료!</h2>
+                            <div className="flex items-center gap-2 bg-pink-50 px-4 py-2 sm:px-6 rounded-full border border-pink-200 mb-5 sm:mb-8">
+                                <span className="font-bold text-pink-700 text-sm sm:text-base">모은 하트:</span>
                                 {[...Array(Math.max(1, state.hearts))].map((_, i) => (
                                     <FaHeart key={i} className="text-pink-500" />
                                 ))}
                             </div>
 
-                            <p className="text-xl text-slate-700 mb-8">지금 당신의 기분은 어떤가요?</p>
+                            <p className="text-base sm:text-lg md:text-xl text-slate-700 mb-5 sm:mb-8">지금 당신의 기분은 어떤가요?</p>
 
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 w-full max-w-3xl">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 md:gap-6 w-full max-w-3xl">
                                 {STICKERS.map(sticker => (
                                     <button
                                         key={sticker.id}
                                         onClick={() => handleStickerSelect(sticker)}
-                                        className="flex flex-col items-center justify-center p-6 bg-slate-50 border-2 border-slate-200 rounded-2xl hover:bg-green-50 hover:border-green-400 hover:scale-105 transition-all shadow-sm"
+                                        className="flex flex-col items-center justify-center p-3 sm:p-4 md:p-6 bg-slate-50 border-2 border-slate-200 rounded-2xl hover:bg-green-50 hover:border-green-400 hover:scale-105 transition-all shadow-sm"
                                     >
-                                        <span className="text-6xl mb-4">{sticker.emoji}</span>
-                                        <span className="font-bold text-slate-700">{sticker.label}</span>
+                                        <span className="text-4xl sm:text-5xl md:text-6xl mb-2 sm:mb-4">{sticker.emoji}</span>
+                                        <span className="font-bold text-sm sm:text-base text-slate-700">{sticker.label}</span>
                                     </button>
                                 ))}
                             </div>
                         </>
                     ) : (
                         <div className="flex flex-col items-center w-full animate-fade-in-up">
-                            <h2 className="text-3xl font-bold text-green-800 mb-6 font-['CookieRun_Regular']">새싹 요원 수료증 발급 준비 완료!</h2>
+                            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-green-800 mb-4 sm:mb-6 font-['CookieRun_Regular'] text-center">새싹 요원 수료증 발급 준비 완료!</h2>
 
-                            <div className="bg-green-50 p-8 rounded-2xl border-2 border-green-200 w-full max-w-2xl text-center mb-8 relative">
-                                <span className="absolute -top-6 -right-6 text-6xl rotate-12">{selectedSticker.emoji}</span>
-                                <h3 className="text-2xl font-bold text-green-900 mb-4">{state.player.name === '나' ? '나' : state.player.name} 요원</h3>
-                                <p className="text-lg text-green-700 mb-4">훌륭하게 배려와 기다림을 실천했습니다.</p>
+                            <div className="bg-green-50 p-4 sm:p-6 md:p-8 rounded-2xl border-2 border-green-200 w-full max-w-2xl text-center mb-5 sm:mb-8 relative">
+                                <span className="absolute -top-4 -right-4 sm:-top-6 sm:-right-6 text-4xl sm:text-5xl md:text-6xl rotate-12">{selectedSticker.emoji}</span>
+                                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-green-900 mb-3 sm:mb-4">{state.player.name === '나' ? '나' : state.player.name} 요원</h3>
+                                <p className="text-base sm:text-lg text-green-700 mb-3 sm:mb-4">훌륭하게 배려와 기다림을 실천했습니다.</p>
                                 <div className="flex justify-center gap-2 mb-2">
                                     {[...Array(Math.max(1, state.hearts))].map((_, i) => (
-                                        <span key={i} className="text-2xl">💖</span>
+                                        <span key={i} className="text-xl sm:text-2xl">💖</span>
                                     ))}
                                 </div>
                             </div>
 
-                            <div className="flex flex-col sm:flex-row gap-4 w-full max-w-lg">
+                            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full max-w-lg">
                                 <button
                                     onClick={downloadCertificate}
                                     disabled={isDownloading}
-                                    className="flex-1 py-4 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                                    className="flex-1 py-3 sm:py-4 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold text-base sm:text-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                                 >
                                     {isDownloading ? (
                                         <span className="animate-pulse">이미지 생성 중...</span>
                                     ) : (
-                                        <><FaDownload /> <span>수료증 저장하기 (패들렛 공유용)</span></>
+                                        <><FaDownload /> <span>수료증 저장하기</span></>
                                     )}
                                 </button>
                                 <button
                                     onClick={resetGame}
-                                    className="py-4 px-6 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold text-lg shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                                    className="py-3 sm:py-4 px-5 sm:px-6 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold text-base sm:text-lg shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                                 >
                                     <FaRotateLeft /> <span>처음으로</span>
                                 </button>

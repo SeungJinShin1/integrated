@@ -30,11 +30,11 @@ export default function LowStage1() {
             <img src={LOW_BG_IMAGES.stages} alt="미술실" className="absolute inset-0 w-full h-full object-cover opacity-80" />
 
             {/* Main Interactive Area */}
-            <div className="relative z-10 w-full h-full flex flex-col items-center justify-between p-8">
+            <div className="relative z-10 w-full h-full flex flex-col items-center justify-between p-3 sm:p-5 md:p-8">
 
                 {/* Instruction Text Box */}
-                <div className="bg-white/90 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-lg border-2 border-indigo-200 mt-8 max-w-2xl text-center min-h-[100px] flex items-center justify-center">
-                    <p className="text-2xl font-bold text-slate-800 break-keep">
+                <div className="bg-white/90 backdrop-blur-sm px-4 py-3 sm:px-6 sm:py-4 rounded-2xl shadow-lg border-2 border-indigo-200 mt-4 sm:mt-8 max-w-2xl w-full text-center min-h-[60px] sm:min-h-[80px] md:min-h-[100px] flex items-center justify-center">
+                    <p className="text-lg sm:text-xl md:text-2xl font-bold text-slate-800 break-keep">
                         {isComplete ? (
                             <span className="text-green-600">성공! 친구와 함께 놀게 되었어요.</span>
                         ) : (
@@ -44,41 +44,41 @@ export default function LowStage1() {
                 </div>
 
                 {/* Character and Interaction */}
-                <div className="flex-1 w-full flex items-end justify-center relative pb-10">
+                <div className="flex-1 w-full flex flex-col items-center justify-end relative pb-4 sm:pb-10">
+
+                    {/* Speech Bubble to Tap - above character on mobile */}
+                    {!isComplete && (
+                        <div
+                            onClick={handleTap}
+                            className="p-4 sm:p-6 bg-white rounded-[2rem] rounded-bl-sm shadow-xl border-4 border-indigo-400 cursor-pointer hover:bg-indigo-50 hover:scale-110 active:scale-95 transition-all text-center animate-bounce z-20 mb-3 sm:mb-4"
+                        >
+                            <span className="text-xl sm:text-2xl md:text-3xl font-bold text-indigo-700 whitespace-nowrap">같이 놀자! 👋</span>
+                        </div>
+                    )}
 
                     {/* Consistent Character Container */}
-                    <div className="h-[55vh] flex flex-col justify-end items-center relative">
+                    <div className="h-[30vh] sm:h-[40vh] md:h-[55vh] flex flex-col justify-end items-center relative">
                         <img
                             src={getLowNpcImage(state.npc.gender, isComplete ? 'happy' : 'default')}
                             alt={state.npc.name}
                             className={`h-full object-contain transition-transform duration-500 ${!isComplete && 'hover:scale-105'}`}
                         />
 
-                        {/* Speech Bubble to Tap */}
-                        {!isComplete && (
-                            <div
-                                onClick={handleTap}
-                                className="absolute top-0 right-[-100px] p-6 bg-white rounded-[2rem] rounded-bl-sm shadow-xl border-4 border-indigo-400 cursor-pointer hover:bg-indigo-50 hover:scale-110 active:scale-95 transition-all text-center animate-bounce z-20"
-                            >
-                                <span className="text-3xl font-bold text-indigo-700 whitespace-nowrap">같이 놀자! 👋</span>
-                            </div>
-                        )}
-
                         {/* Success Effect */}
                         {isComplete && (
-                            <div className="absolute top-1/4 right-[-40px] animate-ping z-20 pointer-events-none">
-                                <span className="text-6xl">💖</span>
+                            <div className="absolute top-1/4 -right-4 sm:right-[-40px] animate-ping z-20 pointer-events-none">
+                                <span className="text-4xl sm:text-6xl">💖</span>
                             </div>
                         )}
                     </div>
                 </div>
 
-                {/* Next Button Overlay */}
+                {/* Next Button - in flow, bottom center */}
                 {isComplete && (
-                    <div className="absolute bottom-10 right-10 z-30 animate-fade-in-up">
+                    <div className="w-full flex justify-center pb-4 sm:pb-6 z-30 animate-fade-in-up">
                         <button
                             onClick={handleNext}
-                            className="bg-green-500 hover:bg-green-600 text-white rounded-full px-8 py-4 text-xl font-bold shadow-lg transition-transform transform hover:-translate-y-1 cursor-pointer"
+                            className="bg-green-500 hover:bg-green-600 text-white rounded-full px-6 py-3 text-lg sm:px-8 sm:py-4 sm:text-xl font-bold shadow-lg transition-transform transform hover:-translate-y-1 cursor-pointer"
                         >
                             다음으로 가기 ▸
                         </button>
