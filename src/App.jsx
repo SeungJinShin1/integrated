@@ -21,20 +21,42 @@ import { FaHeart } from 'react-icons/fa6';
 
 function WelcomeScreen({ onStart }) {
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full bg-slate-50 p-6 animate-fade-in relative">
-      <div className="max-w-md w-full text-center space-y-8 bg-white p-10 rounded-3xl shadow-lg border border-slate-100">
-        <h1 className="text-3xl sm:text-4xl font-black text-slate-800 leading-tight">
-          모두가 행복한 교실<br/>
-          <span className="text-blue-500">장애이해교육</span>
-        </h1>
-        <p className="text-slate-500 text-lg break-keep">
-          친구가 되는 순간, 원팀 프로젝트를 시작합니다!
-        </p>
+    <div className="flex flex-col items-center justify-center w-full h-dvh bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 p-4 sm:p-6 md:p-8 animate-fade-in relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute -top-20 -left-20 w-64 h-64 bg-yellow-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
+        <div className="absolute top-1/4 -right-20 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-32 left-1/3 w-80 h-80 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-4000"></div>
+      </div>
+
+      <div className="max-w-3xl w-full text-center space-y-6 sm:space-y-8 md:space-y-10 bg-white/80 backdrop-blur-xl p-8 sm:p-12 md:p-16 rounded-[2rem] sm:rounded-[3rem] shadow-2xl border border-white/50 relative z-10 flex flex-col items-center">
+        
+        <div className="space-y-3 sm:space-y-4">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-indigo-500 tracking-tight">
+            달라서 더 빛나는 우리들의 이야기
+          </h2>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-slate-800 leading-tight drop-shadow-sm">
+            우리 반 <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">보물찾기</span> 💎
+          </h1>
+        </div>
+
+        <div className="bg-white/50 p-6 sm:p-8 rounded-3xl border border-indigo-100 shadow-inner max-w-2xl">
+          <p className="text-slate-600 text-base sm:text-lg md:text-xl leading-relaxed break-keep font-medium">
+            자신만의 특별한 행동과 소리로 마음을 전하는 친구가 있어요.<br className="hidden md:block"/>
+            <span className="text-indigo-600 font-bold">'기다림'</span>이라는 열쇠로 친구의 마음 상자를 열면, 누구보다 정직하고 순수한 보물을 만날 수 있답니다.<br className="hidden md:block"/>
+            <br className="block md:hidden"/>
+            나와 조금 다른 친구의 <span className="text-orange-500 font-bold">특별한 보물</span>을 찾으러 가볼까요?
+          </p>
+        </div>
+
         <button
           onClick={onStart}
-          className="w-full bg-blue-500 hover:bg-blue-600 active:scale-95 text-white font-bold py-4 rounded-xl shadow-md transition-all text-xl"
+          className="group relative inline-flex items-center justify-center px-8 py-4 sm:px-10 sm:py-5 font-bold text-white transition-all duration-200 bg-gradient-to-r from-indigo-500 to-purple-600 border border-transparent rounded-full hover:from-indigo-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 shadow-[0_10px_20px_rgba(99,102,241,0.4)] hover:shadow-[0_15px_30px_rgba(99,102,241,0.6)] hover:-translate-y-1 active:translate-y-0 text-xl sm:text-2xl w-full sm:w-auto"
         >
-          시작하기
+          보물찾기 출발! 🚀
+          <span className="absolute right-6 opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-300">
+            →
+          </span>
         </button>
       </div>
     </div>
