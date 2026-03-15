@@ -62,13 +62,15 @@ export default function LowStage2() {
                     {/* Consistent Character Container */}
                     <div className="h-[30vh] sm:h-[40vh] md:h-[55vh] flex flex-col justify-end items-center relative">
                         <img
-                            src={getLowNpcImage(state.npc.gender, isComplete ? 'happy' : 'earblock')}
+                            src={getLowNpcImage(state.npc.gender, isComplete ? 'happy2' : 'earblock')}
                             alt={state.npc.name}
                             className={`h-full object-contain transition-transform duration-300 ${!isComplete && 'animate-[wiggle_0.5s_ease-in-out_infinite]'}`}
                         />
-                        {/* Fake Headphone Overlay */}
+                        {/* Fake Headphone Overlay - Modified to not overlap character */}
                         {isComplete && (
-                            <img src={ITEM_IMAGES.headset} alt="장착된 헤드폰" className="absolute top-[20%] right-[-10px] sm:right-[-20px] w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 object-contain animate-bounce z-20" />
+                            <div className="absolute top-0 right-0 sm:-right-10 flex flex-col items-center animate-bounce z-20 pointer-events-none">
+                                <img src={ITEM_IMAGES.headset} alt="장착된 헤드폰" className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 object-contain drop-shadow-md" />
+                            </div>
                         )}
                     </div>
                 </div>

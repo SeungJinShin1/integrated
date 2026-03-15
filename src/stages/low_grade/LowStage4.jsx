@@ -92,7 +92,7 @@ export default function LowStage4() {
                     {/* Consistent Character Container */}
                     <div className="h-[25vh] sm:h-[35vh] md:h-[55vh] flex flex-col justify-end items-center relative">
                         <img
-                            src={getLowNpcImage(state.npc.gender, phase === 'done' ? 'happy' : 'upset')}
+                            src={getLowNpcImage(state.npc.gender, phase === 'done' ? 'happy2' : 'upset')}
                             alt={state.npc.name}
                             className={`h-full object-contain ${phase !== 'done' ? 'animate-[wiggle_1s_ease-in-out_infinite] opacity-90' : 'transition-transform hover:scale-105'}`}
                         />

@@ -58,12 +58,12 @@ export default function LowStage3() {
                     {/* Character Container */}
                     <div className="h-[25vh] sm:h-[35vh] md:h-[55vh] flex flex-col justify-end items-center relative">
                         <img
-                            src={getLowNpcImage(state.npc.gender, !isComplete ? 'default' : 'happy')}
+                            src={getLowNpcImage(state.npc.gender, !isComplete ? 'default' : 'happy2')}
                             alt={state.npc.name}
                             className={`h-full object-contain transition-transform duration-500 ${isComplete && 'hover:scale-105'}`}
                         />
                         {isComplete && (
-                            <div className="absolute -top-2 sm:top-10 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:-left-20 bg-white p-3 sm:p-4 rounded-3xl rounded-br-sm shadow-xl font-bold text-base sm:text-lg md:text-xl text-slate-800 animate-bounce whitespace-nowrap z-30 border-2 border-indigo-200">
+                            <div className="absolute -top-16 sm:-top-20 left-1/2 -translate-x-1/2 bg-white p-3 sm:p-4 rounded-3xl rounded-br-sm shadow-xl font-bold text-base sm:text-lg md:text-xl text-slate-800 animate-bounce whitespace-nowrap z-30 border-2 border-indigo-200">
                                 기다려줘서<br />고마워!
                             </div>
                         )}

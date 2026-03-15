@@ -146,6 +146,10 @@ import low_npcM_upset from './assets/sprout/2_CH2_성민(저_남)_속상.png';
 import low_npcM_earblock from './assets/sprout/2_CH3_성민(저_남)_귀막음.png';
 import low_npcM_happy from './assets/sprout/2_CH4_성민(저_남)_기분_좋음.png';
 
+// 추가된 기분_좋음2
+import low_npcF_happy2 from './assets/sprout/1_CH4_승주(저_여)_기분_좋음2.png';
+import low_npcM_happy2 from './assets/sprout/2_CH4_성민(저_남)_기분_좋음2.png';
+
 import low_bg_intro from './assets/sprout/3_BG_intro.png';
 import low_bg_stages from './assets/sprout/3_BG1,BG2,BG3,BG4.png';
 import low_bg_ending from './assets/sprout/3_BG_ending.png';
@@ -156,12 +160,14 @@ export const LOW_NPC_IMAGES = {
         upset: low_npcF_upset,
         earblock: low_npcF_earblock,
         happy: low_npcF_happy,
+        happy2: low_npcF_happy2,
     },
     male: {
         default: low_npcM_default,
         upset: low_npcM_upset,
         earblock: low_npcM_earblock,
         happy: low_npcM_happy,
+        happy2: low_npcM_happy2,
     },
 };
 
