@@ -59,7 +59,7 @@ export default function LowStage1() {
                     {/* Consistent Character Container */}
                     <div className="h-[30vh] sm:h-[40vh] md:h-[55vh] flex flex-col justify-end items-center relative">
                         <img
-                            src={getLowNpcImage(state.npc.gender, isComplete ? 'happy' : 'default')}
+                            src={getLowNpcImage(state.npc.gender, isComplete ? 'happy2' : 'default')}
                             alt={state.npc.name}
                             className={`h-full object-contain transition-transform duration-500 ${!isComplete && 'hover:scale-105'}`}
                         />
