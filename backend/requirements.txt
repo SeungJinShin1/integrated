@@ -1,0 +1,7 @@
+fastapi[all]==0.111.0
+firebase-admin==6.5.0
+pydantic==2.8.2
+python-dotenv==1.0.1
+uvicorn==0.30.1
+emails==0.6
+google-generativeai==0.7.2

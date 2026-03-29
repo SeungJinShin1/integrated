@@ -1,0 +1,227 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+import { useGame } from '@/contexts/GameContext';
+import TopNavBar from '@/components/layout/TopNavBar';
+import { getLowNpcImage, LOW_BG_IMAGES, ITEM_IMAGES } from '@/data/assetMap';
+import { FaClock } from 'react-icons/fa6';
+
+// ===== Low Stage 1: 먼저 물어봐주기 =====
+function LowStage1() {
+  const { state, completeStage } = useGame();
+  const router = useRouter();
+  const [isComplete, setIsComplete] = useState(false);
+
+  const handleTap = () => {
+    if (isComplete) return;
+    setIsComplete(true);
+  };
+
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <img src={LOW_BG_IMAGES.stages} alt="bg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} />
+      <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', padding: '24px 16px' }}>
+
+        <div style={{ background: 'rgba(255,255,255,0.95)', padding: '16px 24px', borderRadius: 20, boxShadow: '0 8px 32px rgba(0,0,0,0.1)', textAlign: 'center', border: '3px solid #c7d2fe', width: '100%', maxWidth: 600 }}>
+          <h2 style={{ fontSize: 22, fontWeight: 800, color: isComplete ? '#16a34a' : '#1e293b' }}>
+            {isComplete ? '성공! 친구와 함께 놀게 되었어요.' : '친구에게 먼저 다가가 볼까요?'}
+          </h2>
+          <p style={{ fontSize: 15, color: '#64748b', marginTop: 8 }}>
+            {isComplete ? '잘했어요! 친구도 기뻐하는 것 같네요.' : `${state.npc.name}가 혼자 클레이 놀이를 하고 있어요. 인사를 건네볼까요?`}
+          </p>
+        </div>
+
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 40, width: '100%' }}>
+          {!isComplete && (
+            <div onClick={handleTap} className="animate-bounce" style={{
+              background: 'white', padding: '16px 24px', borderRadius: '32px 32px 32px 4px',
+              border: '4px solid #818cf8', boxShadow: '0 12px 24px rgba(99,102,241,0.2)',
+              cursor: 'pointer', marginBottom: 24,
+            }}>
+              <span style={{ fontSize: 24, fontWeight: 800, color: '#4f46e5' }}>같이 놀자! 👋</span>
+            </div>
+          )}
+
+          <div style={{ height: '40vh', position: 'relative' }}>
+            <img src={getLowNpcImage(state.npc.gender, isComplete ? 'happy2' : 'default')} alt={state.npc.name} style={{ height: '100%', objectFit: 'contain' }} />
+            {isComplete && <div style={{ position: 'absolute', top: '20%', right: -20, fontSize: 48, animation: 'pulse 1s infinite' }}>💖</div>}
+          </div>
+        </div>
+
+        {isComplete && (
+          <button onClick={() => { completeStage('low_stage1'); router.push('/low/episode/2'); }} style={{
+            padding: '16px 40px', background: '#22c55e', color: 'white', border: 'none', borderRadius: 30, fontSize: 20, fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 24px rgba(34,197,94,0.4)',
+          }}>다음으로 가기 ▸</button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ===== Low Stage 2: 귀가 아파요 =====
+function LowStage2() {
+  const { state, completeStage } = useGame();
+  const router = useRouter();
+  const [isComplete, setIsComplete] = useState(false);
+
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <img src={LOW_BG_IMAGES.stages} alt="bg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: isComplete ? 0.3 : 0.8, filter: isComplete ? 'sepia(1)' : 'none', transition: 'all 1s' }} />
+      <div style={{ position: 'absolute', inset: 0, background: isComplete ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)', transition: 'all 1s' }} />
+
+      <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', padding: '24px 16px' }}>
+
+        <div style={{ background: 'rgba(255,255,255,0.95)', padding: '16px 24px', borderRadius: 20, boxShadow: '0 8px 32px rgba(0,0,0,0.1)', textAlign: 'center', border: `3px solid ${isComplete ? '#86efac' : '#fca5a5'}`, width: '100%', maxWidth: 600 }}>
+          <h2 style={{ fontSize: 22, fontWeight: 800, color: isComplete ? '#15803d' : '#b91c1c' }}>
+            {isComplete ? '헤드폰을 씌워주었어요!' : `${state.npc.name}가 시끄러운 소리 때문에 힘들어해요!`}
+          </h2>
+          <p style={{ fontSize: 14, color: '#64748b', marginTop: 8 }}>
+            {isComplete ? '소음이 줄어들어서 친구가 편안해졌어요.' : '앗, 공사 소리가 너무 크게 들려요. 헤드폰을 눌러서 도와주세요.'}
+          </p>
+        </div>
+
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', gap: 32 }}>
+          {!isComplete && (
+            <div onClick={() => setIsComplete(true)} style={{ background: 'white', padding: 24, borderRadius: '50%', border: '4px solid #fca5a5', boxShadow: '0 0 30px rgba(239,68,68,0.6)', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'pulse 1.5s infinite' }}>
+              <img src={ITEM_IMAGES.headset} alt="headset" style={{ width: 100, height: 100, objectFit: 'contain' }} />
+              <span style={{ fontSize: 18, fontWeight: 800, color: '#475569', marginTop: 12 }}>눌러서 씌워주기</span>
+            </div>
+          )}
+
+          <div style={{ height: '40vh', position: 'relative' }}>
+            <img src={getLowNpcImage(state.npc.gender, isComplete ? 'happy2' : 'earblock')} alt={state.npc.name} style={{ height: '100%', objectFit: 'contain' }} />
+            {isComplete && <img src={ITEM_IMAGES.headset} alt="headset" style={{ position: 'absolute', top: -10, right: -20, width: 80, height: 80, animation: 'bounce 2s infinite' }} />}
+          </div>
+        </div>
+
+        {isComplete && (
+          <button onClick={() => { completeStage('low_stage2'); router.push('/low/episode/3'); }} style={{ padding: '16px 40px', background: '#22c55e', color: 'white', border: 'none', borderRadius: 30, fontSize: 20, fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 24px rgba(34,197,94,0.4)', }}>다음으로 가기 ▸</button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ===== Low Stage 3: 기다려주기 =====
+function LowStage3() {
+  const { state, completeStage } = useGame();
+  const router = useRouter();
+  const [tapCount, setTapCount] = useState(0);
+  const isComplete = tapCount >= 3;
+
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <img src={LOW_BG_IMAGES.stages} alt="bg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7 }} />
+      <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', padding: '24px 16px' }}>
+
+        <div style={{ background: 'rgba(255,255,255,0.95)', padding: '16px 24px', borderRadius: 20, boxShadow: '0 8px 32px rgba(0,0,0,0.1)', textAlign: 'center', border: '3px solid #c7d2fe', width: '100%', maxWidth: 600 }}>
+          <h2 style={{ fontSize: 22, fontWeight: 800, color: isComplete ? '#16a34a' : '#1e293b' }}>
+            {isComplete ? '성공! 친구가 대답할 시간을 주었어요.' : `시계 버튼을 눌러주세요! (${tapCount}/3)`}
+          </h2>
+        </div>
+
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', gap: 32 }}>
+
+          <div style={{ display: 'flex', gap: 16, background: '#1e293b', padding: 20, borderRadius: 40, border: '4px solid #334155', boxShadow: '0 16px 32px rgba(0,0,0,0.5)' }}>
+            <div style={{ width: 60, height: 60, borderRadius: '50%', background: tapCount === 1 ? '#ef4444' : '#7f1d1d', boxShadow: tapCount === 1 ? '0 0 30px #ef4444' : 'inset 0 -5px 15px rgba(0,0,0,0.5)', transition: 'all 0.3s' }} />
+            <div style={{ width: 60, height: 60, borderRadius: '50%', background: tapCount === 2 ? '#eab308' : '#713f12', boxShadow: tapCount === 2 ? '0 0 30px #eab308' : 'inset 0 -5px 15px rgba(0,0,0,0.5)', transition: 'all 0.3s' }} />
+            <div style={{ width: 60, height: 60, borderRadius: '50%', background: tapCount >= 3 ? '#22c55e' : '#14532d', boxShadow: tapCount >= 3 ? '0 0 30px #22c55e' : 'inset 0 -5px 15px rgba(0,0,0,0.5)', transition: 'all 0.3s', transform: tapCount >= 3 ? 'scale(1.1)' : 'scale(1)' }} />
+          </div>
+
+          <div style={{ height: '35vh', position: 'relative' }}>
+            <img src={getLowNpcImage(state.npc.gender, isComplete ? 'happy2' : 'default')} alt={state.npc.name} style={{ height: '100%', objectFit: 'contain' }} />
+            {isComplete && <div style={{ position: 'absolute', top: -30, left: '50%', transform: 'translateX(-50%)', background: 'white', padding: '12px 20px', borderRadius: 24, fontSize: 18, border: '2px solid #c7d2fe', fontWeight: 800, whiteSpace: 'nowrap' }}>기다려줘서<br />고마워!</div>}
+          </div>
+
+          {!isComplete && (
+            <div onClick={() => setTapCount(v => v + 1)} style={{ background: 'white', padding: 24, borderRadius: '50%', border: '4px solid #c7d2fe', boxShadow: '0 0 30px rgba(99,102,241,0.6)', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'pulse 1.5s infinite' }}>
+              <FaClock style={{ fontSize: 48, color: '#6366f1', marginBottom: 8 }} />
+              <span style={{ fontSize: 18, fontWeight: 800, color: '#475569' }}>기다리기</span>
+            </div>
+          )}
+
+        </div>
+
+        {isComplete && (
+          <button onClick={() => { completeStage('low_stage3'); router.push('/low/episode/4'); }} style={{ padding: '16px 40px', background: '#22c55e', color: 'white', border: 'none', borderRadius: 30, fontSize: 20, fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 24px rgba(34,197,94,0.4)', }}>다음으로 가기 ▸</button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ===== Low Stage 4: 쉽게 말해주기 =====
+function LowStage4() {
+  const { state, completeStage } = useGame();
+  const router = useRouter();
+  const [phase, setPhase] = useState<'card_selection' | 'squishy_tapping' | 'done'>('card_selection');
+  const [tapCount, setTapCount] = useState(0);
+
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <img src={LOW_BG_IMAGES.stages} alt="bg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.6 }} />
+      <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', padding: '24px 16px' }}>
+
+        <div style={{ background: 'rgba(255,255,255,0.95)', padding: '16px 24px', borderRadius: 20, boxShadow: '0 8px 32px rgba(0,0,0,0.1)', textAlign: 'center', border: '3px solid #a5b4fc', width: '100%', maxWidth: 600 }}>
+          <h2 style={{ fontSize: 22, fontWeight: 800, color: phase === 'done' ? '#16a34a' : '#1e293b' }}>
+            {phase === 'card_selection' && '그림 카드를 눌러 친구의 마음을 들어볼까요?'}
+            {phase === 'squishy_tapping' && `말랑이를 3번 눌러주세요! (${tapCount}/3)`}
+            {phase === 'done' && '완벽해요! 친구가 기분이 좋아졌어요.'}
+          </h2>
+        </div>
+
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', gap: 32 }}>
+
+          {phase === 'card_selection' && (
+            <div onClick={() => setPhase('squishy_tapping')} style={{ background: 'white', padding: 32, borderRadius: 48, border: '4px dashed #818cf8', cursor: 'pointer', textAlign: 'center', animation: 'pulse 1.5s infinite' }}>
+              <img src={ITEM_IMAGES.pecs} alt="카드" style={{ width: 120, height: 120, objectFit: 'contain', marginBottom: 16 }} />
+              <div style={{ background: 'white', padding: '8px 24px', borderRadius: 20, fontSize: 22, fontWeight: 800, color: '#4f46e5', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>그림 카드 보기</div>
+            </div>
+          )}
+
+          {phase === 'squishy_tapping' && (
+            <div onClick={() => { if (tapCount + 1 >= 3) { setPhase('done'); } else { setTapCount(v => v + 1); } }} style={{ position: 'relative', cursor: 'pointer', padding: 32 }}>
+              <div style={{ position: 'absolute', inset: 0, background: '#f9a8d4', borderRadius: '50%', opacity: 0.5, animation: 'ping 1s infinite' }} />
+              <img src={ITEM_IMAGES.squishy} alt="말랑이" style={{ position: 'relative', zIndex: 10, width: 150, height: 150, objectFit: 'contain', transform: `scale(${1 + tapCount * 0.1})`, transition: 'transform 0.2s' }} />
+              <div style={{ position: 'absolute', bottom: -10, left: '50%', transform: 'translateX(-50%)', background: 'white', padding: '8px 24px', borderRadius: 24, fontSize: 18, fontWeight: 800, color: '#db2777', whiteSpace: 'nowrap', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 20 }}>눌러주세요! 🖐</div>
+            </div>
+          )}
+
+          <div style={{ height: '35vh', position: 'relative' }}>
+            <img src={getLowNpcImage(state.npc.gender, phase === 'done' ? 'happy' : 'upset')} alt={state.npc.name} style={{ height: '100%', objectFit: 'contain' }} />
+            {phase === 'done' && <div style={{ position: 'absolute', top: 20, right: -20, fontSize: 48, animation: 'bounce 1s infinite' }}>✨</div>}
+          </div>
+
+        </div>
+
+        {phase === 'done' && (
+          <button onClick={() => { completeStage('low_stage4'); router.push('/low/ending'); }} style={{ padding: '16px 40px', background: '#22c55e', color: 'white', border: 'none', borderRadius: 30, fontSize: 20, fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 24px rgba(34,197,94,0.4)', }}>다음으로 가기 ▸</button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ===== Main Stage Router =====
+const STAGE_COMPONENTS = [LowStage1, LowStage2, LowStage3, LowStage4];
+
+export default function LowStagePage() {
+  const params = useParams();
+  const index = parseInt(params.id as string) - 1;
+
+  if (index < 0 || index >= STAGE_COMPONENTS.length) {
+    return <div style={{ color: 'white', padding: 40, textAlign: 'center' }}>잘못된 단계입니다.</div>;
+  }
+
+  const StageComponent = STAGE_COMPONENTS[index];
+
+  return (
+    <>
+      <TopNavBar />
+      <div className="game-area">
+        <StageComponent />
+      </div>
+    </>
+  );
+}
