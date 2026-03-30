@@ -1,12 +1,12 @@
 services:
   - type: web
     name: hiddenpiece-backend
-    env: python
+    runtime: python
     rootDir: backend
     buildCommand: "pip install -r requirements.txt"
     startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"
     envVars:
       - key: PYTHON_VERSION
-        value: 3.10.0
+        value: "3.10.0"
       - key: MAIN_ENV
         value: production
