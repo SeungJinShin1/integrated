@@ -35,9 +35,13 @@
 html, body {
   height: 100%;
   overflow: hidden;
-  font-family: 'Nanum Gothic', sans-serif;
+  font-family: 'Nanum Gothic', sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+input, button, textarea, select {
+  font-family: inherit;
 }
 
 body {

@@ -12,6 +12,8 @@ import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler,
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip);
 
 const Radar = dynamic(() => import('react-chartjs-2').then(mod => mod.Radar), { ssr: false });
+import html2canvas from 'html2canvas';
+
 
 const SYSTEM_PROMPT = `You are a friendly AI researcher at the "Prism Lab" in a Korean educational game about understanding autism spectrum disorder (ASD) for elementary school students (5th grade).
 RULES:
@@ -94,6 +96,21 @@ export default function LabPage() {
     setLoading(false);
   };
 
+  const handleDownload = async () => {
+    const el = document.getElementById('prism-report-card');
+    if (!el) return;
+    try {
+      const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#ffffff' });
+      const url = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `프리즘_요원_결과카드_${state.player.name}.png`;
+      a.click();
+    } catch (e) {
+      console.error('Failed to download image', e);
+    }
+  };
+
   const stats = state.stats || { understanding: 0, trust: 0, communication: 0, patience: 0 };
   const prismScore = Math.round(((stats.understanding || 0) + (stats.trust || 0) + (stats.communication || 0) + (stats.patience || 0)) / 4);
   const logs = state.logs || { tool_attempts: 0, tool_accuracy: 0, waiting_count: 0 };
@@ -124,7 +141,7 @@ export default function LabPage() {
         <img src={BG_IMAGES.exit} alt="프리즘 연구소" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
         <div style={{ position: 'absolute', inset: 0, background: 'rgba(30,27,75,0.6)', backdropFilter: 'blur(4px)' }} />
 
-        <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', height: '100%', padding: 16 }}>
+        <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', minHeight: '100%', padding: 16 }}>
           <div style={{ textAlign: 'center', marginBottom: 12 }}>
             <h1 style={{ fontSize: 20, fontWeight: 800, color: 'white' }}>🔬 6단계: 프리즘 연구소</h1>
             <p style={{ fontSize: 13, color: '#a5b4fc' }}>AI 회고 & 공유</p>
@@ -259,10 +276,14 @@ export default function LabPage() {
                 </div>
               </div>
 
-              <div style={{ maxWidth: 440, margin: '16px auto', display: 'flex', gap: 12, paddingBottom: 16 }}>
-                <button onClick={() => { resetGame(); router.push('/start'); }}
-                  style={{ flex: 1, padding: 14, background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 12, fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: "'Nanum Gothic', sans-serif" }}>
-                  <FaRotateLeft style={{ display: 'inline', marginRight: 8 }} />다시 시작
+              <div style={{ maxWidth: 440, margin: '16px auto', display: 'flex', flexDirection: 'column', gap: 12, paddingBottom: 40 }}>
+                <button onClick={handleDownload}
+                  style={{ width: '100%', padding: 16, background: '#eab308', color: 'white', border: 'none', borderRadius: 12, fontSize: 16, fontWeight: 800, cursor: 'pointer', fontFamily: "'Nanum Gothic', sans-serif", boxShadow: '0 8px 24px rgba(234,179,8,0.4)' }}>
+                  📥 결과 카드 이미지 저장 
+                </button>
+                <button onClick={() => { window.location.href = '/'; }}
+                  style={{ width: '100%', padding: 14, background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: "'Nanum Gothic', sans-serif" }}>
+                  <FaRotateLeft style={{ display: 'inline', marginRight: 8 }} />처음으로 돌아가기
                 </button>
               </div>
             </div>
