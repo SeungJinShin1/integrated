@@ -1,17 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import ParticleCanvas from './ParticleCanvas';
 
 const PIECES = [
-  { id: 1, color: '#60a5fa', correct: false },
-  { id: 2, color: '#3b82f6', correct: true },
-  { id: 3, color: '#93c5fd', correct: false },
-  { id: 4, color: '#2563eb', correct: false },
+  { id: 1, color: '#60a5fa', label: '#60a5fa', correct: false },
+  { id: 2, color: '#3b82f6', label: '#3b82f6', correct: true },
+  { id: 3, color: '#93c5fd', label: '#93c5fd', correct: false },
+  { id: 4, color: '#2563eb', label: '#2563eb', correct: false },
 ];
 
 export default function MosaicPuzzle({ onComplete }: { onComplete: () => void }) {
   const [selected, setSelected] = useState<number | null>(null);
   const [result, setResult] = useState<string | null>(null);
+  const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const [targetPulse, setTargetPulse] = useState(true);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Animate the target zone
+  useEffect(() => {
+    const interval = setInterval(() => setTargetPulse(p => !p), 1200);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSelect = (piece: typeof PIECES[0]) => {
     setSelected(piece.id);
@@ -25,26 +35,107 @@ export default function MosaicPuzzle({ onComplete }: { onComplete: () => void })
   };
 
   return (
-    <div style={{ background: 'rgba(255,255,255,0.95)', borderRadius: 20, padding: 24, boxShadow: '0 16px 40px rgba(0,0,0,0.3)', textAlign: 'center' }}>
-      <p style={{ fontSize: 14, fontWeight: 700, color: '#334155', marginBottom: 16 }}>🧩 올바른 파란색 조각을 찾으세요!</p>
-      <div style={{ background: 'linear-gradient(135deg, #bfdbfe, #93c5fd)', borderRadius: 12, padding: 16, marginBottom: 16 }}>
-        <div style={{ width: 40, height: 40, border: '3px dashed #1e40af', borderRadius: 8, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ fontSize: 20 }}>?</span>
+    <div className="minigame-card" style={{ position: 'relative', overflow: 'hidden' }}>
+      <ParticleCanvas
+        width={500}
+        height={380}
+        effect={result === 'correct' ? 'firework' : 'ambient'}
+        active={true}
+        intensity={result === 'correct' ? 2 : 0.3}
+        color="#3b82f6"
+      />
+
+      <div style={{ position: 'relative', zIndex: 5 }}>
+        <p className="minigame-title">🧩 올바른 파란색 조각을 찾으세요!</p>
+
+        {/* Target area with gradient */}
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(96,165,250,0.15), rgba(59,130,246,0.1))',
+          borderRadius: 16,
+          padding: 20,
+          marginBottom: 20,
+          border: '1px solid rgba(59,130,246,0.2)',
+        }}>
+          <div style={{
+            width: 56,
+            height: 56,
+            border: '3px dashed #60a5fa',
+            borderRadius: 12,
+            margin: '0 auto',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.6s',
+            boxShadow: targetPulse ? '0 0 24px rgba(59,130,246,0.4)' : '0 0 8px rgba(59,130,246,0.1)',
+            background: result === 'correct' ? '#3b82f6' : 'transparent',
+          }}>
+            <span style={{ fontSize: 24, color: result === 'correct' ? 'white' : '#60a5fa' }}>
+              {result === 'correct' ? '✓' : '?'}
+            </span>
+          </div>
+          <p style={{ fontSize: 12, color: '#93c5fd', marginTop: 10 }}>빈 칸의 색: #3b82f6</p>
         </div>
-        <p style={{ fontSize: 12, color: '#1e40af', marginTop: 8 }}>빈 칸의 색: #3b82f6</p>
+
+        {/* Color pieces grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+          {PIECES.map((p, idx) => (
+            <button
+              key={p.id}
+              onClick={() => handleSelect(p)}
+              onMouseEnter={() => setHoveredId(p.id)}
+              onMouseLeave={() => setHoveredId(null)}
+              disabled={selected !== null}
+              className="animate-card-flip"
+              style={{
+                width: '100%',
+                aspectRatio: '1',
+                borderRadius: 14,
+                background: `linear-gradient(135deg, ${p.color}, ${p.color}dd)`,
+                border: selected === p.id
+                  ? (result === 'correct' ? '3px solid #22c55e' : '3px solid #ef4444')
+                  : hoveredId === p.id ? '3px solid rgba(255,255,255,0.4)' : '3px solid transparent',
+                cursor: selected !== null ? 'default' : 'pointer',
+                transition: 'all 0.3s',
+                animationDelay: `${idx * 0.08}s`,
+                transform: selected === p.id && result === 'correct'
+                  ? 'scale(1.15)'
+                  : hoveredId === p.id ? 'scale(1.08)' : 'scale(1)',
+                boxShadow: selected === p.id && result === 'correct'
+                  ? '0 0 30px rgba(34,197,94,0.5)'
+                  : hoveredId === p.id
+                    ? `0 8px 24px ${p.color}40`
+                    : `0 4px 12px ${p.color}20`,
+                position: 'relative',
+              }}
+            >
+              {/* Color label on hover */}
+              {hoveredId === p.id && (
+                <div style={{
+                  position: 'absolute',
+                  bottom: -24,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  background: 'rgba(0,0,0,0.8)',
+                  color: 'white',
+                  padding: '2px 8px',
+                  borderRadius: 6,
+                  fontSize: 10,
+                  whiteSpace: 'nowrap',
+                }}>
+                  {p.label}
+                </div>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {result === 'correct' && (
+          <p className="minigame-success animate-success-scale">✅ 완벽한 조각을 찾았어요!</p>
+        )}
+        {result === 'wrong' && (
+          <p className="minigame-fail">❌ 조금 다른 색이에요, 다시 시도!</p>
+        )}
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
-        {PIECES.map(p => (
-          <button key={p.id} onClick={() => handleSelect(p)} disabled={selected !== null}
-            style={{
-              width: '100%', aspectRatio: '1', borderRadius: 10, background: p.color,
-              border: selected === p.id ? (result === 'correct' ? '3px solid #22c55e' : '3px solid #ef4444') : '2px solid transparent',
-              cursor: selected !== null ? 'default' : 'pointer', transition: 'all 0.2s',
-            }} />
-        ))}
-      </div>
-      {result === 'correct' && <p style={{ marginTop: 12, color: '#16a34a', fontWeight: 700 }}>✅ 완벽한 조각을 찾았어요!</p>}
-      {result === 'wrong' && <p style={{ marginTop: 12, color: '#ef4444', fontWeight: 700 }}>❌ 조금 다른 색이에요, 다시 시도!</p>}
     </div>
   );
 }

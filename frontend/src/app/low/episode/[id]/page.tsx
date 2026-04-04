@@ -6,6 +6,7 @@ import { useGame } from '@/contexts/GameContext';
 import TopNavBar from '@/components/layout/TopNavBar';
 import { getLowNpcImage, LOW_BG_IMAGES, ITEM_IMAGES } from '@/data/assetMap';
 import { FaClock } from 'react-icons/fa6';
+import ParticleCanvas from '@/components/minigames/ParticleCanvas';
 
 // ===== Low Stage 1: 먼저 물어봐주기 =====
 function LowStage1() {
@@ -21,6 +22,9 @@ function LowStage1() {
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
       <img src={LOW_BG_IMAGES.stages} alt="bg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} />
+      
+      <ParticleCanvas effect={isComplete ? 'success' : 'ambient'} active={true} intensity={isComplete ? 2 : 0.5} style={{ pointerEvents: 'none', zIndex: 1 }} />
+
       <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', padding: '24px 16px' }}>
 
         <div style={{ background: 'rgba(255,255,255,0.95)', padding: '16px 24px', borderRadius: 20, boxShadow: '0 8px 32px rgba(0,0,0,0.1)', textAlign: 'center', border: '3px solid #c7d2fe', width: '100%', maxWidth: 600 }}>
@@ -51,7 +55,7 @@ function LowStage1() {
 
         {isComplete && (
           <button onClick={() => { completeStage('low_stage1'); router.push('/low/episode/2'); }} style={{
-            padding: '16px 40px', background: '#22c55e', color: 'white', border: 'none', borderRadius: 30, fontSize: 20, fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 24px rgba(34,197,94,0.4)',
+            padding: '16px 40px', background: '#22c55e', color: 'white', border: 'none', borderRadius: 30, fontSize: 20, fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 24px rgba(34,197,94,0.4)', zIndex: 20,
           }}>다음으로 가기 ▸</button>
         )}
       </div>
@@ -69,6 +73,8 @@ function LowStage2() {
     <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
       <img src={LOW_BG_IMAGES.stages} alt="bg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: isComplete ? 0.3 : 0.8, filter: isComplete ? 'sepia(1)' : 'none', transition: 'all 1s' }} />
       <div style={{ position: 'absolute', inset: 0, background: isComplete ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)', transition: 'all 1s' }} />
+
+      <ParticleCanvas effect={isComplete ? 'firework' : 'ambient'} active={true} intensity={isComplete ? 2 : 0.5} style={{ pointerEvents: 'none', zIndex: 1 }} />
 
       <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', padding: '24px 16px' }}>
 
@@ -96,7 +102,7 @@ function LowStage2() {
         </div>
 
         {isComplete && (
-          <button onClick={() => { completeStage('low_stage2'); router.push('/low/episode/3'); }} style={{ padding: '16px 40px', background: '#22c55e', color: 'white', border: 'none', borderRadius: 30, fontSize: 20, fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 24px rgba(34,197,94,0.4)', }}>다음으로 가기 ▸</button>
+          <button onClick={() => { completeStage('low_stage2'); router.push('/low/episode/3'); }} style={{ padding: '16px 40px', background: '#22c55e', color: 'white', border: 'none', borderRadius: 30, fontSize: 20, fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 24px rgba(34,197,94,0.4)', zIndex: 20 }}>다음으로 가기 ▸</button>
         )}
       </div>
     </div>
@@ -113,6 +119,9 @@ function LowStage3() {
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
       <img src={LOW_BG_IMAGES.stages} alt="bg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7 }} />
+      
+      <ParticleCanvas effect={isComplete ? 'success' : 'ambient'} active={true} intensity={isComplete ? 2 : 0.5} style={{ pointerEvents: 'none', zIndex: 1 }} color={isComplete ? '#6366f1' : undefined} />
+
       <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', padding: '24px 16px' }}>
 
         <div style={{ background: 'rgba(255,255,255,0.95)', padding: '16px 24px', borderRadius: 20, boxShadow: '0 8px 32px rgba(0,0,0,0.1)', textAlign: 'center', border: '3px solid #c7d2fe', width: '100%', maxWidth: 600 }}>
@@ -144,7 +153,7 @@ function LowStage3() {
         </div>
 
         {isComplete && (
-          <button onClick={() => { completeStage('low_stage3'); router.push('/low/episode/4'); }} style={{ padding: '16px 40px', background: '#22c55e', color: 'white', border: 'none', borderRadius: 30, fontSize: 20, fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 24px rgba(34,197,94,0.4)', }}>다음으로 가기 ▸</button>
+          <button onClick={() => { completeStage('low_stage3'); router.push('/low/episode/4'); }} style={{ padding: '16px 40px', background: '#22c55e', color: 'white', border: 'none', borderRadius: 30, fontSize: 20, fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 24px rgba(34,197,94,0.4)', zIndex: 20 }}>다음으로 가기 ▸</button>
         )}
       </div>
     </div>
@@ -161,6 +170,9 @@ function LowStage4() {
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
       <img src={LOW_BG_IMAGES.stages} alt="bg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.6 }} />
+      
+      <ParticleCanvas effect={phase === 'done' ? 'success' : phase === 'squishy_tapping' ? 'ambient' : 'ambient'} active={true} intensity={phase === 'done' ? 2 : 0.5} style={{ pointerEvents: 'none', zIndex: 1 }} color="#a855f7" />
+
       <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', padding: '24px 16px' }}>
 
         <div style={{ background: 'rgba(255,255,255,0.95)', padding: '16px 24px', borderRadius: 20, boxShadow: '0 8px 32px rgba(0,0,0,0.1)', textAlign: 'center', border: '3px solid #a5b4fc', width: '100%', maxWidth: 600 }}>
@@ -196,7 +208,7 @@ function LowStage4() {
         </div>
 
         {phase === 'done' && (
-          <button onClick={() => { completeStage('low_stage4'); router.push('/low/ending'); }} style={{ padding: '16px 40px', background: '#22c55e', color: 'white', border: 'none', borderRadius: 30, fontSize: 20, fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 24px rgba(34,197,94,0.4)', }}>다음으로 가기 ▸</button>
+          <button onClick={() => { completeStage('low_stage4'); router.push('/low/ending'); }} style={{ padding: '16px 40px', background: '#22c55e', color: 'white', border: 'none', borderRadius: 30, fontSize: 20, fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 24px rgba(34,197,94,0.4)', zIndex: 20 }}>다음으로 가기 ▸</button>
         )}
       </div>
     </div>

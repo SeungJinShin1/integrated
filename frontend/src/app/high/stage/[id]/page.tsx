@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useGame } from '@/contexts/GameContext';
 import TopNavBar from '@/components/layout/TopNavBar';
 import DialogueBox from '@/components/game/DialogueBox';
-import { getNpcImage, getPlayerImage, BG_IMAGES } from '@/data/assetMap';
+import { getNpcImage, getPlayerImage, BG_IMAGES, ITEM_IMAGES } from '@/data/assetMap';
 import { DialogueData } from '@/types';
 import StageTransition from '@/components/game/StageTransition';
 import dynamic from 'next/dynamic';
@@ -121,25 +121,21 @@ function Stage1() {
         <div className="stage-subtitle">반향어 & 소통</div>
       </div>
 
-      {/* Characters */}
-      <div className="character-container">
-        <div style={{ textAlign: 'center' }}>
-          <img src={playerImg} alt={P} className="character-sprite" />
-          <div className="character-name-tag">{P}</div>
-        </div>
-      </div>
-      <div style={{ position: 'absolute', bottom: 160, right: 24, textAlign: 'center', zIndex: 90 }}>
-        <img src={npcImg} alt={N} className="character-sprite" />
-        <div className="character-name-tag">{N}</div>
-      </div>
-
       {showMinigame && (
         <div className="minigame-area">
           <CardPuzzle npcName={N} onComplete={handleMinigameComplete} />
         </div>
       )}
 
-      {dialogue && <DialogueBox {...dialogue} npcName={N} playerName={P} />}
+      {dialogue && (
+        <DialogueBox 
+          {...dialogue} 
+          npcName={N} 
+          playerName={P} 
+          characterImage={dialogue.speaker === P ? playerImg : dialogue.speaker === N ? npcImg : undefined}
+          characterPosition={dialogue.speaker === P ? 'right' : 'left'}
+        />
+      )}
     </div>
   );
 }
@@ -245,19 +241,16 @@ function Stage2() {
         <div className="stage-subtitle">감각 과부하 & 조절</div>
       </div>
 
-      <div className="character-container">
-        <div style={{ textAlign: 'center' }}>
-          <img src={playerImg} alt={P} className="character-sprite" />
-          <div className="character-name-tag">{P}</div>
-        </div>
-      </div>
-      <div style={{ position: 'absolute', bottom: 160, right: 24, textAlign: 'center', zIndex: 90 }}>
-        <img src={npcImg} alt={N} className="character-sprite" />
-        <div className="character-name-tag">{N}</div>
-      </div>
-
       {showMinigame && <div className="minigame-area"><WaveformSlider onComplete={handleMinigameComplete} /></div>}
-      {dialogue && <DialogueBox {...dialogue} npcName={N} playerName={P} />}
+      {dialogue && (
+        <DialogueBox 
+          {...dialogue} 
+          npcName={N} 
+          playerName={P} 
+          characterImage={dialogue.speaker === P ? playerImg : dialogue.speaker === N ? npcImg : undefined}
+          characterPosition={dialogue.speaker === P ? 'right' : 'left'}
+        />
+      )}
     </div>
   );
 }
@@ -345,11 +338,17 @@ function Stage3() {
       <img src={BG_IMAGES.playground} alt="운동장" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
       <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)' }} />
       <div className="stage-header"><div className="stage-title">🚂 3단계: 기차는 멈추지 않아</div><div className="stage-subtitle">전이 & 감각 조절</div></div>
-      <div className="character-container"><div style={{ textAlign: 'center' }}><img src={playerImg} alt={P} className="character-sprite" /><div className="character-name-tag">{P}</div></div></div>
-      <div style={{ position: 'absolute', bottom: 160, right: 24, textAlign: 'center', zIndex: 90 }}><img src={npcImg} alt={N} className="character-sprite" /><div className="character-name-tag">{N}</div></div>
       {showDial && <div className="minigame-area"><TimerDial onComplete={handleDialComplete} /></div>}
       {showSquishy && <div className="minigame-area"><SquishyBreath onComplete={handleSquishyComplete} /></div>}
-      {dialogue && <DialogueBox {...dialogue} npcName={N} playerName={P} />}
+      {dialogue && (
+        <DialogueBox 
+          {...dialogue} 
+          npcName={N} 
+          playerName={P} 
+          characterImage={dialogue.speaker === P ? playerImg : dialogue.speaker === N ? npcImg : undefined}
+          characterPosition={dialogue.speaker === P ? 'right' : 'left'}
+        />
+      )}
     </div>
   );
 }
@@ -437,11 +436,17 @@ function Stage4() {
       <img src={BG_IMAGES.sciencelab} alt="미술시간" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
       <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)' }} />
       <div className="stage-header"><div className="stage-title">🧩 4단계: 사라진 퍼즐 조각</div><div className="stage-subtitle">강점 & 주체성</div></div>
-      <div className="character-container"><div style={{ textAlign: 'center' }}><img src={playerImg} alt={P} className="character-sprite" /><div className="character-name-tag">{P}</div></div></div>
-      <div style={{ position: 'absolute', bottom: 160, right: 24, textAlign: 'center', zIndex: 90 }}><img src={npcImg} alt={N} className="character-sprite" /><div className="character-name-tag">{N}</div></div>
       {showPecs && <div className="minigame-area"><PecsCardPuzzle npcName={N} onComplete={handlePecsComplete} /></div>}
       {showMosaic && <div className="minigame-area"><MosaicPuzzle onComplete={handleMosaicComplete} /></div>}
-      {dialogue && <DialogueBox {...dialogue} npcName={N} playerName={P} />}
+      {dialogue && (
+        <DialogueBox 
+          {...dialogue} 
+          npcName={N} 
+          playerName={P} 
+          characterImage={dialogue.speaker === P ? playerImg : dialogue.speaker === N ? npcImg : undefined}
+          characterPosition={dialogue.speaker === P ? 'right' : 'left'}
+        />
+      )}
     </div>
   );
 }
@@ -526,8 +531,6 @@ function Stage5() {
       <img src={BG_IMAGES.crossroads} alt="갈림길" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
       <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)' }} />
       <div className="stage-header"><div className="stage-title">🌲 5단계: 갈림길의 기억</div><div className="stage-subtitle">통합 & 신뢰</div></div>
-      <div className="character-container"><div style={{ textAlign: 'center' }}><img src={playerImg} alt={P} className="character-sprite" /><div className="character-name-tag">{P}</div></div></div>
-      <div style={{ position: 'absolute', bottom: 160, right: 24, textAlign: 'center', zIndex: 90 }}><img src={npcImg} alt={N} className="character-sprite" /><div className="character-name-tag">{N}</div></div>
 
       {step === 20 && !showFlashback && (
         <div className="minigame-area" style={{ textAlign: 'center' }}>
@@ -558,8 +561,17 @@ function Stage5() {
         </div>
       )}
 
-      {showScratch && <div className="minigame-area"><ScratchFog bgImage={BG_IMAGES.map} onComplete={() => setStep(40)} /></div>}
-      {dialogue && <DialogueBox {...dialogue} npcName={N} playerName={P} />}
+      {showScratch && <div className="minigame-area"><ScratchFog bgImage={BG_IMAGES.map} ribbonImage={ITEM_IMAGES.ribbon} onComplete={() => setStep(40)} /></div>}
+      
+      {dialogue && (
+        <DialogueBox 
+          {...dialogue} 
+          npcName={N} 
+          playerName={P} 
+          characterImage={dialogue.speaker === P ? playerImg : dialogue.speaker === N ? npcImg : undefined}
+          characterPosition={dialogue.speaker === P ? 'right' : 'left'}
+        />
+      )}
     </div>
   );
 }
