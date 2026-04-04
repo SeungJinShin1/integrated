@@ -11,24 +11,23 @@ import { DialogueData } from '@/types';
 export default function LowGradePage() {
   const router = useRouter();
   const { state, dispatch, setGradeMode } = useGame();
+  const [step, setStep] = useState(0);
   const [dialogue, setDialogue] = useState<DialogueData | null>({
     speaker: '시스템',
     text: '안녕! 나는 새싹 요원 본부의 연구원이야. 오늘 특별한 친구를 만나러 가볼까?',
     choices: [
       { text: '👧 여자 친구를 만나러 가기', action: () => { 
-          setGradeMode('low_grade');
           dispatch({ type: 'SET_NPC', payload: { name: '승주', gender: 'female' } }); 
-          dispatch({ type: 'SET_STAGE', payload: 'low_stage1' });
-          router.push('/low/episode/1');
-        } 
-      },
-      { text: '👦 남자 친구를 만나러 가기', action: () => { 
           setGradeMode('low_grade');
-          dispatch({ type: 'SET_NPC', payload: { name: '성민', gender: 'male' } }); 
           dispatch({ type: 'SET_STAGE', payload: 'low_stage1' });
           router.push('/low/episode/1');
-        } 
-      },
+      } },
+      { text: '👦 남자 친구를 만나러 가기', action: () => { 
+          dispatch({ type: 'SET_NPC', payload: { name: '성민', gender: 'male' } }); 
+          setGradeMode('low_grade');
+          dispatch({ type: 'SET_STAGE', payload: 'low_stage1' });
+          router.push('/low/episode/1');
+      } },
     ]
   });
 

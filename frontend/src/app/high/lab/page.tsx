@@ -7,13 +7,12 @@ import TopNavBar from '@/components/layout/TopNavBar';
 import { getNpcImage, getPlayerImage, BG_IMAGES } from '@/data/assetMap';
 import { FaRotateLeft } from 'react-icons/fa6';
 import dynamic from 'next/dynamic';
+import html2canvas from 'html2canvas';
 import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip } from 'chart.js';
 
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip);
 
 const Radar = dynamic(() => import('react-chartjs-2').then(mod => mod.Radar), { ssr: false });
-import html2canvas from 'html2canvas';
-
 
 const SYSTEM_PROMPT = `You are a friendly AI researcher at the "Prism Lab" in a Korean educational game about understanding autism spectrum disorder (ASD) for elementary school students (5th grade).
 RULES:
@@ -73,15 +72,19 @@ export default function LabPage() {
 
   const callAI = async (userMessage: string) => {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s timeout
       const res = await fetch(`${API_URL}/api/ai/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userMessage, systemPrompt: SYSTEM_PROMPT }),
+        signal: controller.signal
       });
+      clearTimeout(timeoutId);
       const data = await res.json();
       return data.reply || '답변을 생성하지 못했어요. 다시 질문해 주세요!';
     } catch {
-      return '🔌 연결 오류가 발생했어요. 잠시 후 다시 시도해 주세요.';
+      return '🔌 서버가 잠에서 깨어나는 중이거나 연결 오류가 발생했어요. 잠시 후 다시 시도해 주세요.';
     }
   };
 
@@ -94,21 +97,6 @@ export default function LabPage() {
     const reply = await callAI(msg);
     setChatMessages(prev => [...prev, { role: 'ai', text: reply }]);
     setLoading(false);
-  };
-
-  const handleDownload = async () => {
-    const el = document.getElementById('prism-report-card');
-    if (!el) return;
-    try {
-      const canvas = await html2canvas(el, { scale: 2, backgroundColor: '#ffffff' });
-      const url = canvas.toDataURL('image/png');
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `프리즘_요원_결과카드_${state.player.name}.png`;
-      a.click();
-    } catch (e) {
-      console.error('Failed to download image', e);
-    }
   };
 
   const stats = state.stats || { understanding: 0, trust: 0, communication: 0, patience: 0 };
@@ -134,14 +122,35 @@ export default function LabPage() {
 
   const suggestions = ['자폐는 병이야?', '왜 눈을 안 마주쳐?', '내가 어떻게 도와주면 돼?', `${N}는 왜 소리에 예민해?`];
 
+  const downloadCard = async () => {
+    const cardEl = document.getElementById('prism-result-card');
+    if (!cardEl) return;
+    try {
+      const canvas = await html2canvas(cardEl, { scale: 2, useCORS: true });
+      const link = document.createElement('a');
+      link.download = `프리즘결과카드_${P}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (err) {
+      console.error('Failed to download card', err);
+      alert('결과 카드 저장에 실패했습니다.');
+    }
+  };
+
   return (
     <>
       <TopNavBar />
-      <div className="game-area" style={{ position: 'relative' }}>
-        <img src={BG_IMAGES.exit} alt="프리즘 연구소" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(30,27,75,0.6)', backdropFilter: 'blur(4px)' }} />
-
-        <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', minHeight: '100%', padding: 16 }}>
+      <div className="game-area" style={{ 
+        position: 'relative', 
+        overflowY: 'auto', 
+        display: 'flex', 
+        flexDirection: 'column',
+        backgroundImage: `linear-gradient(rgba(30,27,75,0.6), rgba(30,27,75,0.6)), url(${BG_IMAGES.exit})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'local'
+      }}>
+        <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', flex: 1, padding: 16 }}>
           <div style={{ textAlign: 'center', marginBottom: 12 }}>
             <h1 style={{ fontSize: 20, fontWeight: 800, color: 'white' }}>🔬 6단계: 프리즘 연구소</h1>
             <p style={{ fontSize: 13, color: '#a5b4fc' }}>AI 회고 & 공유</p>
@@ -220,8 +229,8 @@ export default function LabPage() {
 
           {/* Phase 3: Report */}
           {phase === 'report' && (
-            <div className="animate-fade-in" style={{ flex: 1, overflowY: 'auto' }}>
-              <div style={{ background: 'var(--bg-card)', borderRadius: 20, padding: 24, maxWidth: 440, margin: '0 auto' }}>
+            <div className="animate-fade-in" style={{ flex: 1, overflowY: 'visible' }}>
+              <div id="prism-result-card" style={{ background: 'var(--bg-card)', borderRadius: 20, padding: 24, maxWidth: 440, margin: '0 auto' }}>
                 <h2 style={{ fontSize: 18, fontWeight: 800, color: '#1e293b', textAlign: 'center', marginBottom: 4 }}>🌈 프리즘 결과 카드</h2>
                 <p style={{ fontSize: 12, color: '#94a3b8', textAlign: 'center', marginBottom: 16 }}>Hidden Piece: The Secret Agent of Our Class</p>
 
@@ -276,14 +285,14 @@ export default function LabPage() {
                 </div>
               </div>
 
-              <div style={{ maxWidth: 440, margin: '16px auto', display: 'flex', flexDirection: 'column', gap: 12, paddingBottom: 40 }}>
-                <button onClick={handleDownload}
-                  style={{ width: '100%', padding: 16, background: '#eab308', color: 'white', border: 'none', borderRadius: 12, fontSize: 16, fontWeight: 800, cursor: 'pointer', fontFamily: "'Nanum Gothic', sans-serif", boxShadow: '0 8px 24px rgba(234,179,8,0.4)' }}>
-                  📥 결과 카드 이미지 저장 
+              <div style={{ maxWidth: 440, margin: '16px auto', display: 'flex', gap: 12, paddingBottom: 16 }}>
+                <button onClick={downloadCard}
+                  style={{ flex: 1, padding: 14, background: '#3b82f6', color: 'white', border: 'none', borderRadius: 12, fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: "'Nanum Gothic', sans-serif" }}>
+                  💾 프리즘 카드 내려받기
                 </button>
-                <button onClick={() => { window.location.href = '/'; }}
-                  style={{ width: '100%', padding: 14, background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: "'Nanum Gothic', sans-serif" }}>
-                  <FaRotateLeft style={{ display: 'inline', marginRight: 8 }} />처음으로 돌아가기
+                <button onClick={() => { resetGame(); router.push('/start'); }}
+                  style={{ flex: 1, padding: 14, background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 12, fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: "'Nanum Gothic', sans-serif" }}>
+                  <FaRotateLeft style={{ display: 'inline', marginRight: 8 }} />다시 시작
                 </button>
               </div>
             </div>
