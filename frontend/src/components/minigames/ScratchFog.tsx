@@ -14,6 +14,7 @@ export default function ScratchFog({ bgImage, onComplete, ribbonImage }: Scratch
   const [scratched, setScratched] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [showRibbons, setShowRibbons] = useState(false);
+  const [fogCleared, setFogCleared] = useState(false);
   const isDrawing = useRef(false);
 
   useEffect(() => {
@@ -76,10 +77,9 @@ export default function ScratchFog({ bgImage, onComplete, ribbonImage }: Scratch
     const pct = (transparent / (340 * 220)) * 100;
     setScratched(pct);
 
-    if (pct > 55 && !completed) {
-      setCompleted(true);
+    if (pct > 75 && !fogCleared) {
+      setFogCleared(true);
       setShowRibbons(true);
-      onComplete();
     }
   };
 
@@ -148,26 +148,42 @@ export default function ScratchFog({ bgImage, onComplete, ribbonImage }: Scratch
               justifyContent: 'center',
               alignItems: 'center',
               gap: 20,
-              zIndex: 1,
+              zIndex: fogCleared ? 20 : 1,
+              pointerEvents: 'none',
             }}>
-              {[0, 1, 2].map(i => (
-                <img
-                  key={i}
-                  src={ribbonImage}
-                  alt="노란 리본"
-                  className={showRibbons ? 'animate-ribbon-reveal' : ''}
-                  style={{
-                    width: 50,
-                    height: 50,
-                    objectFit: 'contain',
-                    filter: 'drop-shadow(0 2px 8px rgba(251,191,36,0.6))',
-                    opacity: scratched > 20 ? Math.min(1, (scratched - 20) / 30) : 0,
-                    transition: 'opacity 0.5s',
-                    animationDelay: `${i * 0.2}s`,
-                    transform: `rotate(${(i - 1) * 15}deg)`,
-                  }}
-                />
-              ))}
+              <img
+                src={ribbonImage}
+                alt="노란 리본"
+                className={showRibbons ? 'animate-ribbon-reveal' : ''}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  if (fogCleared && !completed) {
+                    setCompleted(true);
+                    onComplete();
+                  }
+                }}
+                onTouchEnd={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  if (fogCleared && !completed) {
+                    setCompleted(true);
+                    onComplete();
+                  }
+                }}
+                style={{
+                  width: 90,
+                  height: 90,
+                  objectFit: 'contain',
+                  filter: 'drop-shadow(0 4px 12px rgba(251,191,36,0.8))',
+                  opacity: scratched > 30 ? Math.min(1, (scratched - 30) / 45) : 0,
+                  transition: 'opacity 0.5s',
+                  cursor: fogCleared && !completed ? 'pointer' : 'default',
+                  pointerEvents: fogCleared && !completed ? 'auto' : 'none',
+                  animation: fogCleared && !completed ? 'pulse 1.5s infinite' : 'none',
+                  zIndex: 30, // pull to front to prevent canvas overlapping clicks
+                }}
+              />
             </div>
           )}
 
@@ -179,6 +195,7 @@ export default function ScratchFog({ bgImage, onComplete, ribbonImage }: Scratch
               inset: 0,
               cursor: completed ? 'default' : 'pointer',
               zIndex: 2,
+              pointerEvents: fogCleared ? 'none' : 'auto',
               width: '100%',
               height: '100%',
             }}
@@ -210,9 +227,14 @@ export default function ScratchFog({ bgImage, onComplete, ribbonImage }: Scratch
           }} />
         </div>
         <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 6 }}>
-          진행: {Math.round(Math.min(100, scratched / 55 * 100))}%
+          진행: {Math.round(Math.min(100, scratched / 75 * 100))}%
         </p>
 
+        {fogCleared && !completed && (
+          <p className="minigame-success animate-success-scale" style={{ marginTop: 8, color: '#fbbf24' }}>
+            👆 리본을 터치하세요!
+          </p>
+        )}
         {completed && (
           <p className="minigame-success animate-success-scale" style={{ marginTop: 8 }}>
             🎗️ 노란 리본을 발견했어요!

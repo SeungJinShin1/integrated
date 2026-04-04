@@ -4,10 +4,10 @@ import { useState, useEffect, useRef } from 'react';
 import ParticleCanvas from './ParticleCanvas';
 
 const PIECES = [
-  { id: 1, color: '#60a5fa', label: '#60a5fa', correct: false },
-  { id: 2, color: '#3b82f6', label: '#3b82f6', correct: true },
-  { id: 3, color: '#93c5fd', label: '#93c5fd', correct: false },
-  { id: 4, color: '#2563eb', label: '#2563eb', correct: false },
+  { id: 1, color: '#60a5fa', label: '연한 파란색', correct: false },
+  { id: 2, color: '#3b82f6', label: '파란색', correct: true },
+  { id: 3, color: '#93c5fd', label: '연한 하늘색', correct: false },
+  { id: 4, color: '#2563eb', label: '진한 파란색', correct: false },
 ];
 
 export default function MosaicPuzzle({ onComplete }: { onComplete: () => void }) {
@@ -73,7 +73,8 @@ export default function MosaicPuzzle({ onComplete }: { onComplete: () => void })
               {result === 'correct' ? '✓' : '?'}
             </span>
           </div>
-          <p style={{ fontSize: 12, color: '#93c5fd', marginTop: 10 }}>빈 칸의 색: #3b82f6</p>
+          <p style={{ fontSize: 16, fontWeight: 800, color: '#93c5fd', marginTop: 10 }}>빈 칸의 색: 파란색</p>
+          <p style={{ fontSize: 14, color: '#fcd34d', marginTop: 6 }}>💡 힌트: '파란색'은 연한색과 진한색의 중간 정도로 가장 선명한 파란색이에요.</p>
         </div>
 
         {/* Color pieces grid */}
@@ -108,23 +109,23 @@ export default function MosaicPuzzle({ onComplete }: { onComplete: () => void })
                 position: 'relative',
               }}
             >
-              {/* Color label on hover */}
-              {hoveredId === p.id && (
-                <div style={{
-                  position: 'absolute',
-                  bottom: -24,
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  background: 'rgba(0,0,0,0.8)',
-                  color: 'white',
-                  padding: '2px 8px',
-                  borderRadius: 6,
-                  fontSize: 10,
-                  whiteSpace: 'nowrap',
-                }}>
-                  {p.label}
-                </div>
-              )}
+              {/* Color label permanently visible to avoid confusion with hex codes */}
+              <div style={{
+                position: 'absolute',
+                bottom: 8,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background: 'rgba(0,0,0,0.7)',
+                color: 'white',
+                padding: '4px 8px',
+                borderRadius: 8,
+                fontSize: 12,
+                fontWeight: 800,
+                whiteSpace: 'nowrap',
+                pointerEvents: 'none',
+              }}>
+                {p.label}
+              </div>
             </button>
           ))}
         </div>

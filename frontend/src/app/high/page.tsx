@@ -42,7 +42,11 @@ export default function HighGradePage() {
       return;
     }
     dispatch({ type: 'SET_STAGE', payload: stageId });
-    router.push(`/high/stage/${index + 1}`);
+    if (stageId === 'stage-6') {
+      router.push('/high/lab');
+    } else {
+      router.push(`/high/stage/${index + 1}`);
+    }
   };
 
   return (

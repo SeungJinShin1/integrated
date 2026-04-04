@@ -6,10 +6,12 @@ import { useGame } from '@/contexts/GameContext';
 import TopNavBar from '@/components/layout/TopNavBar';
 import { getNpcImage, getPlayerImage, BG_IMAGES } from '@/data/assetMap';
 import { FaRotateLeft } from 'react-icons/fa6';
-import { Radar } from 'react-chartjs-2';
+import dynamic from 'next/dynamic';
 import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip } from 'chart.js';
 
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip);
+
+const Radar = dynamic(() => import('react-chartjs-2').then(mod => mod.Radar), { ssr: false });
 
 const SYSTEM_PROMPT = `You are a friendly AI researcher at the "Prism Lab" in a Korean educational game about understanding autism spectrum disorder (ASD) for elementary school students (5th grade).
 RULES:
@@ -40,9 +42,10 @@ export default function LabPage() {
 
   useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [chatMessages]);
 
-  // Check if stages 1-5 are all complete
+  // Check if stages 1-5 are all complete safely
+  const completedStages = state.completedStages || [];
   const allComplete = ['stage-1', 'stage-2', 'stage-3', 'stage-4', 'stage-5']
-    .every(s => state.completedStages.includes(s));
+    .every(s => completedStages.includes(s));
 
   if (!allComplete) {
     return (
@@ -91,17 +94,19 @@ export default function LabPage() {
     setLoading(false);
   };
 
-  const stats = state.stats;
-  const prismScore = Math.round((stats.understanding + stats.trust + stats.communication + stats.patience) / 4);
-  const accuracy = state.logs.tool_attempts > 0 ? Math.round((state.logs.tool_accuracy / state.logs.tool_attempts) * 100) : 100;
+  const stats = state.stats || { understanding: 0, trust: 0, communication: 0, patience: 0 };
+  const prismScore = Math.round(((stats.understanding || 0) + (stats.trust || 0) + (stats.communication || 0) + (stats.patience || 0)) / 4);
+  const logs = state.logs || { tool_attempts: 0, tool_accuracy: 0, waiting_count: 0 };
+  const accuracy = logs.tool_attempts > 0 ? Math.round((logs.tool_accuracy / logs.tool_attempts) * 100) : 100;
   const grade = prismScore >= 80 ? '🏆 S등급 - 프리즘 마스터' : prismScore >= 60 ? '🥇 A등급 - 프리즘 요원' : prismScore >= 40 ? '🥈 B등급 - 프리즘 수습생' : '🥉 C등급 - 프리즘 입문자';
 
+  const usedTools = state.usedTools || [];
   const badges: string[] = [];
-  if (state.usedTools.includes('aac')) badges.push('🏅 소통의 배지');
-  if (state.usedTools.includes('headset')) badges.push('🛡️ 배려의 방패');
-  if (state.usedTools.includes('timer')) badges.push('⏰ 약속의 시계');
-  if (state.usedTools.includes('pecs')) badges.push('💡 협력의 전구');
-  if (state.usedTools.includes('ribbon') || state.usedTools.includes('map')) badges.push('🌈 프리즘 팀');
+  if (usedTools.includes('aac')) badges.push('🏅 소통의 배지');
+  if (usedTools.includes('headset')) badges.push('🛡️ 배려의 방패');
+  if (usedTools.includes('timer')) badges.push('⏰ 약속의 시계');
+  if (usedTools.includes('pecs')) badges.push('💡 협력의 전구');
+  if (usedTools.includes('ribbon') || usedTools.includes('map')) badges.push('🌈 프리즘 팀');
 
   const radarData = {
     labels: ['이해', '신뢰', '소통', '인내'],
@@ -244,9 +249,9 @@ export default function LabPage() {
                 )}
 
                 <div style={{ background: '#f8fafc', borderRadius: 12, padding: 12, fontSize: 14, marginBottom: 16 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}><span style={{ color: '#64748b' }}>⏳ 기다려준 횟수</span><span style={{ fontWeight: 700, color: '#334155' }}>{state.logs.waiting_count}회</span></div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}><span style={{ color: '#64748b' }}>⏳ 기다려준 횟수</span><span style={{ fontWeight: 700, color: '#334155' }}>{logs.waiting_count || 0}회</span></div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}><span style={{ color: '#64748b' }}>🎯 도구 정확도</span><span style={{ fontWeight: 700, color: '#334155' }}>{accuracy}%</span></div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#64748b' }}>🧰 사용한 도구</span><span style={{ fontWeight: 700, color: '#334155' }}>{state.usedTools.length}개</span></div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#64748b' }}>🧰 사용한 도구</span><span style={{ fontWeight: 700, color: '#334155' }}>{usedTools.length}개</span></div>
                 </div>
 
                 <div style={{ background: 'linear-gradient(135deg, #eef2ff, #f3e8ff)', borderRadius: 12, padding: 12, textAlign: 'center', marginBottom: 16 }}>

@@ -138,9 +138,9 @@ body {
 /* Character overlapping the dialogue box */
 .dialogue-character {
   position: absolute;
-  bottom: 16px;
+  bottom: 0px;
   left: 16px;
-  z-index: 110;
+  z-index: 50; /* Set below dialogue box */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -178,27 +178,28 @@ body {
 }
 
 .dialogue-box {
-  background: rgba(10, 15, 30, 0.92);
-  backdrop-filter: blur(24px);
+  background: rgba(10, 15, 30, 0.85); /* Slightly more transparent to see character behind */
+  backdrop-filter: blur(8px); /* Reduce blur so character is somewhat visible */
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 20px;
-  padding: 28px 32px 24px;
-  padding-left: 200px; /* Space for character */
+  padding: 24px 32px;
   position: relative;
+  z-index: 100;
   cursor: pointer;
   transition: background 0.2s;
   box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
-  min-height: 100px;
+  min-height: 120px; /* Consistent height */
+  width: 100%; /* Consistent width */
 }
 
 .dialogue-box:hover {
-  background: rgba(10, 15, 30, 0.96);
+  background: rgba(10, 15, 30, 0.90);
   border-color: rgba(255, 255, 255, 0.18);
 }
 
 /* When no character image, reduce left padding */
 .dialogue-character + .dialogue-box {
-  padding-left: 200px;
+  padding-left: 32px;
 }
 
 .dialogue-box:first-child {
@@ -220,9 +221,10 @@ body {
 
 .dialogue-text {
   color: #e2e8f0;
-  font-size: 16px;
-  line-height: 1.8;
+  font-size: 22px; /* Increased font size */
+  line-height: 1.6;
   letter-spacing: 0.01em;
+  font-weight: 700; /* Made slightly bolder for legibility */
 }
 
 .dialogue-text .highlight {
@@ -825,7 +827,7 @@ body {
   }
 
   .dialogue-box {
-    padding-left: 140px !important;
+    padding: 20px 24px !important;
   }
 
   .character-sprite {
@@ -845,7 +847,7 @@ body {
   }
 
   .dialogue-box {
-    padding-left: 110px !important;
+    padding: 16px 20px !important;
   }
 
   .dialogue-character-name {
