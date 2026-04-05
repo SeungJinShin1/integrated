@@ -5,34 +5,30 @@ from app.models.schemas import AIChatRequest
 
 router = APIRouter()
 
-def get_genai():
+def get_genai(system_prompt: str = None):
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
         print("Warning: GEMINI_API_KEY is not set.")
         return None
     genai.configure(api_key=api_key)
-    # Using the latest Gemini 3 Flash model
-    return genai.GenerativeModel('gemini-3-flash-preview')
+    # Using the latest Gemini 3 Flash model with system instruction
+    return genai.GenerativeModel(
+        'gemini-3-flash-preview',
+        system_instruction=system_prompt
+    )
 
 @router.post("/chat")
 async def chat_with_ai(req: AIChatRequest):
-    model = get_genai()
+    model = get_genai(req.systemPrompt)
     if not model:
         raise HTTPException(status_code=500, detail="AI component not configured on server")
-    
+
     try:
-        # Construct the conversation with system prompt behavior
-        # In Gemini API, system_instruction can be set, but for simplicity in flash/pro depending on version, 
-        # injecting it into the first prompt or using standard parameters works best.
-        # We will wrap it securely.
-        
-        full_prompt = f"System Rules:\n{req.systemPrompt}\n\nUser Question: {req.message}\n\nAI Response:"
-        
         response = model.generate_content(
-            full_prompt,
+            req.message,
             generation_config=genai.types.GenerationConfig(
-                temperature=0.7,
-                max_output_tokens=300,
+                temperature=0.75,
+                max_output_tokens=1024,
             )
         )
         return {"reply": response.text.strip()}

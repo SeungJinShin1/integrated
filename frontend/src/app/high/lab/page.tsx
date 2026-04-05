@@ -154,12 +154,7 @@ export default function LabPage() {
   return (
     <>
       <TopNavBar />
-      <div className="game-area" style={{ 
-        position: 'relative', 
-        overflowY: 'auto', 
-        display: 'flex', 
-        flexDirection: 'column',
-      }}>
+      <div className="game-area">
         {/* Background Image Layer */}
         <div style={{
           position: 'fixed',
@@ -183,7 +178,7 @@ export default function LabPage() {
           zIndex: 1,
         }} />
 
-        <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', flex: 1, padding: 16, minHeight: '100%' }}>
+        <div style={{ position: 'relative', zIndex: 10, padding: 16 }}>
           <div style={{ textAlign: 'center', marginBottom: 16 }}>
             <h1 style={{ fontSize: 22, fontWeight: 800, color: 'white', textShadow: '0 2px 12px rgba(0,0,0,0.5)' }}>🔬 6단계: 프리즘 연구소</h1>
             <p style={{ fontSize: 14, color: '#a5b4fc' }}>AI 회고 & 공유</p>
