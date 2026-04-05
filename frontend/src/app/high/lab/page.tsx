@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useGame } from '@/contexts/GameContext';
 import TopNavBar from '@/components/layout/TopNavBar';
 import { getNpcImage, getPlayerImage, BG_IMAGES } from '@/data/assetMap';
-import { FaRotateLeft } from 'react-icons/fa6';
+import { FaRotateLeft, FaDownload } from 'react-icons/fa6';
 import dynamic from 'next/dynamic';
 import html2canvas from 'html2canvas';
 import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip } from 'chart.js';
@@ -81,9 +81,15 @@ export default function LabPage() {
         signal: controller.signal
       });
       clearTimeout(timeoutId);
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        console.error('AI API error:', res.status, errorData);
+        return '🔌 서버 오류가 발생했어요. 잠시 후 다시 시도해 주세요.';
+      }
       const data = await res.json();
       return data.reply || '답변을 생성하지 못했어요. 다시 질문해 주세요!';
-    } catch {
+    } catch (err) {
+      console.error('AI fetch error:', err);
       return '🔌 서버가 잠에서 깨어나는 중이거나 연결 오류가 발생했어요. 잠시 후 다시 시도해 주세요.';
     }
   };
@@ -118,7 +124,7 @@ export default function LabPage() {
     datasets: [{ label: '역량', data: [stats.understanding, stats.trust, stats.communication, stats.patience], backgroundColor: 'rgba(99,102,241,0.25)', borderColor: 'rgba(99,102,241,0.8)', borderWidth: 2, pointBackgroundColor: '#6366f1', pointBorderColor: '#fff', pointBorderWidth: 1, pointRadius: 4 }]
   };
 
-  const radarOptions = { responsive: true, maintainAspectRatio: true, plugins: { tooltip: { enabled: false } }, scales: { r: { min: 0, max: 100, ticks: { stepSize: 20, display: false }, pointLabels: { font: { size: 13, weight: 'bold' as const }, color: '#475569' }, grid: { color: 'rgba(100,116,139,0.15)' }, angleLines: { color: 'rgba(100,116,139,0.15)' } } } };
+  const radarOptions = { responsive: true, maintainAspectRatio: true, plugins: { tooltip: { enabled: false } }, scales: { r: { min: 0, max: 100, ticks: { stepSize: 20, display: false }, pointLabels: { font: { size: 13, weight: 'bold' as const, family: "'Nanum Gothic', sans-serif" }, color: '#475569' }, grid: { color: 'rgba(100,116,139,0.15)' }, angleLines: { color: 'rgba(100,116,139,0.15)' } } } };
 
   const suggestions = ['자폐는 병이야?', '왜 눈을 안 마주쳐?', '내가 어떻게 도와주면 돼?', `${N}는 왜 소리에 예민해?`];
 
@@ -126,14 +132,21 @@ export default function LabPage() {
     const cardEl = document.getElementById('prism-result-card');
     if (!cardEl) return;
     try {
-      const canvas = await html2canvas(cardEl, { scale: 2, useCORS: true });
+      const canvas = await html2canvas(cardEl, { 
+        scale: 2, 
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+      });
       const link = document.createElement('a');
       link.download = `프리즘결과카드_${P}.png`;
       link.href = canvas.toDataURL('image/png');
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
     } catch (err) {
       console.error('Failed to download card', err);
-      alert('결과 카드 저장에 실패했습니다.');
+      alert('결과 카드 저장에 실패했습니다. 다시 시도해 주세요.');
     }
   };
 
@@ -145,34 +158,60 @@ export default function LabPage() {
         overflowY: 'auto', 
         display: 'flex', 
         flexDirection: 'column',
-        backgroundImage: `linear-gradient(rgba(30,27,75,0.6), rgba(30,27,75,0.6)), url(${BG_IMAGES.exit})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'local'
       }}>
-        <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', flex: 1, padding: 16 }}>
-          <div style={{ textAlign: 'center', marginBottom: 12 }}>
-            <h1 style={{ fontSize: 20, fontWeight: 800, color: 'white' }}>🔬 6단계: 프리즘 연구소</h1>
-            <p style={{ fontSize: 13, color: '#a5b4fc' }}>AI 회고 & 공유</p>
+        {/* Background Image Layer */}
+        <div style={{
+          position: 'fixed',
+          top: 'var(--nav-height)',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundImage: `url(${BG_IMAGES.exit})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          zIndex: 0,
+        }} />
+        {/* Dark overlay on background */}
+        <div style={{
+          position: 'fixed',
+          top: 'var(--nav-height)',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(30,27,75,0.55)',
+          zIndex: 1,
+        }} />
+
+        <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', flex: 1, padding: 16, minHeight: '100%' }}>
+          <div style={{ textAlign: 'center', marginBottom: 16 }}>
+            <h1 style={{ fontSize: 22, fontWeight: 800, color: 'white', textShadow: '0 2px 12px rgba(0,0,0,0.5)' }}>🔬 6단계: 프리즘 연구소</h1>
+            <p style={{ fontSize: 14, color: '#a5b4fc' }}>AI 회고 & 공유</p>
           </div>
 
           {/* Phase 1: Journal */}
           {phase === 'journal' && (
             <div className="animate-fade-in" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ background: 'var(--bg-card)', borderRadius: 20, padding: 24, maxWidth: 440, width: '100%' }}>
-                <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
-                  <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>🔬</div>
-                  <div><p style={{ fontSize: 13, color: '#94a3b8' }}>AI 연구원</p><p style={{ color: '#334155' }}>&quot;오늘 {N}(이)와 함께하며 느낀 점은?&quot;</p></div>
+              <div style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(16px)', borderRadius: 24, padding: 28, maxWidth: 480, width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.2)' }}>
+                <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
+                  <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, boxShadow: '0 4px 12px rgba(99,102,241,0.2)' }}>🔬</div>
+                  <div>
+                    <p style={{ fontSize: 13, color: '#6366f1', fontWeight: 700 }}>AI 연구원</p>
+                    <p style={{ color: '#334155', fontSize: 15, lineHeight: 1.5 }}>&quot;오늘 {N}(이)와 함께하며 느낀 점은?&quot;</p>
+                  </div>
                 </div>
                 <textarea value={journal} onChange={e => setJournal(e.target.value)} placeholder={`오늘 알게 된 ${N}의 특징이나, 내가 잘한 점을 적어보세요.`}
-                  style={{ width: '100%', height: 128, padding: 12, borderRadius: 12, border: '2px solid #e2e8f0', resize: 'none', fontSize: 14, color: '#334155', fontFamily: "'Nanum Gothic', sans-serif", outline: 'none' }} />
+                  style={{ width: '100%', height: 140, padding: 14, borderRadius: 14, border: '2px solid #e2e8f0', resize: 'none', fontSize: 15, color: '#334155', outline: 'none', lineHeight: 1.6, transition: 'border-color 0.2s' }} 
+                  onFocus={e => e.target.style.borderColor = '#6366f1'}
+                  onBlur={e => e.target.style.borderColor = '#e2e8f0'}
+                />
                 <button onClick={() => { if (journal.trim()) setPhase('chat'); }}
                   disabled={!journal.trim()}
                   style={{
-                    width: '100%', marginTop: 12, padding: 14, borderRadius: 12, border: 'none',
+                    width: '100%', marginTop: 14, padding: 16, borderRadius: 14, border: 'none',
                     background: journal.trim() ? 'linear-gradient(135deg, #6366f1, #a855f7)' : '#e2e8f0',
-                    color: journal.trim() ? 'white' : '#94a3b8', fontSize: 15, fontWeight: 800, cursor: journal.trim() ? 'pointer' : 'not-allowed',
-                    fontFamily: "'Nanum Gothic', sans-serif",
+                    color: journal.trim() ? 'white' : '#94a3b8', fontSize: 16, fontWeight: 800, cursor: journal.trim() ? 'pointer' : 'not-allowed',
+                    boxShadow: journal.trim() ? '0 8px 24px rgba(99,102,241,0.3)' : 'none',
+                    transition: 'all 0.2s',
                   }}>
                   📝 일지 저장 & 다음
                 </button>
@@ -182,46 +221,104 @@ export default function LabPage() {
 
           {/* Phase 2: AI Chat */}
           {phase === 'chat' && (
-            <div className="animate-fade-in" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-              <div style={{ flex: 1, overflowY: 'auto', background: 'rgba(255,255,255,0.9)', borderRadius: 16, padding: 16, marginBottom: 12 }}>
+            <div className="animate-fade-in" style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+              {/* Chat Messages */}
+              <div style={{ 
+                flex: 1, overflowY: 'auto', 
+                background: 'rgba(255,255,255,0.92)', 
+                backdropFilter: 'blur(12px)',
+                borderRadius: 20, padding: 20, marginBottom: 12,
+                border: '1px solid rgba(255,255,255,0.3)',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+                minHeight: 200,
+                maxHeight: 'calc(100vh - 340px)',
+              }}>
                 {chatMessages.map((m, i) => (
-                  <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 12, flexDirection: m.role === 'user' ? 'row-reverse' : 'row' }}>
-                    <div style={{ width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '1px solid #e2e8f0', flexShrink: 0 }}>
-                      {m.role === 'ai' ? <span style={{ fontSize: 18 }}>🔬</span> : <img src={playerImg} alt={P} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                  <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 14, flexDirection: m.role === 'user' ? 'row-reverse' : 'row' }}>
+                    <div style={{ 
+                      width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                      overflow: 'hidden', border: '2px solid', borderColor: m.role === 'ai' ? '#c7d2fe' : '#a5b4fc',
+                      flexShrink: 0, background: m.role === 'ai' ? '#eef2ff' : '#f5f3ff',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                    }}>
+                      {m.role === 'ai' ? <span style={{ fontSize: 20 }}>🔬</span> : <img src={playerImg} alt={P} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
                     </div>
-                    <div style={{ maxWidth: '75%', borderRadius: 16, padding: '10px 16px', fontSize: 14, lineHeight: 1.6, background: m.role === 'ai' ? '#eef2ff' : '#6366f1', color: m.role === 'ai' ? '#334155' : 'white' }}>
+                    <div style={{ 
+                      maxWidth: '75%', borderRadius: m.role === 'ai' ? '4px 18px 18px 18px' : '18px 4px 18px 18px', 
+                      padding: '12px 18px', fontSize: 14, lineHeight: 1.7, 
+                      background: m.role === 'ai' ? '#eef2ff' : 'linear-gradient(135deg, #6366f1, #818cf8)', 
+                      color: m.role === 'ai' ? '#334155' : 'white',
+                      boxShadow: m.role === 'ai' ? '0 2px 8px rgba(0,0,0,0.06)' : '0 2px 12px rgba(99,102,241,0.3)',
+                    }}>
                       {m.text}
                     </div>
                   </div>
                 ))}
-                {loading && <div style={{ display: 'flex', gap: 8 }}><div style={{ width: 32, height: 32, borderRadius: '50%', background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🔬</div><div style={{ background: '#eef2ff', borderRadius: 16, padding: '10px 16px', fontSize: 14, color: '#94a3b8' }}>생각 중...</div></div>}
+                {loading && (
+                  <div style={{ display: 'flex', gap: 10 }}>
+                    <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #c7d2fe' }}>🔬</div>
+                    <div style={{ background: '#eef2ff', borderRadius: '4px 18px 18px 18px', padding: '12px 18px', fontSize: 14, color: '#6366f1', display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span className="animate-pulse">💭 생각 중...</span>
+                    </div>
+                  </div>
+                )}
                 <div ref={chatEndRef} />
               </div>
 
+              {/* Quick Suggestions */}
               {chatMessages.length <= 2 && (
-                <div style={{ display: 'flex', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
                   {suggestions.map((s, i) => (
                     <button key={i} onClick={() => setChatInput(s)} style={{
-                      padding: '6px 12px', background: 'rgba(255,255,255,0.8)', color: '#475569',
-                      borderRadius: 20, fontSize: 12, border: '1px solid rgba(255,255,255,0.5)', cursor: 'pointer',
-                      fontFamily: "'Nanum Gothic', sans-serif",
-                    }}>{s}</button>
+                      padding: '8px 14px', background: 'rgba(255,255,255,0.85)', color: '#4f46e5',
+                      borderRadius: 20, fontSize: 13, border: '1px solid rgba(99,102,241,0.3)', cursor: 'pointer',
+                      fontWeight: 600, transition: 'all 0.2s', backdropFilter: 'blur(8px)',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                    }}
+                    onMouseEnter={e => { (e.target as HTMLElement).style.background = '#eef2ff'; (e.target as HTMLElement).style.borderColor = '#6366f1'; }}
+                    onMouseLeave={e => { (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.85)'; (e.target as HTMLElement).style.borderColor = 'rgba(99,102,241,0.3)'; }}
+                    >{s}</button>
                   ))}
                 </div>
               )}
 
-              <div style={{ display: 'flex', gap: 8 }}>
+              {/* Input Area */}
+              <div style={{ display: 'flex', gap: 10 }}>
                 <input type="text" value={chatInput} onChange={e => setChatInput(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
                   placeholder={`${N} 같은 친구에 대해 궁금한 점을 물어보세요...`}
-                  style={{ flex: 1, padding: '12px 16px', borderRadius: 12, border: '2px solid rgba(255,255,255,0.5)', background: 'rgba(255,255,255,0.9)', color: '#334155', fontSize: 14, outline: 'none', fontFamily: "'Nanum Gothic', sans-serif" }} />
+                  style={{ 
+                    flex: 1, padding: '14px 18px', borderRadius: 14, border: '2px solid rgba(255,255,255,0.4)', 
+                    background: 'rgba(255,255,255,0.92)', color: '#334155', fontSize: 15, outline: 'none',
+                    backdropFilter: 'blur(8px)', transition: 'border-color 0.2s',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#6366f1'}
+                  onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.4)'}
+                />
                 <button onClick={sendMessage} disabled={loading || !chatInput.trim()} style={{
-                  padding: '12px 20px', background: 'linear-gradient(135deg, #6366f1, #a855f7)', color: 'white',
-                  borderRadius: 12, border: 'none', fontWeight: 700, cursor: 'pointer', opacity: loading || !chatInput.trim() ? 0.5 : 1,
+                  padding: '14px 22px', background: 'linear-gradient(135deg, #6366f1, #a855f7)', color: 'white',
+                  borderRadius: 14, border: 'none', fontWeight: 700, cursor: 'pointer', 
+                  opacity: loading || !chatInput.trim() ? 0.5 : 1,
+                  boxShadow: '0 4px 16px rgba(99,102,241,0.3)',
+                  transition: 'all 0.2s', fontSize: 16,
                 }}>➤</button>
               </div>
+
+              {/* Proceed to Report Button */}
               <button onClick={() => { completeStage('stage-6'); setPhase('report'); }}
-                style={{ marginTop: 8, width: '100%', padding: 14, background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 12, fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: "'Nanum Gothic', sans-serif" }}>
+                style={{ 
+                  marginTop: 12, width: '100%', padding: 16, 
+                  background: 'linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.2))',
+                  backdropFilter: 'blur(12px)',
+                  color: 'white', border: '1px solid rgba(255,255,255,0.25)', borderRadius: 14, 
+                  fontSize: 15, fontWeight: 700, cursor: 'pointer',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={e => { (e.target as HTMLElement).style.background = 'linear-gradient(135deg, rgba(99,102,241,0.35), rgba(168,85,247,0.35))'; }}
+                onMouseLeave={e => { (e.target as HTMLElement).style.background = 'linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.2))'; }}
+              >
                 📊 결과 카드 확인 & 엔딩
               </button>
             </div>
@@ -229,70 +326,107 @@ export default function LabPage() {
 
           {/* Phase 3: Report */}
           {phase === 'report' && (
-            <div className="animate-fade-in" style={{ flex: 1, overflowY: 'visible' }}>
-              <div id="prism-result-card" style={{ background: 'var(--bg-card)', borderRadius: 20, padding: 24, maxWidth: 440, margin: '0 auto' }}>
-                <h2 style={{ fontSize: 18, fontWeight: 800, color: '#1e293b', textAlign: 'center', marginBottom: 4 }}>🌈 프리즘 결과 카드</h2>
-                <p style={{ fontSize: 12, color: '#94a3b8', textAlign: 'center', marginBottom: 16 }}>Hidden Piece: The Secret Agent of Our Class</p>
+            <div className="animate-fade-in" style={{ flex: 1, overflowY: 'visible', paddingBottom: 32 }}>
+              <div id="prism-result-card" style={{ 
+                background: '#ffffff', borderRadius: 24, padding: 28, maxWidth: 480, margin: '0 auto',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
+                border: '1px solid rgba(255,255,255,0.3)',
+              }}>
+                <h2 style={{ fontSize: 20, fontWeight: 800, color: '#1e293b', textAlign: 'center', marginBottom: 4 }}>🌈 프리즘 결과 카드</h2>
+                <p style={{ fontSize: 12, color: '#94a3b8', textAlign: 'center', marginBottom: 20 }}>Hidden Piece: The Secret Agent of Our Class</p>
 
-                <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginBottom: 16 }}>
-                  <div style={{ textAlign: 'center' }}><div style={{ width: 64, height: 80, borderRadius: 12, background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}><img src={playerImg} alt={P} style={{ height: '100%', objectFit: 'contain' }} /></div><p style={{ fontSize: 12, color: '#475569', marginTop: 4 }}>{P}</p></div>
-                  <div style={{ display: 'flex', alignItems: 'center', fontSize: 24 }}>🤝</div>
-                  <div style={{ textAlign: 'center' }}><div style={{ width: 64, height: 80, borderRadius: 12, background: '#fffbeb', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}><img src={npcImg} alt={N} style={{ height: '100%', objectFit: 'contain' }} /></div><p style={{ fontSize: 12, color: '#475569', marginTop: 4 }}>{N}</p></div>
+                <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginBottom: 20 }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ width: 68, height: 84, borderRadius: 14, background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', boxShadow: '0 4px 12px rgba(99,102,241,0.15)' }}>
+                      <img src={playerImg} alt={P} style={{ height: '100%', objectFit: 'contain' }} />
+                    </div>
+                    <p style={{ fontSize: 12, color: '#475569', marginTop: 6, fontWeight: 700 }}>{P}</p>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', fontSize: 28 }}>🤝</div>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ width: 68, height: 84, borderRadius: 14, background: '#fffbeb', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', boxShadow: '0 4px 12px rgba(251,191,36,0.15)' }}>
+                      <img src={npcImg} alt={N} style={{ height: '100%', objectFit: 'contain' }} />
+                    </div>
+                    <p style={{ fontSize: 12, color: '#475569', marginTop: 6, fontWeight: 700 }}>{N}</p>
+                  </div>
                 </div>
 
-                <div style={{ background: 'linear-gradient(135deg, #6366f1, #a855f7)', borderRadius: 12, padding: 12, textAlign: 'center', color: 'white', marginBottom: 16 }}>
-                  <p style={{ fontSize: 13, opacity: 0.8 }}>프리즘 점수: {prismScore}</p>
-                  <p style={{ fontSize: 18, fontWeight: 800 }}>{grade}</p>
+                <div style={{ background: 'linear-gradient(135deg, #6366f1, #a855f7)', borderRadius: 14, padding: 14, textAlign: 'center', color: 'white', marginBottom: 20, boxShadow: '0 4px 16px rgba(99,102,241,0.3)' }}>
+                  <p style={{ fontSize: 13, opacity: 0.9 }}>프리즘 점수: {prismScore}</p>
+                  <p style={{ fontSize: 20, fontWeight: 800, marginTop: 2 }}>{grade}</p>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
-                  <div style={{ width: 200, height: 200 }}><Radar ref={chartRef} data={radarData} options={radarOptions} /></div>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+                  <div style={{ width: 220, height: 220 }}><Radar ref={chartRef} data={radarData} options={radarOptions} /></div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 16 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 20 }}>
                   {[{ l: '💡 이해', v: stats.understanding }, { l: '🤝 신뢰', v: stats.trust }, { l: '💬 소통', v: stats.communication }, { l: '🧘 인내', v: stats.patience }].map(s => (
-                    <div key={s.l} style={{ background: '#f8fafc', borderRadius: 8, padding: 8, textAlign: 'center' }}>
-                      <p style={{ fontSize: 11, color: '#64748b' }}>{s.l}</p>
-                      <p style={{ fontSize: 20, fontWeight: 800, color: '#4f46e5' }}>{s.v}</p>
+                    <div key={s.l} style={{ background: '#f8fafc', borderRadius: 10, padding: 10, textAlign: 'center', border: '1px solid #f1f5f9' }}>
+                      <p style={{ fontSize: 11, color: '#64748b', fontWeight: 600 }}>{s.l}</p>
+                      <p style={{ fontSize: 22, fontWeight: 800, color: '#4f46e5' }}>{s.v}</p>
                     </div>
                   ))}
                 </div>
 
                 {journal && (
-                  <div style={{ background: '#fffbeb', borderRadius: 12, padding: 16, border: '1px solid #fde68a', marginBottom: 16 }}>
-                    <p style={{ fontSize: 13, fontWeight: 700, color: '#92400e', marginBottom: 4 }}>📝 나의 탐구 일지</p>
-                    <p style={{ fontSize: 14, color: '#b45309', whiteSpace: 'pre-wrap' }}>{journal}</p>
+                  <div style={{ background: '#fffbeb', borderRadius: 14, padding: 16, border: '1px solid #fde68a', marginBottom: 16 }}>
+                    <p style={{ fontSize: 13, fontWeight: 700, color: '#92400e', marginBottom: 6 }}>📝 나의 탐구 일지</p>
+                    <p style={{ fontSize: 14, color: '#b45309', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{journal}</p>
                   </div>
                 )}
 
                 {badges.length > 0 && (
-                  <div style={{ background: '#fffbeb', borderRadius: 12, padding: 12, border: '1px solid #fde68a', marginBottom: 16 }}>
+                  <div style={{ background: '#fffbeb', borderRadius: 14, padding: 14, border: '1px solid #fde68a', marginBottom: 16 }}>
                     <p style={{ fontSize: 13, fontWeight: 700, color: '#92400e', marginBottom: 8 }}>🎖️ 획득한 배지</p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
-                      {badges.map((b, i) => <span key={i} style={{ padding: '4px 12px', background: '#fef3c7', borderRadius: 20, fontSize: 13, color: '#92400e' }}>{b}</span>)}
+                      {badges.map((b, i) => <span key={i} style={{ padding: '5px 14px', background: '#fef3c7', borderRadius: 20, fontSize: 13, color: '#92400e', fontWeight: 600 }}>{b}</span>)}
                     </div>
                   </div>
                 )}
 
-                <div style={{ background: '#f8fafc', borderRadius: 12, padding: 12, fontSize: 14, marginBottom: 16 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}><span style={{ color: '#64748b' }}>⏳ 기다려준 횟수</span><span style={{ fontWeight: 700, color: '#334155' }}>{logs.waiting_count || 0}회</span></div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}><span style={{ color: '#64748b' }}>🎯 도구 정확도</span><span style={{ fontWeight: 700, color: '#334155' }}>{accuracy}%</span></div>
+                <div style={{ background: '#f8fafc', borderRadius: 14, padding: 14, fontSize: 14, marginBottom: 16, border: '1px solid #f1f5f9' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}><span style={{ color: '#64748b' }}>⏳ 기다려준 횟수</span><span style={{ fontWeight: 700, color: '#334155' }}>{logs.waiting_count || 0}회</span></div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}><span style={{ color: '#64748b' }}>🎯 도구 정확도</span><span style={{ fontWeight: 700, color: '#334155' }}>{accuracy}%</span></div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#64748b' }}>🧰 사용한 도구</span><span style={{ fontWeight: 700, color: '#334155' }}>{usedTools.length}개</span></div>
                 </div>
 
-                <div style={{ background: 'linear-gradient(135deg, #eef2ff, #f3e8ff)', borderRadius: 12, padding: 12, textAlign: 'center', marginBottom: 16 }}>
-                  <p style={{ fontSize: 14, fontWeight: 800, color: '#4338ca' }}>&quot;우리는 서로 달라서, 서로에게 필요한 존재입니다.&quot;</p>
+                <div style={{ background: 'linear-gradient(135deg, #eef2ff, #f3e8ff)', borderRadius: 14, padding: 14, textAlign: 'center' }}>
+                  <p style={{ fontSize: 15, fontWeight: 800, color: '#4338ca', lineHeight: 1.6 }}>&quot;우리는 서로 달라서, 서로에게 필요한 존재입니다.&quot;</p>
                 </div>
               </div>
 
-              <div style={{ maxWidth: 440, margin: '16px auto', display: 'flex', gap: 12, paddingBottom: 16 }}>
+              {/* Download & Reset Buttons */}
+              <div style={{ maxWidth: 480, margin: '20px auto', display: 'flex', gap: 12, paddingBottom: 24 }}>
                 <button onClick={downloadCard}
-                  style={{ flex: 1, padding: 14, background: '#3b82f6', color: 'white', border: 'none', borderRadius: 12, fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: "'Nanum Gothic', sans-serif" }}>
-                  💾 프리즘 카드 내려받기
+                  style={{ 
+                    flex: 1, padding: 16, 
+                    background: 'linear-gradient(135deg, #3b82f6, #2563eb)', 
+                    color: 'white', border: 'none', borderRadius: 14, 
+                    fontSize: 15, fontWeight: 700, cursor: 'pointer',
+                    boxShadow: '0 8px 24px rgba(59,130,246,0.3)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={e => { (e.target as HTMLElement).style.transform = 'translateY(-2px)'; }}
+                  onMouseLeave={e => { (e.target as HTMLElement).style.transform = 'translateY(0)'; }}
+                >
+                  <FaDownload /> 프리즘 카드 내려받기
                 </button>
                 <button onClick={() => { resetGame(); router.push('/start'); }}
-                  style={{ flex: 1, padding: 14, background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 12, fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: "'Nanum Gothic', sans-serif" }}>
-                  <FaRotateLeft style={{ display: 'inline', marginRight: 8 }} />다시 시작
+                  style={{ 
+                    flex: 1, padding: 16, 
+                    background: 'rgba(255,255,255,0.15)', 
+                    backdropFilter: 'blur(8px)',
+                    color: 'white', border: '1px solid rgba(255,255,255,0.25)', borderRadius: 14, 
+                    fontSize: 15, fontWeight: 700, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={e => { (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.25)'; }}
+                  onMouseLeave={e => { (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.15)'; }}
+                >
+                  <FaRotateLeft /> 다시 시작
                 </button>
               </div>
             </div>

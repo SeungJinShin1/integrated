@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useGame } from '@/contexts/GameContext';
 import TopNavBar from '@/components/layout/TopNavBar';
@@ -8,24 +8,41 @@ import { getLowNpcImage, LOW_BG_IMAGES, ITEM_IMAGES } from '@/data/assetMap';
 import { FaClock } from 'react-icons/fa6';
 import ParticleCanvas from '@/components/minigames/ParticleCanvas';
 
+// Hook to track container dimensions for ParticleCanvas
+function useContainerSize(ref: React.RefObject<HTMLDivElement | null>) {
+  const [size, setSize] = useState({ width: 800, height: 600 });
+  useEffect(() => {
+    if (!ref.current) return;
+    const ro = new ResizeObserver(([entry]) => {
+      setSize({ width: entry.contentRect.width, height: entry.contentRect.height });
+    });
+    ro.observe(ref.current);
+    return () => ro.disconnect();
+  }, [ref]);
+  return size;
+}
+
 // ===== Low Stage 1: 먼저 물어봐주기 =====
 function LowStage1() {
-  const { state, completeStage } = useGame();
+  const { state, completeStage, addHeart } = useGame();
   const router = useRouter();
   const [isComplete, setIsComplete] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { width, height } = useContainerSize(containerRef);
 
   const handleTap = () => {
     if (isComplete) return;
     setIsComplete(true);
+    addHeart();
   };
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+    <div ref={containerRef} style={{ position: 'relative', width: '100%', minHeight: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
       <img src={LOW_BG_IMAGES.stages} alt="bg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} />
       
-      <ParticleCanvas effect={isComplete ? 'success' : 'ambient'} active={true} intensity={isComplete ? 2 : 0.5} style={{ pointerEvents: 'none', zIndex: 1 }} />
+      <ParticleCanvas effect={isComplete ? 'success' : 'ambient'} active={true} intensity={isComplete ? 2 : 0.5} width={width} height={height} style={{ pointerEvents: 'none', zIndex: 1 }} />
 
-      <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', padding: '24px 16px' }}>
+      <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', width: '100%', minHeight: '100%', padding: '24px 16px' }}>
 
         <div style={{ background: 'rgba(255,255,255,0.95)', padding: '16px 24px', borderRadius: 20, boxShadow: '0 8px 32px rgba(0,0,0,0.1)', textAlign: 'center', border: '3px solid #c7d2fe', width: '100%', maxWidth: 600 }}>
           <h2 style={{ fontSize: 22, fontWeight: 800, color: isComplete ? '#16a34a' : '#1e293b' }}>
@@ -65,18 +82,20 @@ function LowStage1() {
 
 // ===== Low Stage 2: 귀가 아파요 =====
 function LowStage2() {
-  const { state, completeStage } = useGame();
+  const { state, completeStage, addHeart } = useGame();
   const router = useRouter();
   const [isComplete, setIsComplete] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { width, height } = useContainerSize(containerRef);
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+    <div ref={containerRef} style={{ position: 'relative', width: '100%', minHeight: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
       <img src={LOW_BG_IMAGES.stages} alt="bg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: isComplete ? 0.3 : 0.8, filter: isComplete ? 'sepia(1)' : 'none', transition: 'all 1s' }} />
       <div style={{ position: 'absolute', inset: 0, background: isComplete ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)', transition: 'all 1s' }} />
 
-      <ParticleCanvas effect={isComplete ? 'firework' : 'ambient'} active={true} intensity={isComplete ? 2 : 0.5} style={{ pointerEvents: 'none', zIndex: 1 }} />
+      <ParticleCanvas effect={isComplete ? 'firework' : 'ambient'} active={true} intensity={isComplete ? 2 : 0.5} width={width} height={height} style={{ pointerEvents: 'none', zIndex: 1 }} />
 
-      <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', padding: '24px 16px' }}>
+      <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', width: '100%', minHeight: '100%', padding: '24px 16px' }}>
 
         <div style={{ background: 'rgba(255,255,255,0.95)', padding: '16px 24px', borderRadius: 20, boxShadow: '0 8px 32px rgba(0,0,0,0.1)', textAlign: 'center', border: `3px solid ${isComplete ? '#86efac' : '#fca5a5'}`, width: '100%', maxWidth: 600 }}>
           <h2 style={{ fontSize: 22, fontWeight: 800, color: isComplete ? '#15803d' : '#b91c1c' }}>
@@ -89,7 +108,7 @@ function LowStage2() {
 
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', gap: 32 }}>
           {!isComplete && (
-            <div onClick={() => setIsComplete(true)} style={{ background: 'white', padding: 24, borderRadius: '50%', border: '4px solid #fca5a5', boxShadow: '0 0 30px rgba(239,68,68,0.6)', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'pulse 1.5s infinite' }}>
+            <div onClick={() => { setIsComplete(true); addHeart(); }} style={{ background: 'white', padding: 24, borderRadius: '50%', border: '4px solid #fca5a5', boxShadow: '0 0 30px rgba(239,68,68,0.6)', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'pulse 1.5s infinite' }}>
               <img src={ITEM_IMAGES.headset} alt="headset" style={{ width: 100, height: 100, objectFit: 'contain' }} />
               <span style={{ fontSize: 18, fontWeight: 800, color: '#475569', marginTop: 12 }}>눌러서 씌워주기</span>
             </div>
@@ -111,18 +130,24 @@ function LowStage2() {
 
 // ===== Low Stage 3: 기다려주기 =====
 function LowStage3() {
-  const { state, completeStage } = useGame();
+  const { state, completeStage, addHeart } = useGame();
   const router = useRouter();
   const [tapCount, setTapCount] = useState(0);
   const isComplete = tapCount >= 3;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { width, height } = useContainerSize(containerRef);
+
+  useEffect(() => {
+    if (isComplete) addHeart();
+  }, [isComplete]);
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+    <div ref={containerRef} style={{ position: 'relative', width: '100%', minHeight: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
       <img src={LOW_BG_IMAGES.stages} alt="bg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7 }} />
       
-      <ParticleCanvas effect={isComplete ? 'success' : 'ambient'} active={true} intensity={isComplete ? 2 : 0.5} style={{ pointerEvents: 'none', zIndex: 1 }} color={isComplete ? '#6366f1' : undefined} />
+      <ParticleCanvas effect={isComplete ? 'success' : 'ambient'} active={true} intensity={isComplete ? 2 : 0.5} width={width} height={height} style={{ pointerEvents: 'none', zIndex: 1 }} color={isComplete ? '#6366f1' : undefined} />
 
-      <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', padding: '24px 16px' }}>
+      <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', width: '100%', minHeight: '100%', padding: '24px 16px' }}>
 
         <div style={{ background: 'rgba(255,255,255,0.95)', padding: '16px 24px', borderRadius: 20, boxShadow: '0 8px 32px rgba(0,0,0,0.1)', textAlign: 'center', border: '3px solid #c7d2fe', width: '100%', maxWidth: 600 }}>
           <h2 style={{ fontSize: 22, fontWeight: 800, color: isComplete ? '#16a34a' : '#1e293b' }}>
@@ -162,18 +187,20 @@ function LowStage3() {
 
 // ===== Low Stage 4: 쉽게 말해주기 =====
 function LowStage4() {
-  const { state, completeStage } = useGame();
+  const { state, completeStage, addHeart } = useGame();
   const router = useRouter();
   const [phase, setPhase] = useState<'card_selection' | 'squishy_tapping' | 'done'>('card_selection');
   const [tapCount, setTapCount] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { width, height } = useContainerSize(containerRef);
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+    <div ref={containerRef} style={{ position: 'relative', width: '100%', minHeight: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
       <img src={LOW_BG_IMAGES.stages} alt="bg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.6 }} />
       
-      <ParticleCanvas effect={phase === 'done' ? 'success' : phase === 'squishy_tapping' ? 'ambient' : 'ambient'} active={true} intensity={phase === 'done' ? 2 : 0.5} style={{ pointerEvents: 'none', zIndex: 1 }} color="#a855f7" />
+      <ParticleCanvas effect={phase === 'done' ? 'success' : 'ambient'} active={true} intensity={phase === 'done' ? 2 : 0.5} width={width} height={height} style={{ pointerEvents: 'none', zIndex: 1 }} color="#a855f7" />
 
-      <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', height: '100%', padding: '24px 16px' }}>
+      <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', width: '100%', minHeight: '100%', padding: '24px 16px' }}>
 
         <div style={{ background: 'rgba(255,255,255,0.95)', padding: '16px 24px', borderRadius: 20, boxShadow: '0 8px 32px rgba(0,0,0,0.1)', textAlign: 'center', border: '3px solid #a5b4fc', width: '100%', maxWidth: 600 }}>
           <h2 style={{ fontSize: 22, fontWeight: 800, color: phase === 'done' ? '#16a34a' : '#1e293b' }}>
@@ -193,7 +220,7 @@ function LowStage4() {
           )}
 
           {phase === 'squishy_tapping' && (
-            <div onClick={() => { if (tapCount + 1 >= 3) { setPhase('done'); } else { setTapCount(v => v + 1); } }} style={{ position: 'relative', cursor: 'pointer', padding: 32 }}>
+            <div onClick={() => { if (tapCount + 1 >= 3) { setPhase('done'); addHeart(); } else { setTapCount(v => v + 1); } }} style={{ position: 'relative', cursor: 'pointer', padding: 32 }}>
               <div style={{ position: 'absolute', inset: 0, background: '#f9a8d4', borderRadius: '50%', opacity: 0.5, animation: 'ping 1s infinite' }} />
               <img src={ITEM_IMAGES.squishy} alt="말랑이" style={{ position: 'relative', zIndex: 10, width: 150, height: 150, objectFit: 'contain', transform: `scale(${1 + tapCount * 0.1})`, transition: 'transform 0.2s' }} />
               <div style={{ position: 'absolute', bottom: -10, left: '50%', transform: 'translateX(-50%)', background: 'white', padding: '8px 24px', borderRadius: 24, fontSize: 18, fontWeight: 800, color: '#db2777', whiteSpace: 'nowrap', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 20 }}>눌러주세요! 🖐</div>
@@ -231,7 +258,7 @@ export default function LowStagePage() {
   return (
     <>
       <TopNavBar />
-      <div className="game-area">
+      <div className="game-area" style={{ display: 'flex', flexDirection: 'column' }}>
         <StageComponent />
       </div>
     </>

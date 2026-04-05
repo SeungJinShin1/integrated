@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding&display=swap');
 
 :root {
   /* Color System */
@@ -35,13 +36,17 @@
 html, body {
   height: 100%;
   overflow: hidden;
-  font-family: 'Nanum Gothic', sans-serif !important;
+  font-family: 'Nanum Gothic', 'NanumSquareRound', sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-button, input, textarea, select {
-  font-family: 'Nanum Gothic', sans-serif !important;
+* {
+  font-family: 'Nanum Gothic', 'NanumSquareRound', sans-serif !important;
+}
+
+button, input, textarea, select, span, p, h1, h2, h3, h4, h5, h6, div, a, label, li, td, th {
+  font-family: 'Nanum Gothic', 'NanumSquareRound', sans-serif !important;
 }
 
 body {
@@ -115,7 +120,8 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .game-area.no-nav {
