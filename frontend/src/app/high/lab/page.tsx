@@ -11,6 +11,7 @@ import html2canvas from 'html2canvas';
 import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip } from 'chart.js';
 
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip);
+ChartJS.defaults.font.family = "'Nanum Gothic', sans-serif";
 
 const Radar = dynamic(() => import('react-chartjs-2').then(mod => mod.Radar), { ssr: false });
 
@@ -326,7 +327,7 @@ export default function LabPage() {
 
           {/* Phase 3: Report */}
           {phase === 'report' && (
-            <div className="animate-fade-in" style={{ flex: 1, overflowY: 'visible', paddingBottom: 32 }}>
+            <div className="animate-fade-in" style={{ paddingBottom: 48 }}>
               <div id="prism-result-card" style={{ 
                 background: '#ffffff', borderRadius: 24, padding: 28, maxWidth: 480, margin: '0 auto',
                 boxShadow: '0 20px 60px rgba(0,0,0,0.2)',

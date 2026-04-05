@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Noto Sans KR', sans-serif;
+  --font-sans: 'Nanum Gothic', sans-serif;
   --color-primary: #6366f1;
   --color-primary-light: #e0e7ff;
 }

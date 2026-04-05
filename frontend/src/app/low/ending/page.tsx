@@ -68,7 +68,7 @@ export default function LowEndingPage() {
 
     // Hearts
     ctx.fillStyle = '#ec4899';
-    ctx.font = '60px Arial';
+    ctx.font = '60px "Nanum Gothic", sans-serif';
     const heartCount = Math.max(1, state.hearts);
     let heartsStr = '';
     for (let i = 0; i < heartCount; i++) heartsStr += '💖 ';
@@ -82,7 +82,7 @@ export default function LowEndingPage() {
     ctx.fillStyle = '#334155';
     ctx.font = '40px "Nanum Gothic", sans-serif';
     ctx.fillText('나의 감정:', canvas.width / 2 - 80, 680);
-    ctx.font = '80px Arial';
+    ctx.font = '80px "Nanum Gothic", sans-serif';
     ctx.fillText(selectedSticker.emoji, canvas.width / 2 + 80, 700);
 
     // Footer
