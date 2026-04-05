@@ -102,16 +102,13 @@ export default function DialogueBox({
         {characterImage && (
           <div className={`dialogue-character ${characterPosition === 'right' ? 'dialogue-character-right' : ''}`}>
             <img src={characterImage} alt={displaySpeaker} className="dialogue-character-img" />
-            <div className="dialogue-character-name">{displaySpeaker}</div>
           </div>
         )}
 
         {/* Dialogue box */}
         <div className="dialogue-box" onClick={handleClick}>
-          {/* Speaker tag only if no character image */}
-          {!characterImage && (
-            <div className="dialogue-speaker">{displaySpeaker}</div>
-          )}
+          {/* Speaker name badge on top of dialogue box */}
+          <div className="dialogue-speaker">{displaySpeaker}</div>
 
           <div className="dialogue-text">
             {renderText(displayedText)}

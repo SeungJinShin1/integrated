@@ -148,7 +148,7 @@ body {
 /* Character overlapping the dialogue box */
 .dialogue-character {
   position: absolute;
-  bottom: calc(100% - 40px);
+  bottom: calc(100% - 60px);
   left: 16px;
   z-index: 50; /* Set below dialogue box */
   display: flex;
@@ -162,8 +162,8 @@ body {
 }
 
 .dialogue-character-img {
-  width: 160px;
-  height: 200px;
+  width: 220px;
+  height: 280px;
   object-fit: contain;
   filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.5));
   transform: translateY(-20px);
@@ -175,17 +175,6 @@ body {
   transform: translateY(-28px) scale(1.03);
 }
 
-.dialogue-character-name {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-  color: white;
-  padding: 4px 16px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 700;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-  transform: translateY(-24px);
-  white-space: nowrap;
-}
 
 .dialogue-box {
   background: rgba(10, 15, 30, 0.85); /* Slightly more transparent to see character behind */
@@ -832,8 +821,8 @@ body {
   }
 
   .dialogue-character-img {
-    width: 110px;
-    height: 140px;
+    width: 160px;
+    height: 200px;
   }
 
   .dialogue-box {
@@ -852,16 +841,11 @@ body {
 
 @media (max-width: 480px) {
   .dialogue-character-img {
-    width: 80px;
-    height: 100px;
+    width: 120px;
+    height: 150px;
   }
 
   .dialogue-box {
     padding: 16px 20px !important;
-  }
-
-  .dialogue-character-name {
-    font-size: 11px;
-    padding: 3px 10px;
   }
 }
