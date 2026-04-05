@@ -11,8 +11,8 @@ def get_genai():
         print("Warning: GEMINI_API_KEY is not set.")
         return None
     genai.configure(api_key=api_key)
-    # Using the latest Gemini 3.1 Pro model
-    return genai.GenerativeModel('gemini-3.1-pro-preview')
+    # Using the latest Gemini 3 Flash model
+    return genai.GenerativeModel('gemini-3-flash-preview')
 
 @router.post("/chat")
 async def chat_with_ai(req: AIChatRequest):
