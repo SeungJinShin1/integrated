@@ -134,6 +134,7 @@ function Stage1() {
           playerName={P} 
           characterImage={dialogue.speaker === P ? playerImg : dialogue.speaker === N ? npcImg : undefined}
           characterPosition={dialogue.speaker === P ? 'right' : 'left'}
+          enableTTS={false}
         />
       )}
     </div>
@@ -249,6 +250,7 @@ function Stage2() {
           playerName={P} 
           characterImage={dialogue.speaker === P ? playerImg : dialogue.speaker === N ? npcImg : undefined}
           characterPosition={dialogue.speaker === P ? 'right' : 'left'}
+          enableTTS={false}
         />
       )}
     </div>
@@ -347,6 +349,7 @@ function Stage3() {
           playerName={P} 
           characterImage={dialogue.speaker === P ? playerImg : dialogue.speaker === N ? npcImg : undefined}
           characterPosition={dialogue.speaker === P ? 'right' : 'left'}
+          enableTTS={false}
         />
       )}
     </div>
@@ -445,6 +448,7 @@ function Stage4() {
           playerName={P} 
           characterImage={dialogue.speaker === P ? playerImg : dialogue.speaker === N ? npcImg : undefined}
           characterPosition={dialogue.speaker === P ? 'right' : 'left'}
+          enableTTS={false}
         />
       )}
     </div>
@@ -570,6 +574,7 @@ function Stage5() {
           playerName={P} 
           characterImage={dialogue.speaker === P ? playerImg : dialogue.speaker === N ? npcImg : undefined}
           characterPosition={dialogue.speaker === P ? 'right' : 'left'}
+          enableTTS={false}
         />
       )}
     </div>

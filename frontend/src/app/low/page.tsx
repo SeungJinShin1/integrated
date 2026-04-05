@@ -14,7 +14,7 @@ export default function LowGradePage() {
   const [step, setStep] = useState(0);
   const [dialogue, setDialogue] = useState<DialogueData | null>({
     speaker: '시스템',
-    text: '안녕! 나는 새싹 요원 본부의 연구원이야. 오늘 특별한 친구를 만나러 가볼까?',
+    text: '안녕! 동물 숲에 온 것을 환영해. 동물들이 다르게 생겼듯이, 우리 친구들도 저마다 다른 모습을 가지고 있어. 지금부터 특별한 친구를 만나러 가볼까?',
     choices: [
       { text: '👧 여자 친구를 만나러 가기', action: () => { 
           dispatch({ type: 'SET_NPC', payload: { name: '승주', gender: 'female' } }); 

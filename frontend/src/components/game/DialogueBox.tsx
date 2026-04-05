@@ -13,6 +13,7 @@ interface DialogueBoxProps {
   playerName?: string;
   characterImage?: string;
   characterPosition?: 'left' | 'right';
+  enableTTS?: boolean;
 }
 
 export default function DialogueBox({
@@ -24,6 +25,7 @@ export default function DialogueBox({
   playerName,
   characterImage,
   characterPosition = 'left',
+  enableTTS = true,
 }: DialogueBoxProps) {
   const displaySpeaker = speaker === npcName ? `${npcName}` : speaker === playerName ? `${playerName}` : speaker;
   const [displayedText, setDisplayedText] = useState('');
@@ -37,8 +39,8 @@ export default function DialogueBox({
     setDisplayedText('');
     setIsTyping(true);
 
-    // TTS
-    if (!state.isMuted && typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    // TTS (only for low-grade mode)
+    if (enableTTS && !state.isMuted && typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       // Remove asterisks around text for cleaner speech
       const cleanText = text.replace(/\*\*/g, '');
@@ -69,7 +71,7 @@ export default function DialogueBox({
         window.speechSynthesis.cancel();
       }
     };
-  }, [text, state.isMuted, speaker, playerName, state.player.gender]);
+  }, [text, state.isMuted, speaker, playerName, state.player.gender, enableTTS]);
 
   const handleClick = () => {
     if (isTyping) {

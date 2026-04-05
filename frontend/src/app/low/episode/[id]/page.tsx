@@ -7,6 +7,7 @@ import TopNavBar from '@/components/layout/TopNavBar';
 import { getLowNpcImage, LOW_BG_IMAGES, ITEM_IMAGES } from '@/data/assetMap';
 import { FaClock } from 'react-icons/fa6';
 import ParticleCanvas from '@/components/minigames/ParticleCanvas';
+import { useTTS } from '@/hooks/useTTS';
 
 // Hook to track container dimensions for ParticleCanvas
 function useContainerSize(ref: React.RefObject<HTMLDivElement | null>) {
@@ -36,6 +37,12 @@ function LowStage1() {
     addHeart();
   };
 
+  // TTS messages
+  const ttsText = isComplete
+    ? '잘했어요! 친구도 기뻐하는 것 같네요.'
+    : `${state.npc.name}가 혼자 클레이 놀이를 하고 있어요. 다가가서 먼저 인사를 건네볼까요? 같이 놀자 말풍선을 눌러주세요.`;
+  useTTS(ttsText);
+
   return (
     <div ref={containerRef} style={{ position: 'relative', width: '100%', minHeight: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
       <img src={LOW_BG_IMAGES.stages} alt="bg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} />
@@ -49,7 +56,7 @@ function LowStage1() {
             {isComplete ? '성공! 친구와 함께 놀게 되었어요.' : '친구에게 먼저 다가가 볼까요?'}
           </h2>
           <p style={{ fontSize: 15, color: '#64748b', marginTop: 8 }}>
-            {isComplete ? '잘했어요! 친구도 기뻐하는 것 같네요.' : `${state.npc.name}가 혼자 클레이 놀이를 하고 있어요. 인사를 건네볼까요?`}
+            {isComplete ? '잘했어요! 친구도 기뻐하는 것 같네요.' : `${state.npc.name}가 혼자 클레이 놀이를 하고 있어요. 다가가서 먼저 인사를 건네볼까요? '같이 놀자' 말풍선을 눌러주세요.`}
           </p>
         </div>
 
@@ -88,6 +95,12 @@ function LowStage2() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width, height } = useContainerSize(containerRef);
 
+  // TTS messages
+  const ttsText = isComplete
+    ? `와! 소음이 줄어들어서 ${state.npc.name}가 편안해졌어요.`
+    : `앗, 밖에서 공사 소리가 너무 크게 들려요. ${state.npc.name}가 귀를 막고 힘들어하고 있네요. 헤드폰을 눌러서 ${state.npc.name}를 도와주세요.`;
+  useTTS(ttsText);
+
   return (
     <div ref={containerRef} style={{ position: 'relative', width: '100%', minHeight: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
       <img src={LOW_BG_IMAGES.stages} alt="bg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: isComplete ? 0.3 : 0.8, filter: isComplete ? 'sepia(1)' : 'none', transition: 'all 1s' }} />
@@ -102,7 +115,7 @@ function LowStage2() {
             {isComplete ? '헤드폰을 씌워주었어요!' : `${state.npc.name}가 시끄러운 소리 때문에 힘들어해요!`}
           </h2>
           <p style={{ fontSize: 14, color: '#64748b', marginTop: 8 }}>
-            {isComplete ? '소음이 줄어들어서 친구가 편안해졌어요.' : '앗, 공사 소리가 너무 크게 들려요. 헤드폰을 눌러서 도와주세요.'}
+            {isComplete ? `와! 소음이 줄어들어서 ${state.npc.name}가 편안해졌어요.` : `앗, 밖에서 공사 소리가 너무 크게 들려요. ${state.npc.name}가 귀를 막고 힘들어하고 있네요. 헤드폰을 눌러서 ${state.npc.name}를 도와주세요.`}
           </p>
         </div>
 
@@ -141,6 +154,12 @@ function LowStage3() {
     if (isComplete) addHeart();
   }, [isComplete]);
 
+  // TTS messages
+  const ttsText = isComplete
+    ? '참 잘했어요! 기다려주니 친구가 대답을 했어요.'
+    : '친구의 대답이 늦어지고 있어요. 시계 버튼을 3번 눌러서 잠시 기다려줄까요?';
+  useTTS(ttsText);
+
   return (
     <div ref={containerRef} style={{ position: 'relative', width: '100%', minHeight: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
       <img src={LOW_BG_IMAGES.stages} alt="bg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7 }} />
@@ -151,8 +170,11 @@ function LowStage3() {
 
         <div style={{ background: 'rgba(255,255,255,0.95)', padding: '16px 24px', borderRadius: 20, boxShadow: '0 8px 32px rgba(0,0,0,0.1)', textAlign: 'center', border: '3px solid #c7d2fe', width: '100%', maxWidth: 600 }}>
           <h2 style={{ fontSize: 22, fontWeight: 800, color: isComplete ? '#16a34a' : '#1e293b' }}>
-            {isComplete ? '성공! 친구가 대답할 시간을 주었어요.' : `시계 버튼을 눌러주세요! (${tapCount}/3)`}
+            {isComplete ? '참 잘했어요! 기다려주니 친구가 대답을 했어요.' : `시계 버튼을 눌러주세요! (${tapCount}/3)`}
           </h2>
+          <p style={{ fontSize: 15, color: '#64748b', marginTop: 8 }}>
+            {isComplete ? '성공! 친구가 대답할 시간을 주었어요.' : '친구의 대답이 늦어지고 있어요. 시계 버튼을 3번 눌러서 잠시 기다려줄까요?'}
+          </p>
         </div>
 
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', gap: 32 }}>
@@ -194,6 +216,14 @@ function LowStage4() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width, height } = useContainerSize(containerRef);
 
+  // TTS messages
+  const ttsText = phase === 'card_selection'
+    ? '친구가 많이 속상해 보여요. 그림 카드를 누르면 친구가 원하는 것을 말할 수 있어요!'
+    : phase === 'squishy_tapping'
+    ? '말랑말랑한 장난감이 필요하대요! 말랑이를 3번 눌러서 친구를 달래주세요.'
+    : '최고! 친구가 다시 편안해졌어요.';
+  useTTS(ttsText);
+
   return (
     <div ref={containerRef} style={{ position: 'relative', width: '100%', minHeight: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
       <img src={LOW_BG_IMAGES.stages} alt="bg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.6 }} />
@@ -204,10 +234,15 @@ function LowStage4() {
 
         <div style={{ background: 'rgba(255,255,255,0.95)', padding: '16px 24px', borderRadius: 20, boxShadow: '0 8px 32px rgba(0,0,0,0.1)', textAlign: 'center', border: '3px solid #a5b4fc', width: '100%', maxWidth: 600 }}>
           <h2 style={{ fontSize: 22, fontWeight: 800, color: phase === 'done' ? '#16a34a' : '#1e293b' }}>
-            {phase === 'card_selection' && '그림 카드를 눌러 친구의 마음을 들어볼까요?'}
+            {phase === 'card_selection' && '친구가 많이 속상해 보여요.'}
             {phase === 'squishy_tapping' && `말랑이를 3번 눌러주세요! (${tapCount}/3)`}
-            {phase === 'done' && '완벽해요! 친구가 기분이 좋아졌어요.'}
+            {phase === 'done' && '최고! 친구가 다시 편안해졌어요.'}
           </h2>
+          <p style={{ fontSize: 15, color: '#64748b', marginTop: 8 }}>
+            {phase === 'card_selection' && '그림 카드를 누르면 친구가 원하는 것을 말할 수 있어요!'}
+            {phase === 'squishy_tapping' && '말랑말랑한 장난감이 필요하대요! 말랑이를 눌러서 친구를 달래주세요.'}
+            {phase === 'done' && '완벽해요! 친구가 기분이 좋아졌어요.'}
+          </p>
         </div>
 
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', gap: 32 }}>
