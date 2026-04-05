@@ -37,5 +37,7 @@ async def chat_with_ai(req: AIChatRequest):
         )
         return {"reply": response.text.strip()}
     except Exception as e:
-        print(f"AI Error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to communicate with AI")
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"AI Error: {e}\n{error_details}")
+        raise HTTPException(status_code=500, detail=f"Failed to communicate with AI: {str(e)}")

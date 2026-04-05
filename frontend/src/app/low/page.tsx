@@ -34,16 +34,20 @@ export default function LowGradePage() {
   return (
     <>
       <TopNavBar />
-      <div className="game-area" style={{ position: 'relative' }}>
-        <img src={LOW_BG_IMAGES.intro} alt="새싹요원" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)' }} />
+      <div className="game-area">
+        <div style={{ position: 'relative', width: '100%', minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
+          <img src={LOW_BG_IMAGES.intro} alt="새싹요원" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)', zIndex: 1 }} />
 
-        <div className="stage-header">
-          <div className="stage-title">🌱 새싹 요원 본부</div>
-          <div className="stage-subtitle">친구를 선택하세요</div>
+          <div className="stage-header" style={{ position: 'relative', zIndex: 10 }}>
+            <div className="stage-title">🌱 새싹 요원 본부</div>
+            <div className="stage-subtitle">친구를 선택하세요</div>
+          </div>
+
+          <div style={{ flex: 1, position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', padding: '20px' }}>
+            {dialogue && <DialogueBox {...dialogue} />}
+          </div>
         </div>
-
-        {dialogue && <DialogueBox {...dialogue} />}
       </div>
     </>
   );

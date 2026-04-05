@@ -84,7 +84,7 @@ export default function LabPage() {
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
         console.error('AI API error:', res.status, errorData);
-        return '🔌 서버 오류가 발생했어요. 잠시 후 다시 시도해 주세요.';
+        return `🔌 서버 오류(${res.status}): ${errorData.detail || '알 수 없는 오류가 발생했습니다.'}`;
       }
       const data = await res.json();
       return data.reply || '답변을 생성하지 못했어요. 다시 질문해 주세요!';
