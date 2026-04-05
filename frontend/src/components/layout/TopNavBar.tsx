@@ -3,15 +3,16 @@
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGame } from '@/contexts/GameContext';
-import { FaHouse, FaExpand, FaVolumeXmark, FaVolumeHigh, FaRightFromBracket, FaUsers, FaMap } from 'react-icons/fa6';
+import { FaHouse, FaExpand, FaVolumeXmark, FaVolumeHigh, FaRightFromBracket, FaUsers, FaMap, FaRotateLeft } from 'react-icons/fa6';
 import { useCallback, useEffect, useState } from 'react';
 import { STAGE_NAMES } from '@/data/gameData';
+import GameHUD from '@/components/game/GameHUD';
 
 export default function TopNavBar() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuth();
-  const { state, toggleMute } = useGame();
+  const { state, toggleMute, resetGame } = useGame();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Hide nav on intro, start, and auth pages
@@ -21,8 +22,15 @@ export default function TopNavBar() {
   const currentTitle = STAGE_NAMES[state.currentStage] || '우리 반 보물찾기';
 
   const handleHome = () => {
-    if (confirm('홈으로 돌아가시겠습니까?')) {
+    if (confirm('모드 선택 화면으로 돌아가시겠습니까?')) {
       router.push('/mode');
+    }
+  };
+
+  const handleRestart = () => {
+    if (confirm('게임을 처음부터 다시 시작하시겠습니까?\n(모든 진행 상황이 초기화됩니다)')) {
+      resetGame();
+      router.push('/start');
     }
   };
 
@@ -63,10 +71,14 @@ export default function TopNavBar() {
   };
 
   return (
+    <>
     <nav className="top-nav">
       <div className="nav-group">
-        <button className="nav-btn" onClick={handleHome} title="홈으로">
+        <button className="nav-btn" onClick={handleHome} title="모드 선택">
           <FaHouse />
+        </button>
+        <button className="nav-btn" onClick={handleRestart} title="다시 시작 (초기화)">
+          <FaRotateLeft />
         </button>
         {state.gradeMode === 'high_grade' && (
           <button className="nav-btn" onClick={() => router.push('/high')} title="월드맵">
@@ -96,5 +108,7 @@ export default function TopNavBar() {
         )}
       </div>
     </nav>
+    <GameHUD />
+    </>
   );
 }
