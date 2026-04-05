@@ -172,6 +172,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const resetGame = useCallback(() => {
     localStorage.removeItem('hiddenPiece');
+    sessionStorage.removeItem('authUser');
     dispatch({ type: 'RESET' });
   }, []);
 

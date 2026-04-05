@@ -148,7 +148,7 @@ body {
 /* Character overlapping the dialogue box */
 .dialogue-character {
   position: absolute;
-  bottom: 0px;
+  bottom: calc(100% - 40px);
   left: 16px;
   z-index: 50; /* Set below dialogue box */
   display: flex;

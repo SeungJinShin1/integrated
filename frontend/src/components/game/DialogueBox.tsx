@@ -2,6 +2,7 @@
 
 import { DialogueData } from '@/types';
 import { useEffect, useRef, useState } from 'react';
+import { useGame } from '@/contexts/GameContext';
 
 interface DialogueBoxProps {
   speaker: string;
@@ -28,12 +29,30 @@ export default function DialogueBox({
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
   const fullTextRef = useRef(text);
+  const { state } = useGame();
 
-  // Typewriter effect
+  // Typewriter effect & TTS
   useEffect(() => {
     fullTextRef.current = text;
     setDisplayedText('');
     setIsTyping(true);
+
+    // TTS
+    if (!state.isMuted && typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      // Remove asterisks around text for cleaner speech
+      const cleanText = text.replace(/\*\*/g, '');
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.lang = 'ko-KR';
+      utterance.rate = 1.1;
+      
+      if (speaker === '시스템') utterance.pitch = 1.2;
+      else if (speaker === playerName) utterance.pitch = state.player.gender === 'female' ? 1.4 : 0.8;
+      else utterance.pitch = 1.1;
+
+      window.speechSynthesis.speak(utterance);
+    }
+
     let i = 0;
     const interval = setInterval(() => {
       if (i < text.length) {
@@ -44,8 +63,13 @@ export default function DialogueBox({
         clearInterval(interval);
       }
     }, 30);
-    return () => clearInterval(interval);
-  }, [text]);
+    return () => {
+      clearInterval(interval);
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [text, state.isMuted, speaker, playerName, state.player.gender]);
 
   const handleClick = () => {
     if (isTyping) {
