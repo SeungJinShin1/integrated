@@ -3,6 +3,7 @@ import "./globals.css";
 import { GameProvider } from "@/contexts/GameContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import PortraitNotice from "@/components/layout/PortraitNotice";
+import BGMPlayer from "@/components/layout/BGMPlayer";
 
 export const metadata: Metadata = {
   title: "히든피스: 우리 반 보물찾기 - 장애이해교육",
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <GameProvider>
             {children}
             <PortraitNotice />
+            <BGMPlayer />
           </GameProvider>
         </AuthProvider>
       </body>
