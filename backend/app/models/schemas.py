@@ -20,6 +20,9 @@ class AIChatRequest(BaseModel):
     message: str
     systemPrompt: str
 
+class AdminResetPassword(BaseModel):
+    newPassword: Optional[str] = None  # if omitted, server generates one
+
 # Database schema references
 # Teacher:
 # { "uid": "...", "username": "...", "email": "...", "password": "...", "role": "teacher", "authCode": "123456" }

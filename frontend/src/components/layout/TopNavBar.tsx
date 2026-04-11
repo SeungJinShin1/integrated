@@ -3,7 +3,7 @@
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGame } from '@/contexts/GameContext';
-import { FaHouse, FaExpand, FaVolumeXmark, FaVolumeHigh, FaRightFromBracket, FaUsers, FaMap, FaRotateLeft } from 'react-icons/fa6';
+import Icon from '@/components/ui/Icon';
 import { useCallback, useEffect, useState } from 'react';
 import { STAGE_NAMES } from '@/data/gameData';
 import GameHUD from '@/components/game/GameHUD';
@@ -19,7 +19,7 @@ export default function TopNavBar() {
   const hiddenPaths = ['/', '/start', '/auth/login', '/auth/register', '/auth/find'];
   if (hiddenPaths.includes(pathname)) return null;
 
-  const currentTitle = STAGE_NAMES[state.currentStage] || '우리 반 보물찾기';
+  const currentTitle = STAGE_NAMES[state.currentStage] || '히든피스: 우리 반 보물찾기';
 
   const handleHome = () => {
     if (confirm('모드 선택 화면으로 돌아가시겠습니까?')) {
@@ -75,14 +75,14 @@ export default function TopNavBar() {
     <nav className="top-nav">
       <div className="nav-group">
         <button className="nav-btn" onClick={handleHome} title="모드 선택">
-          <FaHouse />
+          <Icon name="home" alt="홈" />
         </button>
         <button className="nav-btn" onClick={handleRestart} title="다시 시작 (초기화)">
-          <FaRotateLeft />
+          <Icon name="back" alt="다시 시작" />
         </button>
         {state.gradeMode === 'high_grade' && (
-          <button className="nav-btn" onClick={() => router.push('/high')} title="월드맵">
-            <FaMap />
+          <button className="nav-btn" onClick={() => router.push('/high')} title="보물찾기 지도">
+            <Icon name="map" alt="보물찾기 지도" />
           </button>
         )}
       </div>
@@ -91,19 +91,19 @@ export default function TopNavBar() {
 
       <div className="nav-group">
         <button className="nav-btn" onClick={handleFullscreen} title={isFullscreen ? '전체화면 해제 (F11)' : '전체보기 (F11)'}>
-          <FaExpand />
+          <Icon name="expand" alt="전체화면" />
         </button>
         <button className="nav-btn" onClick={toggleMute} title={state.isMuted ? '소리 켜기' : '음소거'}>
-          {state.isMuted ? <FaVolumeXmark /> : <FaVolumeHigh />}
+          <Icon name={state.isMuted ? 'volumeOff' : 'volumeOn'} alt={state.isMuted ? '음소거' : '소리 켜기'} />
         </button>
         {user?.role === 'teacher' && (
           <button className="nav-btn" onClick={() => router.push('/teacher')} title="학생 모니터링">
-            <FaUsers />
+            <Icon name="users" alt="학생 모니터링" />
           </button>
         )}
         {user && (
           <button className="nav-btn" onClick={handleLogout} title="로그아웃">
-            <FaRightFromBracket />
+            <Icon name="logout" alt="로그아웃" />
           </button>
         )}
       </div>

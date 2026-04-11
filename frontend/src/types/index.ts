@@ -115,7 +115,8 @@ export interface DialogueData {
 
 // ===== Tool Types =====
 export interface ToolInfo {
-  icon: string;
+  /** Key into ITEM_IMAGES for displaying the tool's PNG icon. */
+  iconKey?: string;
   name: string;
   color: string;
   desc: string;

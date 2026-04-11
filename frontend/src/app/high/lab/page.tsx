@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useGame } from '@/contexts/GameContext';
 import TopNavBar from '@/components/layout/TopNavBar';
 import { getNpcImage, getPlayerImage, BG_IMAGES } from '@/data/assetMap';
-import { FaRotateLeft, FaDownload } from 'react-icons/fa6';
+import Icon from '@/components/ui/Icon';
 import dynamic from 'next/dynamic';
 import html2canvas from 'html2canvas';
 import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip } from 'chart.js';
@@ -15,7 +15,7 @@ ChartJS.defaults.font.family = "'Nanum Gothic', sans-serif";
 
 const Radar = dynamic(() => import('react-chartjs-2').then(mod => mod.Radar), { ssr: false });
 
-const SYSTEM_PROMPT = `You are a friendly AI researcher at the "Prism Lab" in a Korean educational game about understanding autism spectrum disorder (ASD) for elementary school students (5th grade).
+const SYSTEM_PROMPT = `You are a friendly AI guide in the Korean educational game "히든피스: 우리 반 보물찾기" (Hidden Piece: Our Class Treasure Hunt) about understanding autism spectrum disorder (ASD) for elementary school students (5th grade).
 RULES:
 - Answer ONLY questions related to: autism, disabilities, inclusion, empathy, understanding differences, and how to help friends with ASD.
 - Use simple Korean appropriate for 10-11 year old students.
@@ -35,7 +35,7 @@ export default function LabPage() {
   const [phase, setPhase] = useState<'journal' | 'chat' | 'report'>('journal');
   const [journal, setJournal] = useState('');
   const [chatMessages, setChatMessages] = useState<{role: 'ai' | 'user', text: string}[]>([
-    { role: 'ai', text: `축하합니다! 서로 다른 조각이 맞춰져 완벽한 '프리즘 팀'이 되었군요. 오늘 ${N}와의 하루는 어땠나요?` }
+    { role: 'ai', text: `축하합니다! 서로 다른 히든피스들이 맞춰져 「빛나는 우리 반」이 완성되었어요. 오늘 ${N}와의 하루는 어땠나요?` }
   ]);
   const [chatInput, setChatInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -56,12 +56,12 @@ export default function LabPage() {
         <div className="game-area" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f172a' }}>
           <div style={{ textAlign: 'center', color: 'white' }}>
             <div style={{ fontSize: 64, marginBottom: 16 }}>🔒</div>
-            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 12 }}>프리즘 연구소 잠금</h1>
-            <p style={{ color: '#94a3b8', marginBottom: 24 }}>1~5단계를 모두 완료해야 프리즘 연구소에 입장할 수 있어요!</p>
+            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 12 }}>「빛나는 우리 반」 잠금</h1>
+            <p style={{ color: '#94a3b8', marginBottom: 24 }}>1~5단계를 모두 완료해야 「빛나는 우리 반」을 완성할 수 있어요!</p>
             <button onClick={() => router.push('/high')} style={{
               padding: '12px 32px', background: '#6366f1', color: 'white', borderRadius: 12,
               border: 'none', fontSize: 15, fontWeight: 700, cursor: 'pointer',
-            }}>월드맵으로 돌아가기</button>
+            }}>보물찾기 지도로 돌아가기</button>
           </div>
         </div>
       </>
@@ -107,10 +107,10 @@ export default function LabPage() {
   };
 
   const stats = state.stats || { understanding: 0, trust: 0, communication: 0, patience: 0 };
-  const prismScore = Math.round(((stats.understanding || 0) + (stats.trust || 0) + (stats.communication || 0) + (stats.patience || 0)) / 4);
+  const empathyScore = Math.round(((stats.understanding || 0) + (stats.trust || 0) + (stats.communication || 0) + (stats.patience || 0)) / 4);
   const logs = state.logs || { tool_attempts: 0, tool_accuracy: 0, waiting_count: 0 };
   const accuracy = logs.tool_attempts > 0 ? Math.round((logs.tool_accuracy / logs.tool_attempts) * 100) : 100;
-  const grade = prismScore >= 80 ? '🏆 S등급 - 프리즘 마스터' : prismScore >= 60 ? '🥇 A등급 - 프리즘 요원' : prismScore >= 40 ? '🥈 B등급 - 프리즘 수습생' : '🥉 C등급 - 프리즘 입문자';
+  const grade = empathyScore >= 80 ? '🏆 S등급 - 히든피스 마스터' : empathyScore >= 60 ? '🥇 A등급 - 히든피스 탐험가' : empathyScore >= 40 ? '🥈 B등급 - 히든피스 수습생' : '🥉 C등급 - 히든피스 입문자';
 
   const usedTools = state.usedTools || [];
   const badges: string[] = [];
@@ -118,7 +118,7 @@ export default function LabPage() {
   if (usedTools.includes('headset')) badges.push('🛡️ 배려의 방패');
   if (usedTools.includes('timer')) badges.push('⏰ 약속의 시계');
   if (usedTools.includes('pecs')) badges.push('💡 협력의 전구');
-  if (usedTools.includes('ribbon') || usedTools.includes('map')) badges.push('🌈 프리즘 팀');
+  if (usedTools.includes('ribbon') || usedTools.includes('map')) badges.push('🌈 다빛 팀');
 
   const radarData = {
     labels: ['이해', '신뢰', '소통', '인내'],
@@ -130,17 +130,17 @@ export default function LabPage() {
   const suggestions = ['자폐는 병이야?', '왜 눈을 안 마주쳐?', '내가 어떻게 도와주면 돼?', `${N}는 왜 소리에 예민해?`];
 
   const downloadCard = async () => {
-    const cardEl = document.getElementById('prism-result-card');
+    const cardEl = document.getElementById('hiddenpiece-result-card');
     if (!cardEl) return;
     try {
-      const canvas = await html2canvas(cardEl, { 
-        scale: 2, 
+      const canvas = await html2canvas(cardEl, {
+        scale: 2,
         useCORS: true,
         backgroundColor: '#ffffff',
         logging: false,
       });
       const link = document.createElement('a');
-      link.download = `프리즘결과카드_${P}.png`;
+      link.download = `히든피스결과카드_${P}.png`;
       link.href = canvas.toDataURL('image/png');
       document.body.appendChild(link);
       link.click();
@@ -180,8 +180,8 @@ export default function LabPage() {
 
         <div style={{ position: 'relative', zIndex: 10, padding: 16 }}>
           <div style={{ textAlign: 'center', marginBottom: 16 }}>
-            <h1 style={{ fontSize: 22, fontWeight: 800, color: 'white', textShadow: '0 2px 12px rgba(0,0,0,0.5)' }}>🔬 6단계: 프리즘 연구소</h1>
-            <p style={{ fontSize: 14, color: '#a5b4fc' }}>AI 회고 & 공유</p>
+            <h1 style={{ fontSize: 22, fontWeight: 800, color: 'white', textShadow: '0 2px 12px rgba(0,0,0,0.5)' }}>🌈 6단계: 빛나는 우리 반</h1>
+            <p style={{ fontSize: 14, color: '#a5b4fc' }}>히든피스 완성 & 다빛 규칙</p>
           </div>
 
           {/* Phase 1: Journal */}
@@ -189,9 +189,9 @@ export default function LabPage() {
             <div className="animate-fade-in" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(16px)', borderRadius: 24, padding: 28, maxWidth: 480, width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.2)' }}>
                 <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
-                  <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, boxShadow: '0 4px 12px rgba(99,102,241,0.2)' }}>🔬</div>
+                  <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, boxShadow: '0 4px 12px rgba(99,102,241,0.2)' }}>🌈</div>
                   <div>
-                    <p style={{ fontSize: 13, color: '#6366f1', fontWeight: 700 }}>AI 연구원</p>
+                    <p style={{ fontSize: 13, color: '#6366f1', fontWeight: 700 }}>AI 길잡이</p>
                     <p style={{ color: '#334155', fontSize: 15, lineHeight: 1.5 }}>&quot;오늘 {N}(이)와 함께하며 느낀 점은?&quot;</p>
                   </div>
                 </div>
@@ -323,13 +323,13 @@ export default function LabPage() {
           {/* Phase 3: Report */}
           {phase === 'report' && (
             <div className="animate-fade-in" style={{ paddingBottom: 48 }}>
-              <div id="prism-result-card" style={{ 
+              <div id="hiddenpiece-result-card" style={{
                 background: '#ffffff', borderRadius: 24, padding: 28, maxWidth: 480, margin: '0 auto',
                 boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
                 border: '1px solid rgba(255,255,255,0.3)',
               }}>
-                <h2 style={{ fontSize: 20, fontWeight: 800, color: '#1e293b', textAlign: 'center', marginBottom: 4 }}>🌈 프리즘 결과 카드</h2>
-                <p style={{ fontSize: 12, color: '#94a3b8', textAlign: 'center', marginBottom: 20 }}>Hidden Piece: The Secret Agent of Our Class</p>
+                <h2 style={{ fontSize: 20, fontWeight: 800, color: '#1e293b', textAlign: 'center', marginBottom: 4 }}>🌈 히든피스 결과 카드</h2>
+                <p style={{ fontSize: 12, color: '#94a3b8', textAlign: 'center', marginBottom: 20 }}>Hidden Piece: Our Class Treasure Hunt</p>
 
                 <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginBottom: 20 }}>
                   <div style={{ textAlign: 'center' }}>
@@ -348,7 +348,7 @@ export default function LabPage() {
                 </div>
 
                 <div style={{ background: 'linear-gradient(135deg, #6366f1, #a855f7)', borderRadius: 14, padding: 14, textAlign: 'center', color: 'white', marginBottom: 20, boxShadow: '0 4px 16px rgba(99,102,241,0.3)' }}>
-                  <p style={{ fontSize: 13, opacity: 0.9 }}>프리즘 점수: {prismScore}</p>
+                  <p style={{ fontSize: 13, opacity: 0.9 }}>공감 점수: {empathyScore}</p>
                   <p style={{ fontSize: 20, fontWeight: 800, marginTop: 2 }}>{grade}</p>
                 </div>
 
@@ -407,7 +407,7 @@ export default function LabPage() {
                   onMouseEnter={e => { (e.target as HTMLElement).style.transform = 'translateY(-2px)'; }}
                   onMouseLeave={e => { (e.target as HTMLElement).style.transform = 'translateY(0)'; }}
                 >
-                  <FaDownload /> 프리즘 카드 내려받기
+                  <Icon name="download" alt="다운로드" /> 히든피스 카드 내려받기
                 </button>
                 <button onClick={() => { resetGame(); router.push('/start'); }}
                   style={{ 
@@ -422,7 +422,7 @@ export default function LabPage() {
                   onMouseEnter={e => { (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.25)'; }}
                   onMouseLeave={e => { (e.target as HTMLElement).style.background = 'rgba(255,255,255,0.15)'; }}
                 >
-                  <FaRotateLeft /> 다시 시작
+                  <Icon name="back" alt="다시 시작" /> 다시 시작
                 </button>
               </div>
             </div>

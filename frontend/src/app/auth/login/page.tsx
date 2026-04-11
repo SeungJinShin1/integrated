@@ -23,11 +23,17 @@ export default function LoginPage() {
     if (!username || !password) { setError('아이디와 비밀번호를 입력하세요.'); return; }
     setLoading(true);
     setError('');
-    const success = await login(username, password);
+    const result = await login(username, password);
     setLoading(false);
-    if (success) {
-      setGradeMode('high_grade');
-      router.push('/high');
+    if (result.success) {
+      if (result.role === 'admin') {
+        router.push('/admin');
+      } else if (result.role === 'teacher') {
+        router.push('/teacher');
+      } else {
+        setGradeMode('high_grade');
+        router.push('/character');
+      }
     } else {
       setError('아이디 또는 비밀번호가 일치하지 않습니다.');
     }
@@ -38,11 +44,11 @@ export default function LoginPage() {
     if (!authCode || authCode.length !== 6) { setError('6자리 인증번호를 입력하세요.'); return; }
     setLoading(true);
     setError('');
-    const success = await loginWithCode(authCode);
+    const result = await loginWithCode(authCode);
     setLoading(false);
-    if (success) {
+    if (result.success) {
       setGradeMode('high_grade');
-      router.push('/high');
+      router.push('/character');
     } else {
       setError('인증번호가 유효하지 않습니다.');
     }
@@ -50,7 +56,7 @@ export default function LoginPage() {
 
   const handleGuestMode = () => {
     setGradeMode('high_grade');
-    router.push('/high');
+    router.push('/character');
   };
 
   return (

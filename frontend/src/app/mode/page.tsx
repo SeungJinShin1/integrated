@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useGame } from '@/contexts/GameContext';
-import { FaSeedling, FaUserSecret } from 'react-icons/fa6';
+import Icon from '@/components/ui/Icon';
 import TopNavBar from '@/components/layout/TopNavBar';
 
 export default function ModeSelectPage() {
@@ -12,7 +12,7 @@ export default function ModeSelectPage() {
   const handleLowGrade = () => {
     dispatch({ type: 'SET_PLAYER', payload: { name: '나', gender: 'male' } });
     setGradeMode('low_grade');
-    router.push('/low');
+    router.push('/character');
   };
 
   const handleHighGrade = () => {
@@ -34,9 +34,9 @@ export default function ModeSelectPage() {
         }}>
           <div style={{ textAlign: 'center', marginBottom: 40 }}>
             <h1 style={{ fontSize: 28, fontWeight: 800, color: '#1e293b', marginBottom: 8 }}>
-              원팀 프로젝트: 히든 피스
+              히든피스: 우리 반 보물찾기
             </h1>
-            <p style={{ color: '#64748b', fontSize: 15 }}>당신의 요원 등급을 선택해 주세요</p>
+            <p style={{ color: '#64748b', fontSize: 15 }}>학년에 맞는 모드를 선택해 주세요</p>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
@@ -50,13 +50,13 @@ export default function ModeSelectPage() {
             >
               <div style={{
                 width: 72, height: 72, borderRadius: '50%',
-                background: '#bbf7d0', color: '#16a34a',
+                background: '#bbf7d0',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 32, margin: '0 auto 16px',
+                margin: '0 auto 16px',
               }}>
-                <FaSeedling />
+                <Icon name="seedling" size={42} alt="새싹" />
               </div>
-              <h2 style={{ fontSize: 22, fontWeight: 800, color: '#166534', marginBottom: 8 }}>새싹 요원</h2>
+              <h2 style={{ fontSize: 22, fontWeight: 800, color: '#166534', marginBottom: 8 }}>히든피스 새싹</h2>
               <p style={{ color: '#16a34a', fontWeight: 600, fontSize: 14, marginBottom: 4 }}>초등학교 1~2학년</p>
               <p style={{ fontSize: 13, color: '#4ade80', marginTop: 8 }}>
                 터치와 기다림을 통해<br />친구의 마음을 이해해 보아요
@@ -73,16 +73,16 @@ export default function ModeSelectPage() {
             >
               <div style={{
                 width: 72, height: 72, borderRadius: '50%',
-                background: '#c7d2fe', color: '#4f46e5',
+                background: '#c7d2fe',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 32, margin: '0 auto 16px',
+                margin: '0 auto 16px',
               }}>
-                <FaUserSecret />
+                <Icon name="hiddenpiece" size={42} alt="히든피스 탐험가" />
               </div>
-              <h2 style={{ fontSize: 22, fontWeight: 800, color: '#3730a3', marginBottom: 8 }}>프리즘 요원</h2>
+              <h2 style={{ fontSize: 22, fontWeight: 800, color: '#3730a3', marginBottom: 8 }}>히든피스 탐험가</h2>
               <p style={{ color: '#4f46e5', fontWeight: 600, fontSize: 14, marginBottom: 4 }}>초등학교 3~6학년</p>
               <p style={{ fontSize: 13, color: '#818cf8', marginTop: 8 }}>
-                도구를 활용하고 상호 협력하여<br />특별한 친구와 원팀이 되어보아요
+                도구를 활용하고 친구와 협력하여<br />빛나는 우리 반을 완성해 보아요
               </p>
             </div>
           </div>

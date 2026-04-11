@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import TopNavBar from '@/components/layout/TopNavBar';
-import { FaUsers, FaArrowRotateRight, FaShieldHalved } from 'react-icons/fa6';
+import Icon from '@/components/ui/Icon';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -76,7 +76,7 @@ export default function TeacherDashboard() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 800, color: '#1e293b', display: 'flex', alignItems: 'center', gap: 12 }}>
-              <FaShieldHalved style={{ color: '#6366f1' }} />
+              <Icon name="shield" alt="관리자" />
               관리자 대시보드
             </h1>
             <p style={{ color: '#64748b', marginTop: 4 }}>학생들의 학습 현황을 실시간으로 확인하세요.</p>
@@ -87,14 +87,14 @@ export default function TeacherDashboard() {
               <p style={{ fontSize: 32, fontWeight: 900, color: '#4f46e5', letterSpacing: 4, margin: 0, lineHeight: 1 }}>{user.authCode}</p>
             </div>
             <button onClick={fetchDashboard} style={{ width: 48, height: 48, borderRadius: '50%', background: '#f1f5f9', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', cursor: 'pointer', transition: 'all 0.2s' }} className="hover:bg-indigo-50 hover:text-indigo-600">
-              <FaArrowRotateRight style={{ fontSize: 20 }} />
+              <Icon name="refresh" size={22} alt="새로고침" />
             </button>
           </div>
         </div>
 
         <div style={{ background: 'white', borderRadius: 24, padding: 24, boxShadow: '0 8px 32px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24, paddingBottom: 16, borderBottom: '1px solid #f1f5f9' }}>
-            <FaUsers style={{ fontSize: 24, color: '#94a3b8' }} />
+            <Icon name="users" size={26} alt="학생들" />
             <h2 style={{ fontSize: 18, fontWeight: 700, color: '#334155', margin: 0 }}>접속 학생 목록 ({students.length}명)</h2>
           </div>
 

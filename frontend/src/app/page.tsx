@@ -8,7 +8,7 @@ const INTRO_SLIDES = [
   { image: BG_IMAGES.dataworld, text: '어딘가에, 특별한 세상이 있습니다...' },
   { image: BG_IMAGES.classroom, text: '우리 반에는 조금 특별한 친구가 있어요.' },
   { image: BG_IMAGES.breaktime, text: '그 친구는 나와 다른 방식으로 세상을 느끼고 있답니다.' },
-  { image: BG_IMAGES.playground, text: '과연 우리는 서로를 이해하고 "원팀"이 될 수 있을까요?' },
+  { image: BG_IMAGES.playground, text: '서로의 숨겨진 조각, 「히든피스」를 찾아 빛나는 우리 반을 완성해 볼까요?' },
 ];
 
 export default function IntroPage() {

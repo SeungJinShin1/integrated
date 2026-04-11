@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useGame } from '@/contexts/GameContext';
 import TopNavBar from '@/components/layout/TopNavBar';
 import { LOW_BG_IMAGES } from '@/data/assetMap';
-import { FaHeart, FaDownload, FaRotateLeft } from 'react-icons/fa6';
+import Icon from '@/components/ui/Icon';
 import { useTTS } from '@/hooks/useTTS';
 
 const STICKERS = [
@@ -24,7 +24,7 @@ export default function LowEndingPage() {
 
   // TTS messages
   const ttsText = selectedSticker
-    ? '정말 멋진 감정이네요. 새싹 요원 수료증을 받으세요! 다운로드 버튼을 눌러 이미지를 저장할 수 있어요.'
+    ? '정말 멋진 감정이네요. 히든피스 새싹 수료증을 받으세요! 다운로드 버튼을 눌러 이미지를 저장할 수 있어요.'
     : '우와! 4개의 미션을 모두 완료했어요! 지금 기분이 어떤가요? 아래에서 감정 스티커를 하나 골라주세요.';
   useTTS(ttsText);
 
@@ -53,7 +53,7 @@ export default function LowEndingPage() {
     ctx.fillStyle = '#166534';
     ctx.font = 'bold 80px "Nanum Gothic", sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('새싹 요원 수료증', canvas.width / 2, 180);
+    ctx.fillText('히든피스 새싹 수료증', canvas.width / 2, 180);
 
     // Subtitle
     ctx.fillStyle = '#15803d';
@@ -63,7 +63,7 @@ export default function LowEndingPage() {
     // Name
     ctx.fillStyle = '#1e293b';
     ctx.font = 'bold 60px "Nanum Gothic", sans-serif';
-    const playerName = state.player.name === '나' ? '새싹 요원' : `${state.player.name} 요원`;
+    const playerName = state.player.name === '나' ? '히든피스 새싹' : `${state.player.name} 새싹`;
     ctx.fillText(playerName, canvas.width / 2, 380);
 
     // Hearts
@@ -88,11 +88,11 @@ export default function LowEndingPage() {
     // Footer
     ctx.fillStyle = '#94a3b8';
     ctx.font = 'bold 24px "Nanum Gothic", sans-serif';
-    ctx.fillText('원팀 프로젝트: 히든 피스', 200, 740);
+    ctx.fillText('히든피스: 우리 반 보물찾기', 200, 740);
 
     const dataUrl = canvas.toDataURL('image/png');
     const link = document.createElement('a');
-    link.download = `새싹요원_수료증_${playerName.replace(' ', '_')}.png`;
+    link.download = `히든피스_새싹_수료증_${playerName.replace(' ', '_')}.png`;
     link.href = dataUrl;
     link.click();
 
@@ -123,7 +123,7 @@ export default function LowEndingPage() {
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, background: '#fdf2f8', padding: '12px 24px', borderRadius: 30, border: '2px solid #fbcfe8', marginBottom: 32 }}>
                   <span style={{ fontWeight: 800, color: '#be185d', fontSize: 16 }}>모은 하트:</span>
                   <div style={{ display: 'flex', gap: 4 }}>
-                    {[...Array(Math.max(1, state.hearts))].map((_, i) => <FaHeart key={i} style={{ color: '#ec4899', fontSize: 20 }} />)}
+                    {[...Array(Math.max(1, state.hearts))].map((_, i) => <Icon key={i} name="heart" size={22} alt="하트" />)}
                   </div>
                 </div>
 
@@ -143,13 +143,13 @@ export default function LowEndingPage() {
               </div>
             ) : (
               <div className="animate-fade-in-up">
-                <h2 style={{ fontSize: 28, fontWeight: 800, color: '#166534', marginBottom: 24 }}>새싹 요원 수료증 발급 준비 완료!</h2>
+                <h2 style={{ fontSize: 28, fontWeight: 800, color: '#166534', marginBottom: 24 }}>히든피스 새싹 수료증 발급 준비 완료!</h2>
 
                 <div style={{ background: '#f0fdf4', padding: '32px 24px', borderRadius: 24, border: '2px solid #bbf7d0', position: 'relative', overflow: 'hidden', marginBottom: 32 }}>
                   <span style={{ position: 'absolute', top: -20, right: -20, fontSize: 80, opacity: 0.2, transform: 'rotate(15deg)' }}>{selectedSticker.emoji}</span>
                   <div style={{ position: 'relative', zIndex: 10 }}>
                     <h3 style={{ fontSize: 24, fontWeight: 800, color: '#14532d', marginBottom: 12 }}>
-                      {state.player.name === '나' ? '나' : state.player.name} 요원
+                      {state.player.name === '나' ? '나' : state.player.name} 새싹
                     </h3>
                     <p style={{ fontSize: 18, color: '#15803d', marginBottom: 16, fontWeight: 700 }}>
                       훌륭하게 배려와 기다림을 실천했습니다.
@@ -166,13 +166,13 @@ export default function LowEndingPage() {
                     fontSize: 18, fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12,
                     boxShadow: '0 8px 16px rgba(22,163,74,0.3)', opacity: isDownloading ? 0.7 : 1, fontFamily: "'Nanum Gothic', sans-serif"
                   }}>
-                    {isDownloading ? <span className="animate-pulse">이미지 생성 중...</span> : <><FaDownload /> 수료증 저장하기</>}
+                    {isDownloading ? <span className="animate-pulse">이미지 생성 중...</span> : <><Icon name="download" alt="다운로드" /> 수료증 저장하기</>}
                   </button>
                   <button onClick={handleReset} style={{
                     padding: '16px 32px', background: '#f1f5f9', color: '#475569', borderRadius: 16, border: 'none',
                     fontSize: 18, fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12, fontFamily: "'Nanum Gothic', sans-serif"
                   }}>
-                    <FaRotateLeft /> 처음으로
+                    <Icon name="back" alt="처음으로" /> 처음으로
                   </button>
                 </div>
               </div>

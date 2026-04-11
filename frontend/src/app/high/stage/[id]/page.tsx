@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useGame } from '@/contexts/GameContext';
 import TopNavBar from '@/components/layout/TopNavBar';
 import DialogueBox from '@/components/game/DialogueBox';
-import { getNpcImage, getPlayerImage, BG_IMAGES, ITEM_IMAGES } from '@/data/assetMap';
+import { getNpcImage, getPlayerImage, BG_IMAGES, ITEM_IMAGES, PEER_IMAGES, GROUP_PRESSURE_IMAGE } from '@/data/assetMap';
 import { DialogueData } from '@/types';
 import StageTransition from '@/components/game/StageTransition';
 import dynamic from 'next/dynamic';
@@ -35,50 +35,89 @@ function Stage1() {
 
   useEffect(() => {
     switch (step) {
+      // --- 인트로: 분위기 조성 ---
       case 0:
         setPlayerPose('thinking');
         setDialogue({
-          speaker: P, text: `(쉬는 시간. ${N}(이)가 교실 한 구석에서 혼자 무언가를 반복하고 있다. 다가가볼까?)`,
-          choices: [
-            { text: `🗣️ "${N}아, 뭐 하고 있어?" (말 걸기)`, action: () => { addStat('communication', 5); setStep(1); } },
-            { text: `👀 조용히 옆에 앉아본다 (관찰)`, action: () => { logWaiting(); addStat('patience', 10); setStep(1); } },
-          ]
+          speaker: 'Narrator', text: '(쉬는 시간. 교실은 시끌벅적하다. 아이들은 삼삼오오 모여 떠들고 있지만, 한 구석이 유독 조용하다.)',
+          onNext: () => setStep(1),
         });
         break;
       case 1:
-        setNpcEmotion('memory');
         setDialogue({
-          speaker: N, text: `"노란색... 노란색... 노란색..."`,
+          speaker: 'Narrator', text: `(${N}(이)가 혼자 색연필을 늘어놓고 무언가에 집중하고 있다. 입술이 조금씩 움직인다.)`,
           onNext: () => setStep(2),
         });
         break;
+      // --- 선택지 ---
       case 2:
         setDialogue({
-          speaker: '시스템', text: `💡 ${N}(이)가 같은 말을 반복합니다. 이런 현상을 "반향어(에코랄리아)"라고 해요.`,
+          speaker: P, text: `(어? ${N}(이)가 뭔가 말하고 있는 것 같은데... 다가가볼까?)`,
+          choices: [
+            { text: `🗣️ "${N}아, 뭐 하고 있어?" (말 걸기)`, action: () => { addStat('communication', 5); setStep(3); } },
+            { text: `👀 조용히 옆에 앉아본다 (관찰)`, action: () => { logWaiting(); addStat('patience', 10); setStep(3); } },
+          ]
+        });
+        break;
+      // --- 반향어 ---
+      case 3:
+        setNpcEmotion('memory');
+        setDialogue({
+          speaker: N, text: `"노란색... 노란색... 노란색..."`,
+          onNext: () => setStep(4),
+        });
+        break;
+      // --- 승주 속마음 (PRD: 괄호 = 속마음) ---
+      case 4:
+        setDialogue({
+          speaker: N, text: `(노란색 크레파스가 없어졌어. 아까 여기 있었는데. 노란색이 있어야 해.)`,
+          onNext: () => setStep(5),
+        });
+        break;
+      // --- 주변 반응 ---
+      case 5:
+        setDialogue({
+          speaker: '옆 친구', text: '"쟤 또 저러네. 왜 맨날 혼자 중얼거려?"',
+          onNext: () => setStep(6),
+        });
+        break;
+      // --- 시스템 설명 + 핵심 선택 ---
+      case 6:
+        setDialogue({
+          speaker: '시스템', text: `💡 ${N}(이)가 같은 말을 반복합니다. 이것을 **반향어(에코랄리아)**라고 해요. 같은 말을 반복하는 건 **무의미한 게 아니라**, 무언가를 말하려는 시도일 수 있어요.`,
           choices: [
             { text: `😤 "${N}아, 무슨 말인지 모르겠어! 똑바로 말해!" (화남)`, action: () => { addStat('trust', -10); setStep(10); } },
             { text: `🤔 "노란색? 혹시 노란색이 필요한 거야?" (해석 시도)`, action: () => { addStat('understanding', 10); setStep(20); } },
           ]
         });
         break;
+      // --- 화남 루트 ---
       case 10:
         setNpcEmotion('anxious');
         setDialogue({
           speaker: N, text: '(움츠러들며 더 작은 소리로) "노란색... 노란색..."',
+          onNext: () => setStep(11),
+        });
+        break;
+      case 11:
+        setDialogue({
+          speaker: N, text: '(...왜 화가 났지? 나는 그냥 노란색이 필요한데.)',
           onNext: () => setStep(20),
         });
         break;
+      // --- AAC 미니게임 ---
       case 20:
         setDialogue({
-          speaker: '시스템', text: `🎮 AAC 태블릿으로 ${N}(이)가 말하고 싶은 것을 찾아보세요!`,
+          speaker: '시스템', text: `🎮 **AAC 태블릿**으로 ${N}(이)가 말하고 싶은 것을 찾아보세요!`,
         });
         setShowMinigame(true);
         break;
+      // --- 미니게임 성공 후 ---
       case 30:
         setShowMinigame(false);
         setNpcEmotion('happy');
         setDialogue({
-          speaker: N, text: '(AAC에서 "노란색 크레파스" 그림을 가리키며) "노란색!"',
+          speaker: N, text: '(AAC에서 "노란색 크레파스" 그림을 가리키며, 환하게 웃음) "노란색!"',
           onNext: () => setStep(31),
         });
         break;
@@ -89,10 +128,30 @@ function Stage1() {
           onNext: () => setStep(32),
         });
         break;
+      // --- 아웃트로: 깨달음 ---
       case 32:
         setDialogue({
+          speaker: P, text: '"그냥 같은 말 반복하는 줄 알았는데... 계속 말하려고 했던 거였어."',
+          onNext: () => setStep(33),
+        });
+        break;
+      case 33:
+        setNpcEmotion('happy');
+        setDialogue({
+          speaker: 'Narrator', text: `(${N}(이)가 노란색 크레파스를 받아들고, 조용히 웃으며 그림을 그리기 시작한다.)`,
+          onNext: () => setStep(34),
+        });
+        break;
+      case 34:
+        setDialogue({
+          speaker: N, text: '(이 사람은 내 말을 알아들었어. 다음에도 이 사람한테 말해봐야지.)',
+          onNext: () => setStep(35),
+        });
+        break;
+      case 35:
+        setDialogue({
           speaker: '시스템',
-          text: `🏅 소통의 배지 획득! ${N}(이)가 "노란색"이라고 반복한 건 노란색 크레파스가 필요했기 때문이에요.`,
+          text: `🏅 **소통의 배지** 획득! ${N}(이)가 "노란색"이라고 반복한 건 노란색 크레파스가 필요했기 때문이에요. 말이 잘 통하지 않을 때, **AAC 같은 도구**가 다리가 되어줄 수 있어요.`,
           onNext: () => {
             completeStage('stage-1');
             router.push('/high');
@@ -127,12 +186,37 @@ function Stage1() {
         </div>
       )}
 
+      {/* 노란 크레파스 아이템 (반향어가 의미를 드러낸 시점부터 노출) */}
+      {step >= 30 && (
+        <div style={{
+          position: 'absolute', top: '14%', right: '5%', zIndex: 25,
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          background: 'rgba(15,23,42,0.72)', backdropFilter: 'blur(10px)',
+          padding: '10px 14px', borderRadius: 16,
+          border: '1px solid rgba(251,191,36,0.55)',
+          boxShadow: '0 10px 26px rgba(0,0,0,0.4)',
+          animation: 'fadeIn 0.6s ease',
+        }}>
+          <img
+            src={ITEM_IMAGES.yellowCrayon}
+            alt="노란 크레파스"
+            style={{ width: 64, height: 64, objectFit: 'contain', filter: 'drop-shadow(0 4px 10px rgba(251,191,36,0.45))' }}
+          />
+          <span style={{ marginTop: 4, color: '#fde68a', fontSize: 11, fontWeight: 800 }}>노란 크레파스</span>
+        </div>
+      )}
+
       {dialogue && (
-        <DialogueBox 
-          {...dialogue} 
-          npcName={N} 
-          playerName={P} 
-          characterImage={dialogue.speaker === P ? playerImg : dialogue.speaker === N ? npcImg : undefined}
+        <DialogueBox
+          {...dialogue}
+          npcName={N}
+          playerName={P}
+          characterImage={
+            dialogue.speaker === P ? playerImg :
+            dialogue.speaker === N ? npcImg :
+            dialogue.speaker === '옆 친구' ? PEER_IMAGES.peerA_male.annoyed :
+            undefined
+          }
           characterPosition={dialogue.speaker === P ? 'right' : 'left'}
           enableTTS={false}
         />
@@ -158,27 +242,58 @@ function Stage2() {
 
   useEffect(() => {
     switch (step) {
+      // --- 인트로: 급식실 분위기 ---
       case 0:
         setDialogue({
-          speaker: P, text: `(${N} 표정이 안 좋은데... 밥도 안 먹고 숟가락을 딱딱거리고 있어. 왜 저러지?)`,
-          choices: [
-            { text: '🍴 "밥 안 먹어? 빨리 먹어." (재촉)', action: () => setStep(1) },
-            { text: '😟 "어디 아파?" (질문)', action: () => { addStat('understanding', 5); setStep(1); } },
-            { text: '👂 주변 소음을 유심히 들어본다 (관찰)', action: () => { addStat('understanding', 10); logWaiting(); setStep(1); } },
-          ]
+          speaker: 'Narrator', text: '(점심시간. 급식실이 소란스럽다. 숟가락 부딪히는 소리, 웃음소리, 의자 끄는 소리가 뒤섞여 울린다.)',
+          onNext: () => setStep(1),
         });
         break;
       case 1:
-        setDialogue({ speaker: 'Narrator', text: '쨍그랑! 옆 테이블에서 누군가 식판을 떨어뜨렸습니다!', onNext: () => setStep(2) });
+        setDialogue({
+          speaker: 'Narrator', text: `(${N}(이)가 밥을 안 먹고 숟가락을 딱딱거리고 있다. 눈을 질끈 감고 있다.)`,
+          onNext: () => setStep(2),
+        });
         break;
+      // --- 승주 속마음 ---
       case 2:
-        setNpcEmotion('tantrum'); setVignetteRed(true);
-        setDialogue({ speaker: N, text: '"으아아악!! 멈춰!! 멈춰!!" (식탁을 내리치고 나를 밀침)', onNext: () => setStep(3) });
+        setNpcEmotion('anxious');
+        setDialogue({
+          speaker: N, text: '(시끄러워. 시끄러워. 머리가 아파. 여기서 나가고 싶어.)',
+          onNext: () => setStep(3),
+        });
         break;
+      // --- 선택지 ---
       case 3:
+        setPlayerPose('thinking');
+        setDialogue({
+          speaker: P, text: `(${N} 표정이 안 좋은데... 밥도 안 먹고 숟가락을 딱딱거리고 있어. 왜 저러지?)`,
+          choices: [
+            { text: '🍴 "밥 안 먹어? 빨리 먹어." (재촉)', action: () => setStep(4) },
+            { text: '😟 "어디 아파?" (질문)', action: () => { addStat('understanding', 5); setStep(4); } },
+            { text: '👂 주변 소음을 유심히 들어본다 (관찰)', action: () => { addStat('understanding', 10); logWaiting(); setStep(4); } },
+          ]
+        });
+        break;
+      // --- 사건 발생 ---
+      case 4:
+        setDialogue({ speaker: 'Narrator', text: '**쨍그랑!** 옆 테이블에서 누군가 식판을 떨어뜨렸습니다!', onNext: () => setStep(5) });
+        break;
+      // --- 승주 속마음: 공포 ---
+      case 5:
+        setDialogue({
+          speaker: N, text: '(!! 아파아파아파!! 귀가 찢어지는 것 같아!! 도망가야 해!!)',
+          onNext: () => setStep(6),
+        });
+        break;
+      case 6:
+        setNpcEmotion('tantrum'); setVignetteRed(true);
+        setDialogue({ speaker: N, text: '"으아아악!! 멈춰!! 멈춰!!" (귀를 막으며 옆에 있던 나를 밀침)', onNext: () => setStep(7) });
+        break;
+      case 7:
         setPlayerPose('surprised');
         setDialogue({
-          speaker: P, text: `(밀쳐져서 엉덩방아를 찧음) "아, 진짜 아프네!"`,
+          speaker: P, text: `(밀쳐져서 엉덩방아를 찧음) "...진짜 아프다. 왜 나를 밀친 거야?"`,
           choices: [
             { text: '😡 "너 미쳤어? 왜 사람을 때려!" (같이 화냄)', action: () => { addStat('trust', -15); setStress(80); setStep(10); } },
             { text: '🏃 선생님을 부르러 뛰어간다 (회피)', action: () => { addStat('patience', 5); setStep(20); } },
@@ -194,12 +309,14 @@ function Stage2() {
         setDialogue({ speaker: '시스템', text: '선생님이 오시기까지 시간이 걸립니다. 그 사이에도 소음은 계속...', onNext: () => setStep(40) });
         break;
       case 30:
-        setDialogue({ speaker: '시스템', text: `💡 ${N}가 양쪽 귀를 꽉 막고 있는 것이 보입니다. 소리 때문에 고통받고 있어요!`, onNext: () => setStep(40) });
+        setDialogue({ speaker: '시스템', text: `💡 ${N}(이)가 양쪽 귀를 꽉 막고 있는 것이 보입니다. 소리 때문에 **고통받고** 있어요!`, onNext: () => setStep(40) });
         break;
+      // --- 미니게임 ---
       case 40:
-        setDialogue({ speaker: '시스템', text: `🚨 비상 사태! 소음 수치가 위험합니다! [헤드셋 다이얼]을 조절해 ${N}를 진정시키세요.` });
+        setDialogue({ speaker: '시스템', text: `🚨 비상 사태! 소음 수치가 위험합니다! **노이즈 캔슬링 헤드셋** 다이얼을 조절해 ${N}(이)를 진정시키세요.` });
         setShowMinigame(true);
         break;
+      // --- 미니게임 성공 후 ---
       case 50:
         setShowMinigame(false); setVignetteRed(false);
         setNpcEmotion('calm');
@@ -208,14 +325,26 @@ function Stage2() {
       case 51:
         setDialogue({ speaker: N, text: '(거친 숨을 몰아쉬다가 진정함) "...아파. 소리. 아파."', onNext: () => setStep(52) });
         break;
+      // --- 승주 속마음: 사과하고 싶음 ---
       case 52:
-        setDialogue({ speaker: P, text: '"나를 때리려던 게 아니었구나. 소리 때문에 도망치려던 거였어."', onNext: () => setStep(53) });
+        setDialogue({
+          speaker: N, text: '(미안해. 밀치려던 게 아니야. 몸이 먼저 움직였어. 너한테 사과하고 싶은데 어떻게 말해야 하는지 모르겠어.)',
+          onNext: () => setStep(53),
+        });
         break;
+      // --- 아웃트로: 깨달음 ---
       case 53:
+        setPlayerPose('talk');
+        setDialogue({ speaker: P, text: '"나를 때리려던 게 아니었구나. 소리가 너무 아파서... 도망치려던 거였어."', onNext: () => setStep(54) });
+        break;
+      case 54:
+        setDialogue({ speaker: P, text: `"나한테는 그냥 좀 시끄러운 소리였는데, ${N}(이)한테는 **완전히 다른 크기**로 들리는 거구나."`, onNext: () => setStep(55) });
+        break;
+      case 55:
         setNpcEmotion('happy');
         setDialogue({
           speaker: '시스템',
-          text: `🏅 배려의 방패 획득! ${N}처럼 감각이 예민한 친구에게는 우리가 느끼는 소리가 훨씬 크게 들려요.`,
+          text: `🏅 **배려의 방패** 획득! **감각 과민**이 있는 친구에게는 우리가 견딜 수 있는 소리도 고통이 될 수 있어요. 갑자기 밀치거나 소리 지르는 건 **공격이 아니라 자기 방어**예요.`,
           onNext: () => { completeStage('stage-2'); router.push('/high'); },
         });
         break;
@@ -274,10 +403,33 @@ function Stage3() {
 
   useEffect(() => {
     switch (step) {
+      // --- 인트로 ---
       case 0:
-        setDialogue({ speaker: N, text: '"여기는 사당역. 환승입니다. 2호선 띠리리링~" (매우 즐거워 보임)', onNext: () => setStep(1) });
+        setDialogue({
+          speaker: 'Narrator', text: `(점심시간이 끝나간다. 운동장 한쪽에서 ${N}(이)가 바닥에 뭔가를 열심히 그리고 있다.)`,
+          onNext: () => setStep(1),
+        });
         break;
       case 1:
+        setPlayerPose('thinking');
+        setDialogue({
+          speaker: P, text: '(또 지하철 그리고 있네. 매일 저것만 그린다. 종이 쳤는데 어떡하지?)',
+          onNext: () => setStep(2),
+        });
+        break;
+      case 2:
+        setNpcEmotion('happy');
+        setDialogue({ speaker: N, text: '"여기는 사당역. 환승입니다. **2호선** 띠리리링~" (손가락으로 선로를 따라가며 매우 행복한 표정)', onNext: () => setStep(3) });
+        break;
+      // --- 승주 속마음: 특별 관심사 ---
+      case 3:
+        setDialogue({
+          speaker: N, text: '(지하철 노선은 완벽해. 모든 역이 순서대로 연결되어 있어. 이 세상에서 가장 안전한 규칙이야.)',
+          onNext: () => setStep(4),
+        });
+        break;
+      // --- 선택지 ---
+      case 4:
         setDialogue({
           speaker: '시스템', text: `점심시간이 끝났는데 ${N}(이)가 운동장 바닥에 그림을 그리고 있습니다.`,
           choices: [
@@ -286,16 +438,35 @@ function Stage3() {
           ]
         });
         break;
+      // --- 잡아끌기 루트 ---
       case 10:
         setNpcEmotion('tantrum');
-        setDialogue({ speaker: N, text: '(바닥에 드러누우며) "안 가!! 기차 출발 안 했어!!"', onNext: () => setStep(30) });
+        setDialogue({ speaker: N, text: '(바닥에 드러누우며) "안 가!! 기차 출발 안 했어!!"', onNext: () => setStep(11) });
         break;
+      case 11:
+        setDialogue({
+          speaker: N, text: '(지금은 안 돼! 아직 4호선을 안 그렸어! 끝나지 않은 건 안 돼!)',
+          onNext: () => setStep(30),
+        });
+        break;
+      // --- 관심 표현 루트 ---
       case 20:
         setNpcEmotion('memory');
-        setDialogue({ speaker: N, text: '(신나서) "사당역 다음은 낙성대. 그 다음은 서울대입구..."', onNext: () => setStep(30) });
+        setDialogue({ speaker: N, text: '(눈이 반짝이며) "사당역 다음은 낙성대. 그 다음은 **서울대입구**. 그 다음은..."', onNext: () => setStep(21) });
         break;
+      case 21:
+        setPlayerPose('talk');
+        setDialogue({ speaker: P, text: '"와, 이거 진짜 정확해. 역 이름을 다 외우고 있어?"', onNext: () => setStep(22) });
+        break;
+      case 22:
+        setDialogue({
+          speaker: N, text: '(이 사람이 내 지하철에 관심이 있어! 보여주고 싶어!)',
+          onNext: () => setStep(30),
+        });
+        break;
+      // --- 타이머 미니게임 ---
       case 30:
-        setDialogue({ speaker: '시스템', text: '⏳ 말로만 하면 통하지 않습니다. [구글 타이머]로 눈에 보이는 약속을 하세요!' });
+        setDialogue({ speaker: '시스템', text: '⏳ 말로만 하면 통하지 않습니다. **비주얼 타이머**로 눈에 보이는 약속을 하세요!' });
         setShowDial(true);
         break;
       case 40:
@@ -306,23 +477,41 @@ function Stage3() {
         setNpcEmotion('anxious');
         setDialogue({ speaker: N, text: '"5분 길어. 지금? 아니야? 으으으..." (손톱을 물어뜯으며 다리를 떤다)', onNext: () => setStep(42) });
         break;
+      // --- 승주 속마음: 불안 ---
       case 42:
+        setDialogue({
+          speaker: N, text: '(5분이 얼마나 긴 거지? 끝나는 게 보여야 하는데. 불안해.)',
+          onNext: () => setStep(43),
+        });
+        break;
+      // --- 말랑이 미니게임 ---
+      case 43:
         addInventory('squishy');
-        setDialogue({ speaker: '시스템', text: '😰 기다리는 시간은 지루하고 불안합니다. [말랑이]로 긴장을 풀어주세요!' });
+        setDialogue({ speaker: '시스템', text: '😰 기다리는 시간은 지루하고 불안합니다. **말랑이**로 긴장을 풀어주세요!' });
         setShowSquishy(true);
         break;
+      // --- 성공 후 ---
       case 50:
         setShowSquishy(false);
         setNpcEmotion('happy');
         setDialogue({ speaker: N, text: '(타이머 종료. 차분하게 일어남) "종점. 교실역. 출발."', onNext: () => setStep(51) });
         break;
       case 51:
-        setDialogue({ speaker: P, text: '"기다려줘서 고마워! 늦지 않게 전속력으로 가자!"', onNext: () => setStep(52) });
+        setPlayerPose('talk');
+        setDialogue({ speaker: P, text: `"${N}아, 너 이 노선도 다 그렸으니까 내일은 **3호선**도 그려볼래?"`, onNext: () => setStep(52) });
         break;
+      // --- 승주 속마음: 기쁨 ---
       case 52:
         setDialogue({
+          speaker: N, text: '(3호선! 좋아! 내일도 이 사람이랑 같이 그리고 싶어.)',
+          onNext: () => setStep(53),
+        });
+        break;
+      // --- 뱃지 ---
+      case 53:
+        setDialogue({
           speaker: '시스템',
-          text: '🏅 약속의 시계 획득! 갑작스러운 변화가 힘든 친구에게는 미리 준비할 시간과 감각 조절 도구가 효과적이에요.',
+          text: '🏅 **약속의 시계** 획득! 갑작스러운 변화가 힘든 친구에게는 **미리 준비할 시간**과 **눈에 보이는 약속**(타이머)이 효과적이에요. 그리고 친구의 **특별한 관심사**를 존중해주세요.',
           onNext: () => { completeStage('stage-3'); router.push('/high'); },
         });
         break;
@@ -340,13 +529,35 @@ function Stage3() {
       <img src={BG_IMAGES.playground} alt="운동장" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
       <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)' }} />
       <div className="stage-header"><div className="stage-title">🚂 3단계: 기차는 멈추지 않아</div><div className="stage-subtitle">전이 & 감각 조절</div></div>
+
+      {/* 모래에 그린 지하철 노선도 — 승주의 특별 관심사 시각화 (인트로 ~ 관심 표현 구간) */}
+      {step >= 0 && step <= 22 && (
+        <div style={{
+          position: 'absolute', left: '4%', bottom: '24%', zIndex: 25,
+          width: 200, padding: 8,
+          background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(10px)',
+          borderRadius: 14, border: '1px solid rgba(99,102,241,0.45)',
+          boxShadow: '0 12px 28px rgba(0,0,0,0.4)',
+          pointerEvents: 'none',
+        }}>
+          <img
+            src={ITEM_IMAGES.sandSubwayMap}
+            alt="모래 위 지하철 노선도"
+            style={{ width: '100%', height: 'auto', objectFit: 'contain', borderRadius: 8 }}
+          />
+          <div style={{ marginTop: 4, textAlign: 'center', color: '#c7d2fe', fontSize: 11, fontWeight: 700 }}>
+            🚇 모래 위 노선도
+          </div>
+        </div>
+      )}
+
       {showDial && <div className="minigame-area"><TimerDial onComplete={handleDialComplete} /></div>}
       {showSquishy && <div className="minigame-area"><SquishyBreath onComplete={handleSquishyComplete} /></div>}
       {dialogue && (
-        <DialogueBox 
-          {...dialogue} 
-          npcName={N} 
-          playerName={P} 
+        <DialogueBox
+          {...dialogue}
+          npcName={N}
+          playerName={P}
           characterImage={dialogue.speaker === P ? playerImg : dialogue.speaker === N ? npcImg : undefined}
           characterPosition={dialogue.speaker === P ? 'right' : 'left'}
           enableTTS={false}
@@ -373,32 +584,58 @@ function Stage4() {
 
   useEffect(() => {
     switch (step) {
+      // --- 인트로: 미술 시간 분위기 ---
       case 0:
-        setDialogue({ speaker: '시스템', text: '🎨 미술 시간, 거대한 모자이크 벽화를 만들고 있습니다. 하늘 부분의 파란색 그라데이션이 너무 복잡해서 마지막 조각을 못 찾고 있어요.', onNext: () => setStep(1) });
+        setDialogue({
+          speaker: 'Narrator', text: '(미술 시간. 학급 전체가 거대한 모자이크 벽화를 만들고 있다. 마감이 코앞인데 마지막 하늘 부분이 안 맞는다.)',
+          onNext: () => setStep(1),
+        });
         break;
       case 1:
-        setDialogue({ speaker: '조원 A', text: '"아, 이게 다 똑같은 파란색이지 뭐야? 도대체 뭐가 맞는 조각이야?"', onNext: () => setStep(2) });
+        setDialogue({ speaker: '조원 A', text: '"이 파란색 조각들 다 똑같아 보이는데? 도대체 어떤 걸 넣어야 하는 거야?"', onNext: () => setStep(2) });
         break;
       case 2:
-        setNpcEmotion('memory');
-        setDialogue({ speaker: N, text: '(바닥에 떨어진 수많은 조각 중 하나를 집어 들고, 벽화의 빈 곳을 번갈아 쳐다본다)', onNext: () => setStep(3) });
+        setDialogue({ speaker: '조원 B', text: '"시간 없어, 빨리빨리 해야지! 아무거나 넣자."', onNext: () => setStep(3) });
         break;
+      // --- 승주의 행동 ---
       case 3:
-        setDialogue({ speaker: '조원 B', text: `"${N}아, 그거 내려놔. 섞이면 더 골치 아파져. 그냥 앉아 있어."`, onNext: () => setStep(4) });
+        setNpcEmotion('memory');
+        setDialogue({ speaker: 'Narrator', text: `(${N}(이)가 바닥에 흩어진 조각들 사이에서 하나를 집어들고, 벽화의 빈 곳을 번갈아 쳐다본다.)`, onNext: () => setStep(4) });
         break;
+      // --- 승주 속마음 ---
       case 4:
+        setDialogue({
+          speaker: N, text: '(이건 아니야. 이 파란색은 0.3톤 더 밝아. 맞는 건... 저기 있어.)',
+          onNext: () => setStep(5),
+        });
+        break;
+      // --- 배제 ---
+      case 5:
+        setDialogue({ speaker: '조원 B', text: `"${N}아, 그거 내려놔. 섞이면 더 골치 아파져. 그냥 **앉아 있어**."`, onNext: () => setStep(6) });
+        break;
+      // --- 승주 속마음: 슬픔 ---
+      case 6:
+        setDialogue({
+          speaker: N, text: '(...앉아 있으라고? 나는 맞는 조각을 찾았는데. 왜 아무도 안 봐?)',
+          onNext: () => setStep(7),
+        });
+        break;
+      // --- 핵심 선택 ---
+      case 7:
+        setPlayerPose('thinking');
         setDialogue({
           speaker: P, text: `(${N}(이)가 조각을 들고 무언가 보여주려 하고 있다...)`,
           choices: [
             { text: `🤫 "${N}아, 넌 가만히 있는 게 도와주는 거야." (배제)`, action: () => { addStat('trust', -10); setStep(40); } },
-            { text: `✋ "${N}가 뭘 하려는지 한번 볼까?" (관찰)`, action: () => { logWaiting(); addStat('trust', 10); addStat('communication', 10); setStep(40); } },
+            { text: `✋ "${N}(이)가 뭘 하려는지 한번 볼까?" (관찰)`, action: () => { logWaiting(); addStat('trust', 10); addStat('communication', 10); setStep(40); } },
             { text: `🔍 "${N}아, 이거 네가 해볼래?" (참여 유도)`, action: () => { logWaiting(); addStat('understanding', 15); addStat('trust', 10); setStep(40); } },
           ]
         });
         break;
+      // --- PECS 미니게임 ---
       case 40:
         setNpcEmotion('discover');
-        setDialogue({ speaker: '시스템', text: `💬 ${N}(이)가 주머니에서 PECS 카드 뭉치를 꺼냅니다. 카드를 확인하세요!` });
+        setDialogue({ speaker: '시스템', text: `💬 ${N}(이)가 주머니에서 **PECS 카드** 뭉치를 꺼냅니다. 카드를 확인하세요!` });
         setShowPecs(true);
         break;
       case 41:
@@ -406,22 +643,37 @@ function Stage4() {
         setPlayerPose('talk');
         setDialogue({ speaker: P, text: '"뭐? 네가 할 수 있다고? 그래, 한번 해봐!"', onNext: () => setStep(42) });
         break;
+      // --- 모자이크 미니게임 ---
       case 42:
         setDialogue({ speaker: '시스템', text: `🧩 ${N}(이)의 눈에는 미세한 색깔의 차이가 선명한 패턴으로 보입니다. 조각을 돌려 맞추세요!` });
         setShowMosaic(true);
         break;
+      // --- 성공 후: 반응 ---
       case 50:
         setShowMosaic(false);
         setNpcEmotion('happy');
-        setDialogue({ speaker: P, text: `"${N}아, 네가 찾았어! 우린 다 똑같아 보였는데, 넌 이걸 어떻게 구분했어?"`, onNext: () => setStep(51) });
+        setDialogue({ speaker: '조원 A', text: '"우와... **딱 맞네?** 어떻게 이걸 구별했어? 나한테는 다 똑같아 보였는데."', onNext: () => setStep(51) });
         break;
       case 51:
-        setDialogue({ speaker: '조원 A', text: '"우와... 딱 맞네? 우린 다 똑같아 보였는데, 넌 이걸 어떻게 구별했어?"', onNext: () => setStep(52) });
+        setPlayerPose('talk');
+        setDialogue({ speaker: P, text: '"아까 앉아 있으라고 했을 때... 이미 답을 알고 있었구나."', onNext: () => setStep(52) });
         break;
+      // --- 승주 속마음: 기쁨 ---
       case 52:
         setDialogue({
+          speaker: N, text: '(내가 도움이 됐어! 내가 찾은 조각이 맞았어!)',
+          onNext: () => setStep(53),
+        });
+        break;
+      // --- 조원 사과 ---
+      case 53:
+        setDialogue({ speaker: '조원 B', text: `"...미안. 아까 가만히 있으라고 해서. 다음에는 ${N}(이)한테 먼저 물어볼게."`, onNext: () => setStep(54) });
+        break;
+      // --- 뱃지 ---
+      case 54:
+        setDialogue({
           speaker: '시스템',
-          text: `🏅 협력의 전구 획득! 남들은 구분 못하는 미세한 색깔 차이를 ${N}(이)는 단번에 알아챘어요.`,
+          text: `🏅 **협력의 전구** 획득! ${N}(이)는 남들이 보지 못하는 **미세한 차이**를 알아채는 뛰어난 눈을 가지고 있어요. **"못하는 것"만 보면 "잘하는 것"을 놓치게 돼요.**`,
           onNext: () => { completeStage('stage-4'); router.push('/high'); },
         });
         break;
@@ -442,11 +694,23 @@ function Stage4() {
       {showPecs && <div className="minigame-area"><PecsCardPuzzle npcName={N} onComplete={handlePecsComplete} /></div>}
       {showMosaic && <div className="minigame-area"><MosaicPuzzle onComplete={handleMosaicComplete} /></div>}
       {dialogue && (
-        <DialogueBox 
-          {...dialogue} 
-          npcName={N} 
-          playerName={P} 
-          characterImage={dialogue.speaker === P ? playerImg : dialogue.speaker === N ? npcImg : undefined}
+        <DialogueBox
+          {...dialogue}
+          npcName={N}
+          playerName={P}
+          characterImage={
+            dialogue.speaker === P ? playerImg :
+            dialogue.speaker === N ? npcImg :
+            // 조원 A (남): 결말 이후에는 미안/감탄(=sorry 포즈), 그 전에는 짜증
+            dialogue.speaker === '조원 A'
+              ? (step >= 50 ? PEER_IMAGES.peerA_male.sorry : PEER_IMAGES.peerA_male.annoyed)
+              :
+            // 조원 B (여): 사과 단계(53) 이후에는 기본, 그 전에는 짜증
+            dialogue.speaker === '조원 B'
+              ? (step >= 53 ? PEER_IMAGES.peerB_female.default : PEER_IMAGES.peerB_female.annoyed)
+              :
+            undefined
+          }
           characterPosition={dialogue.speaker === P ? 'right' : 'left'}
           enableTTS={false}
         />
@@ -473,32 +737,59 @@ function Stage5() {
 
   useEffect(() => {
     switch (step) {
+      // --- 인트로 내레이션 ---
       case 0:
-        setDialogue({ speaker: P, text: '"큰일 났다... 분명 아까 이쪽으로 온 것 같은데?"', onNext: () => setStep(1) });
+        setDialogue({ speaker: '시스템', text: '숲 체험학습 도중, 갑자기 안개가 짙어졌습니다. 앞이 잘 보이지 않는 가운데, 길이 둘로 갈라집니다.', onNext: () => setStep(1) });
         break;
       case 1:
-        setNpcEmotion('memory');
-        setDialogue({ speaker: N, text: '(제자리에 멈춰 서서 고개를 저음) "왼쪽 아님. 리본 없음."', onNext: () => setStep(2) });
+        setDialogue({ speaker: '시스템', text: '왼쪽은 넓고 평탄해 보이고, 오른쪽은 좁고 덤불이 우거져 있습니다. 대부분의 친구들이 왼쪽을 가리킵니다.', onNext: () => setStep(2) });
         break;
       case 2:
+        setDialogue({ speaker: P, text: '"큰일 났다... 분명 아까 이쪽으로 온 것 같은데? 왼쪽이 더 넓으니까 왼쪽 아닐까?"', onNext: () => setStep(3) });
+        break;
+      // --- 승주 속마음: 사진 같은 기억 ---
+      case 3:
+        setNpcEmotion('memory');
+        setDialogue({ speaker: N, text: '(입구 안내판에 적혀 있었어. "노란 리본을 따라가세요." 왼쪽에는 리본이 없었어. 확실해.)', onNext: () => setStep(4) });
+        break;
+      case 4:
+        setDialogue({ speaker: N, text: '(제자리에 멈춰 서서 고개를 저음) "왼쪽 아님. 리본 없음. 오른쪽."', onNext: () => setStep(5) });
+        break;
+      // --- 또래 압박 ---
+      case 5:
+        setDialogue({ speaker: '친구들', text: '"에이, 아무도 안 가는 좁은 길로 가자고? 넓은 쪽이 맞을 것 같은데..."', onNext: () => setStep(6) });
+        break;
+      // --- 선택 ---
+      case 6:
+        setPlayerPose('thinking');
         setDialogue({
-          speaker: P, text: '"여기가 더 넓잖아! 내 감을 믿어, 빨리 와!"',
+          speaker: P, text: '"다들 왼쪽이라는데... 근데 아까 리본을 봤다고?"',
           choices: [
-            { text: '🚶 승주를 억지로 끌고 왼쪽 길로 간다', action: () => { addStat('trust', -10); setStep(10); } },
-            { text: `🤔 "리본? ${N}아, 아까 뭘 본 거야?" (승주를 믿는다)`, action: () => { logWaiting(); addStat('trust', 10); addStat('understanding', 10); setStep(20); } },
+            { text: '🚶 다수를 따라 왼쪽 길로 간다', action: () => { addStat('trust', -10); setStep(10); } },
+            { text: `🤔 "${N}아, 네가 본 리본 이야기 좀 더 해줘" (승주를 믿는다)`, action: () => { logWaiting(); addStat('trust', 10); addStat('understanding', 10); setStep(20); } },
           ]
         });
         break;
+      // --- 오답 루트 ---
       case 10:
         setNpcEmotion('anxious');
-        setDialogue({ speaker: '시스템', text: '⛔ 막다른 길... 큰 바위가 길을 막고 있습니다.', onNext: () => setStep(11) });
+        setDialogue({ speaker: '시스템', text: '⛔ 막다른 길... 큰 바위가 길을 막고 있습니다. 되돌아가야 합니다.', onNext: () => setStep(11) });
         break;
       case 11:
-        setDialogue({ speaker: P, text: '"...미안, 내가 틀렸어. 노란 리본이 뭐라고 했지?"', onNext: () => setStep(20) });
+        setDialogue({ speaker: P, text: '"(아... 많은 사람이 맞다고 한 쪽이 아니었어. 나는 다수의 의견만 따르고, 직접 관찰한 사람의 말은 무시했구나.)"', onNext: () => setStep(12) });
         break;
+      case 12:
+        setDialogue({ speaker: P, text: `"...미안, 내가 틀렸어. ${N}아, 네가 말한 노란 리본 이야기, 다시 해줄래?"`, onNext: () => setStep(20) });
+        break;
+      // --- 신뢰 루트: 회상 ---
       case 20:
-        setDialogue({ speaker: '시스템', text: `🧩 ${N}는 입구의 안내판을 사진처럼 기억하고 있습니다. ${N}의 기억을 확인해 보세요!` });
+        setDialogue({ speaker: '시스템', text: `🧩 ${N}는 입구의 안내판을 **사진처럼 정확하게** 기억하고 있습니다. ${N}의 기억 속으로 들어가 보세요!` });
         break;
+      case 25:
+        setNpcEmotion('memory');
+        setDialogue({ speaker: N, text: '(안내판. 글자 12개. "노란 리본을 따라가세요." 오른쪽 화살표. 리본 그림 3개. 전부 기억나. 틀릴 리가 없어.)', onNext: () => setStep(30) });
+        break;
+      // --- 스크래치 미니게임 ---
       case 30:
         setShowScratch(true);
         setDialogue({ speaker: '시스템', text: '🖐️ 안개를 문질러 지우세요! 숨겨진 노란 리본을 찾아 클릭하세요!' });
@@ -508,16 +799,25 @@ function Stage5() {
         setNpcEmotion('happy');
         setDialogue({ speaker: N, text: '(오른쪽 덤불 숲을 가리키며) "저기. 리본. 30미터."', onNext: () => setStep(41) });
         break;
+      // --- 승주 속마음: 신뢰의 기쁨 ---
       case 41:
-        setPlayerPose('talk');
-        setDialogue({ speaker: P, text: `"와... 진짜네? 아까 스쳐 지나간 걸 다 기억하고 있었어? ${N}아, 네가 우리 팀 내비게이션이다!"`, onNext: () => setStep(42) });
+        setDialogue({ speaker: N, text: '(맞았어! 내 기억이 맞았어! 이 사람은... 내 말을 믿어줬어. 처음이야.)', onNext: () => setStep(42) });
         break;
       case 42:
+        setPlayerPose('talk');
+        setDialogue({ speaker: P, text: `"와... 진짜네? 아까 스쳐 지나간 걸 다 기억하고 있었어? ${N}아, 네가 우리 팀 내비게이션이다!"`, onNext: () => setStep(43) });
+        break;
+      // --- 깨달음 ---
+      case 43:
+        setDialogue({ speaker: P, text: `"다수가 왼쪽이라고 했을 때, ${N}(이)만 달랐어. 근데 정답은 ${N}(이)었어. **다르다는 건 틀린 게 아니었어.**"`, onNext: () => setStep(44) });
+        break;
+      // --- 배지 ---
+      case 44:
         logAccuracy(); useTool('ribbon'); useTool('map');
         addStat('understanding', 20); addStat('communication', 20);
         setDialogue({
           speaker: '시스템',
-          text: `🏅 기억의 나침반 획득! ${N}의 뛰어난 기억력이 길을 찾아주었어요!`,
+          text: `🏅 **기억의 나침반** 획득! ${N}의 뛰어난 기억력이 길을 찾아주었어요. 누군가의 **다른 방식**을 믿는 것, 그것이 진짜 신뢰예요.`,
           onNext: () => { completeStage('stage-5'); router.push('/high'); },
         });
         break;
@@ -525,14 +825,23 @@ function Stage5() {
   }, [step]);
 
   const triggerFlashback = () => { setGrayscale(true); setShowFlashback(true); };
-  const closeFlashback = () => { setGrayscale(false); setShowFlashback(false); setStep(30); };
+  const closeFlashback = () => { setGrayscale(false); setShowFlashback(false); setStep(25); };
 
   const npcImg = getNpcImage(state.npc.gender, npcEmotion);
   const playerImg = getPlayerImage(state.player.gender, playerPose);
 
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative' }} className={grayscale ? 'scene-grayscale' : ''}>
-      <img src={BG_IMAGES.crossroads} alt="갈림길" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+      {/* 동적 배경: 인트로(안개숲) → 선택/회상(갈림길) → 오답 루트(막다른길) */}
+      <img
+        src={
+          step <= 2 ? BG_IMAGES.foggyForest :
+          (step >= 10 && step <= 12) ? BG_IMAGES.deadEnd :
+          BG_IMAGES.crossroads
+        }
+        alt="갈림길"
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+      />
       <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)' }} />
       <div className="stage-header"><div className="stage-title">🌲 5단계: 갈림길의 기억</div><div className="stage-subtitle">통합 & 신뢰</div></div>
 
@@ -566,13 +875,19 @@ function Stage5() {
       )}
 
       {showScratch && <div className="minigame-area"><ScratchFog bgImage={BG_IMAGES.map} ribbonImage={ITEM_IMAGES.ribbon} onComplete={() => setStep(40)} /></div>}
-      
+
       {dialogue && (
-        <DialogueBox 
-          {...dialogue} 
-          npcName={N} 
-          playerName={P} 
-          characterImage={dialogue.speaker === P ? playerImg : dialogue.speaker === N ? npcImg : undefined}
+        <DialogueBox
+          {...dialogue}
+          npcName={N}
+          playerName={P}
+          characterImage={
+            dialogue.speaker === P ? playerImg :
+            dialogue.speaker === N ? npcImg :
+            // 다수결 압박을 표현하는 친구 무리 그림
+            dialogue.speaker === '친구들' ? GROUP_PRESSURE_IMAGE :
+            undefined
+          }
           characterPosition={dialogue.speaker === P ? 'right' : 'left'}
           enableTTS={false}
         />

@@ -23,7 +23,7 @@ export default function StartPage() {
         </p>
 
         <h1 className="start-title">
-          우리 반<br />보물찾기 💎
+          히든피스<br />우리 반 보물찾기 💎
         </h1>
 
         <div className="start-prompt">

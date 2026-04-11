@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useGame } from '@/contexts/GameContext';
 import TopNavBar from '@/components/layout/TopNavBar';
 import { getLowNpcImage, LOW_BG_IMAGES, ITEM_IMAGES } from '@/data/assetMap';
-import { FaClock } from 'react-icons/fa6';
+import Icon from '@/components/ui/Icon';
 import ParticleCanvas from '@/components/minigames/ParticleCanvas';
 import { useTTS } from '@/hooks/useTTS';
 
@@ -39,8 +39,8 @@ function LowStage1() {
 
   // TTS messages
   const ttsText = isComplete
-    ? '잘했어요! 친구도 기뻐하는 것 같네요.'
-    : `${state.npc.name}가 혼자 클레이 놀이를 하고 있어요. 다가가서 먼저 인사를 건네볼까요? 같이 놀자 말풍선을 눌러주세요.`;
+    ? `잘했어요! ${state.npc.name}가 활짝 웃고 있어요. 먼저 다가가면 친구도 기뻐해요!`
+    : `${state.npc.name}가 교실 한쪽에서 혼자 클레이 놀이를 하고 있어요. 아무도 다가가지 않았네요. 우리가 먼저 인사를 건네볼까요? 같이 놀자 말풍선을 눌러주세요.`;
   useTTS(ttsText);
 
   return (
@@ -56,7 +56,7 @@ function LowStage1() {
             {isComplete ? '성공! 친구와 함께 놀게 되었어요.' : '친구에게 먼저 다가가 볼까요?'}
           </h2>
           <p style={{ fontSize: 15, color: '#64748b', marginTop: 8 }}>
-            {isComplete ? '잘했어요! 친구도 기뻐하는 것 같네요.' : `${state.npc.name}가 혼자 클레이 놀이를 하고 있어요. 다가가서 먼저 인사를 건네볼까요? '같이 놀자' 말풍선을 눌러주세요.`}
+            {isComplete ? `잘했어요! ${state.npc.name}가 활짝 웃고 있어요. 먼저 다가가면 친구도 기뻐해요!` : `${state.npc.name}가 교실 한쪽에서 혼자 클레이 놀이를 하고 있어요. 아무도 다가가지 않았네요. 우리가 먼저 인사를 건네볼까요? '같이 놀자' 말풍선을 눌러주세요.`}
           </p>
         </div>
 
@@ -97,8 +97,8 @@ function LowStage2() {
 
   // TTS messages
   const ttsText = isComplete
-    ? `와! 소음이 줄어들어서 ${state.npc.name}가 편안해졌어요.`
-    : `앗, 밖에서 공사 소리가 너무 크게 들려요. ${state.npc.name}가 귀를 막고 힘들어하고 있네요. 헤드폰을 눌러서 ${state.npc.name}를 도와주세요.`;
+    ? `와! 헤드폰 덕분에 소음이 줄어들었어요. ${state.npc.name}가 다시 편안해졌어요. 같은 소리도 사람마다 다르게 느낄 수 있어요!`
+    : `앗, 밖에서 공사 소리가 쿵쿵 울려요! 우리한테는 그냥 좀 시끄러운 소리지만, ${state.npc.name}에게는 귀가 아플 만큼 크게 들려요. 헤드폰을 눌러서 도와주세요!`;
   useTTS(ttsText);
 
   return (
@@ -115,7 +115,7 @@ function LowStage2() {
             {isComplete ? '헤드폰을 씌워주었어요!' : `${state.npc.name}가 시끄러운 소리 때문에 힘들어해요!`}
           </h2>
           <p style={{ fontSize: 14, color: '#64748b', marginTop: 8 }}>
-            {isComplete ? `와! 소음이 줄어들어서 ${state.npc.name}가 편안해졌어요.` : `앗, 밖에서 공사 소리가 너무 크게 들려요. ${state.npc.name}가 귀를 막고 힘들어하고 있네요. 헤드폰을 눌러서 ${state.npc.name}를 도와주세요.`}
+            {isComplete ? `와! 헤드폰 덕분에 소음이 줄어들었어요. ${state.npc.name}가 다시 편안해졌어요. 같은 소리도 사람마다 다르게 느낄 수 있어요!` : `앗, 밖에서 공사 소리가 쿵쿵 울려요! 우리한테는 그냥 좀 시끄러운 소리지만, ${state.npc.name}에게는 귀가 아플 만큼 크게 들려요. 헤드폰을 눌러서 도와주세요!`}
           </p>
         </div>
 
@@ -156,8 +156,8 @@ function LowStage3() {
 
   // TTS messages
   const ttsText = isComplete
-    ? '참 잘했어요! 기다려주니 친구가 대답을 했어요.'
-    : '친구의 대답이 늦어지고 있어요. 시계 버튼을 3번 눌러서 잠시 기다려줄까요?';
+    ? `참 잘했어요! 조금 기다려주니까 ${state.npc.name}가 자기 생각을 말할 수 있었어요. 기다림은 가장 쉬운 도움이에요!`
+    : `${state.npc.name}에게 질문을 했는데, 대답이 조금 늦어지고 있어요. 생각하는 데 시간이 더 필요한 친구도 있어요. 시계 버튼을 3번 눌러서 기다려줄까요?`;
   useTTS(ttsText);
 
   return (
@@ -170,10 +170,10 @@ function LowStage3() {
 
         <div style={{ background: 'rgba(255,255,255,0.95)', padding: '16px 24px', borderRadius: 20, boxShadow: '0 8px 32px rgba(0,0,0,0.1)', textAlign: 'center', border: '3px solid #c7d2fe', width: '100%', maxWidth: 600 }}>
           <h2 style={{ fontSize: 22, fontWeight: 800, color: isComplete ? '#16a34a' : '#1e293b' }}>
-            {isComplete ? '참 잘했어요! 기다려주니 친구가 대답을 했어요.' : `시계 버튼을 눌러주세요! (${tapCount}/3)`}
+            {isComplete ? `참 잘했어요! ${state.npc.name}가 대답을 했어요!` : `시계 버튼을 눌러주세요! (${tapCount}/3)`}
           </h2>
           <p style={{ fontSize: 15, color: '#64748b', marginTop: 8 }}>
-            {isComplete ? '성공! 친구가 대답할 시간을 주었어요.' : '친구의 대답이 늦어지고 있어요. 시계 버튼을 3번 눌러서 잠시 기다려줄까요?'}
+            {isComplete ? `조금 기다려주니까 ${state.npc.name}가 자기 생각을 말할 수 있었어요. 기다림은 가장 쉬운 도움이에요!` : `${state.npc.name}에게 질문을 했는데, 대답이 조금 늦어지고 있어요. 생각하는 데 시간이 더 필요한 친구도 있어요. 시계 버튼을 3번 눌러서 기다려줄까요?`}
           </p>
         </div>
 
@@ -192,7 +192,7 @@ function LowStage3() {
 
           {!isComplete && (
             <div onClick={() => setTapCount(v => v + 1)} style={{ background: 'white', padding: 24, borderRadius: '50%', border: '4px solid #c7d2fe', boxShadow: '0 0 30px rgba(99,102,241,0.6)', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', animation: 'pulse 1.5s infinite' }}>
-              <FaClock style={{ fontSize: 48, color: '#6366f1', marginBottom: 8 }} />
+              <Icon name="clock" size={56} alt="시계" style={{ marginBottom: 8 }} />
               <span style={{ fontSize: 18, fontWeight: 800, color: '#475569' }}>기다리기</span>
             </div>
           )}
@@ -218,10 +218,10 @@ function LowStage4() {
 
   // TTS messages
   const ttsText = phase === 'card_selection'
-    ? '친구가 많이 속상해 보여요. 그림 카드를 누르면 친구가 원하는 것을 말할 수 있어요!'
+    ? `${state.npc.name}가 속상해서 말로 표현하기 어려운 것 같아요. 그림 카드를 보여주면, 그림으로 자기 마음을 표현할 수 있어요!`
     : phase === 'squishy_tapping'
-    ? '말랑말랑한 장난감이 필요하대요! 말랑이를 3번 눌러서 친구를 달래주세요.'
-    : '최고! 친구가 다시 편안해졌어요.';
+    ? `${state.npc.name}가 그림 카드로 말랑이가 필요하다고 알려줬어요! 말랑이를 3번 눌러서 친구를 달래주세요.`
+    : `최고! 그림 카드와 말랑이 덕분에 ${state.npc.name}가 다시 편안해졌어요. 말로 표현하기 어려울 때, 다른 방법으로 도와줄 수 있어요!`;
   useTTS(ttsText);
 
   return (
@@ -234,14 +234,14 @@ function LowStage4() {
 
         <div style={{ background: 'rgba(255,255,255,0.95)', padding: '16px 24px', borderRadius: 20, boxShadow: '0 8px 32px rgba(0,0,0,0.1)', textAlign: 'center', border: '3px solid #a5b4fc', width: '100%', maxWidth: 600 }}>
           <h2 style={{ fontSize: 22, fontWeight: 800, color: phase === 'done' ? '#16a34a' : '#1e293b' }}>
-            {phase === 'card_selection' && '친구가 많이 속상해 보여요.'}
+            {phase === 'card_selection' && `${state.npc.name}가 많이 속상해 보여요.`}
             {phase === 'squishy_tapping' && `말랑이를 3번 눌러주세요! (${tapCount}/3)`}
-            {phase === 'done' && '최고! 친구가 다시 편안해졌어요.'}
+            {phase === 'done' && `최고! ${state.npc.name}가 다시 편안해졌어요!`}
           </h2>
           <p style={{ fontSize: 15, color: '#64748b', marginTop: 8 }}>
-            {phase === 'card_selection' && '그림 카드를 누르면 친구가 원하는 것을 말할 수 있어요!'}
-            {phase === 'squishy_tapping' && '말랑말랑한 장난감이 필요하대요! 말랑이를 눌러서 친구를 달래주세요.'}
-            {phase === 'done' && '완벽해요! 친구가 기분이 좋아졌어요.'}
+            {phase === 'card_selection' && `${state.npc.name}가 속상해서 말로 표현하기 어려운 것 같아요. 그림 카드를 보여주면, 그림으로 자기 마음을 표현할 수 있어요!`}
+            {phase === 'squishy_tapping' && `${state.npc.name}가 그림 카드로 말랑이가 필요하다고 알려줬어요! 말랑이를 눌러서 친구를 달래주세요.`}
+            {phase === 'done' && `그림 카드와 말랑이 덕분에 ${state.npc.name}가 편안해졌어요. 말로 표현하기 어려울 때, 다른 방법으로 도와줄 수 있어요!`}
           </p>
         </div>
 

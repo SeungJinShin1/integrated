@@ -4,26 +4,22 @@ import { useRouter } from 'next/navigation';
 import { useGame } from '@/contexts/GameContext';
 import TopNavBar from '@/components/layout/TopNavBar';
 import { HIGH_STAGES } from '@/data/gameData';
-import { BG_IMAGES } from '@/data/assetMap';
-import { FaLock } from 'react-icons/fa6';
+import {
+  BG_IMAGES,
+  STAGE_NODE_IMAGES,
+  LOCK_OVERLAY_IMAGE,
+  COMPLETE_BADGE_IMAGE,
+} from '@/data/assetMap';
 import { useState } from 'react';
 
+// Six landmark positions roughly matching the 16:9 world map background.
 const NODE_POSITIONS = [
-  { left: '12%', top: '25%' },
-  { left: '32%', top: '55%' },
-  { left: '52%', top: '20%' },
-  { left: '68%', top: '50%' },
-  { left: '85%', top: '22%' },
-  { left: '50%', top: '75%' },
-];
-
-const NODE_COLORS = [
-  'linear-gradient(135deg, #22c55e, #16a34a)',
-  'linear-gradient(135deg, #ef4444, #dc2626)',
-  'linear-gradient(135deg, #f59e0b, #d97706)',
-  'linear-gradient(135deg, #a855f7, #9333ea)',
-  'linear-gradient(135deg, #06b6d4, #0891b2)',
-  'linear-gradient(135deg, #6366f1, #4f46e5)',
+  { left: '14%', top: '32%' },
+  { left: '32%', top: '62%' },
+  { left: '50%', top: '28%' },
+  { left: '68%', top: '60%' },
+  { left: '85%', top: '32%' },
+  { left: '52%', top: '82%' },
 ];
 
 export default function HighGradePage() {
@@ -53,8 +49,18 @@ export default function HighGradePage() {
     <>
       <TopNavBar />
       <div className="game-area">
-        <div className="world-map" style={{ backgroundImage: `url(${BG_IMAGES.dataworld})` }}>
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(15,23,42,0.3)' }} />
+        <div
+          className="world-map"
+          style={{
+            backgroundImage: `url(${BG_IMAGES.highMap})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            position: 'relative',
+          }}
+        >
+          {/* Subtle overlay so the landmark sprites stay readable */}
+          <div style={{ position: 'absolute', inset: 0, background: 'rgba(15,23,42,0.18)' }} />
 
           {/* Title */}
           <div style={{
@@ -63,67 +69,127 @@ export default function HighGradePage() {
           }}>
             <h1 style={{
               fontSize: 24, fontWeight: 800, color: 'white',
-              textShadow: '0 2px 12px rgba(0,0,0,0.6)',
+              textShadow: '0 2px 12px rgba(0,0,0,0.7)',
             }}>
-              🗺️ 미션 월드맵
+              🗺️ 우리 반 보물찾기 지도
             </h1>
-            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 4 }}>
-              에피소드를 선택하여 모험을 시작하세요
+            <p style={{
+              fontSize: 13, color: 'rgba(255,255,255,0.85)', marginTop: 4,
+              textShadow: '0 1px 8px rgba(0,0,0,0.6)',
+            }}>
+              단계를 선택하여 히든피스를 찾으러 떠나요
             </p>
           </div>
 
-          {/* Map Nodes */}
+          {/* Landmark nodes */}
           {HIGH_STAGES.map((stage, i) => {
             const isCompleted = completedStages.includes(stage.id);
             const isLocked = stage.id === 'stage-6' && !allPreviousComplete;
+            const nodeImage = STAGE_NODE_IMAGES[stage.id];
 
             return (
-              <div
+              <button
+                type="button"
                 key={stage.id}
                 className={`map-node ${isLocked ? 'locked' : ''}`}
-                style={{ ...NODE_POSITIONS[i] as React.CSSProperties, zIndex: 10 }}
-                onClick={() => handleStageClick(stage.id, i)}
-              >
-                <div style={{
-                  background: isCompleted ? 'linear-gradient(135deg, #10b981, #059669)' : NODE_COLORS[i],
-                  borderRadius: 20,
-                  padding: '16px 24px',
+                style={{
+                  ...(NODE_POSITIONS[i] as React.CSSProperties),
+                  zIndex: 10,
+                  position: 'absolute',
+                  transform: 'translate(-50%, -50%)',
+                  background: 'transparent',
+                  border: 'none',
+                  padding: 0,
+                  cursor: isLocked ? 'not-allowed' : 'pointer',
                   textAlign: 'center',
-                  minWidth: 140,
-                  border: isCompleted ? '3px solid #34d399' : '2px solid rgba(255,255,255,0.3)',
-                  boxShadow: isCompleted ? '0 0 20px rgba(16, 185, 129, 0.4)' : '0 4px 16px rgba(0,0,0,0.3)',
-                  position: 'relative',
-                }}>
+                  outline: 'none',
+                }}
+                onClick={() => handleStageClick(stage.id, i)}
+                aria-label={`${stage.title} ${isLocked ? '(잠김)' : ''}`}
+              >
+                <div
+                  style={{
+                    position: 'relative',
+                    width: 132,
+                    height: 132,
+                    margin: '0 auto',
+                    transition: 'transform 0.2s ease',
+                    filter: isLocked
+                      ? 'grayscale(0.85) brightness(0.6)'
+                      : isCompleted
+                        ? 'drop-shadow(0 0 12px rgba(16,185,129,0.55))'
+                        : 'drop-shadow(0 8px 18px rgba(0,0,0,0.45))',
+                  }}
+                >
+                  {nodeImage && (
+                    <img
+                      src={nodeImage}
+                      alt={stage.title}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                        pointerEvents: 'none',
+                      }}
+                    />
+                  )}
+
+                  {/* Lock overlay sprite */}
                   {isLocked && (
-                    <div style={{
-                      position: 'absolute', top: -8, right: -8,
-                      background: '#ef4444', borderRadius: '50%',
-                      width: 28, height: 28, display: 'flex',
-                      alignItems: 'center', justifyContent: 'center',
-                    }}>
-                      <FaLock style={{ color: 'white', fontSize: 12 }} />
-                    </div>
+                    <img
+                      src={LOCK_OVERLAY_IMAGE}
+                      alt="잠금"
+                      style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        width: '70%',
+                        height: '70%',
+                        transform: 'translate(-50%, -50%)',
+                        objectFit: 'contain',
+                        pointerEvents: 'none',
+                      }}
+                    />
                   )}
+
+                  {/* Completed badge sprite */}
                   {isCompleted && (
-                    <div style={{
-                      position: 'absolute', top: -8, right: -8,
-                      background: '#10b981', borderRadius: '50%',
-                      width: 28, height: 28, display: 'flex',
-                      alignItems: 'center', justifyContent: 'center',
-                      fontSize: 14, color: 'white', fontWeight: 800,
-                    }}>
-                      ✓
-                    </div>
+                    <img
+                      src={COMPLETE_BADGE_IMAGE}
+                      alt="완료"
+                      style={{
+                        position: 'absolute',
+                        top: -10,
+                        right: -10,
+                        width: 56,
+                        height: 56,
+                        objectFit: 'contain',
+                        pointerEvents: 'none',
+                        filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.4))',
+                      }}
+                    />
                   )}
-                  <div style={{ fontSize: 28, marginBottom: 6 }}>{stage.emoji}</div>
-                  <div style={{ color: 'white', fontSize: 14, fontWeight: 800, marginBottom: 4 }}>
-                    {stage.title}
-                  </div>
-                  <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: 11 }}>
-                    {stage.subtitle}
-                  </div>
                 </div>
-              </div>
+
+                <div
+                  style={{
+                    marginTop: 6,
+                    display: 'inline-block',
+                    background: 'rgba(15,23,42,0.78)',
+                    backdropFilter: 'blur(6px)',
+                    color: 'white',
+                    padding: '6px 14px',
+                    borderRadius: 14,
+                    fontSize: 13,
+                    fontWeight: 800,
+                    border: '1px solid rgba(255,255,255,0.18)',
+                    boxShadow: '0 4px 14px rgba(0,0,0,0.35)',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {stage.emoji} {stage.title}
+                </div>
+              </button>
             );
           })}
 
@@ -141,7 +207,7 @@ export default function HighGradePage() {
                 잠금 상태
               </h2>
               <p style={{ color: '#94a3b8', fontSize: 15 }}>
-                1~5단계를 모두 완료해야<br/>프리즘 연구소에 입장할 수 있어요!
+                1~5단계를 모두 완료해야<br/>「빛나는 우리 반」을 완성할 수 있어요!
               </p>
             </div>
           )}

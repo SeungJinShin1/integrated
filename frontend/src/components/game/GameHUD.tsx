@@ -2,8 +2,8 @@
 
 import { useGame } from '@/contexts/GameContext';
 import { TOOLS } from '@/data/gameData';
-import { FaHeart, FaStar } from 'react-icons/fa6';
-import * as Icons from 'react-icons/fa6';
+import { ITEM_IMAGES } from '@/data/assetMap';
+import Icon from '@/components/ui/Icon';
 import { useState } from 'react';
 
 export default function GameHUD() {
@@ -26,12 +26,12 @@ export default function GameHUD() {
       <div className="heart-display animate-fade-in-up">
         {isHighGrade ? (
           <>
-            <FaStar style={{ color: '#f59e0b', fontSize: 18 }} />
+            <Icon name="star" size={20} alt="별" />
             <span style={{ fontWeight: 800, color: '#334155' }}>관계 지수: {avgStat}</span>
           </>
         ) : (
           <>
-            <FaHeart style={{ color: '#ec4899', fontSize: 18 }} />
+            <Icon name="heart" size={20} alt="하트" />
             <span style={{ fontWeight: 800, color: '#334155' }}>하트: {state.hearts}</span>
           </>
         )}
@@ -51,11 +51,12 @@ export default function GameHUD() {
           {state.inventory.map(toolId => {
             const tool = TOOLS[toolId];
             if (!tool) return null;
-            // Get icon component dynamically from fa6
-            const IconComponent = (Icons as any)[tool.icon] || Icons.FaStar;
+            // 자체 제작 아이템 PNG (ITEM_IMAGES)에서 도구 이미지를 가져옵니다.
+            const toolImg = (ITEM_IMAGES as Record<string, string>)[toolId];
+            if (!toolImg) return null;
 
             return (
-              <div 
+              <div
                 key={toolId}
                 style={{ position: 'relative' }}
                 onMouseEnter={() => setHoveredTool(toolId)}
@@ -69,13 +70,17 @@ export default function GameHUD() {
                   boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
                   border: '2px solid rgba(99,102,241,0.2)',
                   cursor: 'pointer',
-                  color: '#4f46e5',
-                  fontSize: 20,
+                  overflow: 'hidden',
                   transition: 'transform 0.2s'
                 }}
                 className="hover:scale-110"
                 >
-                  <IconComponent />
+                  <img
+                    src={toolImg}
+                    alt={tool.name}
+                    style={{ width: 36, height: 36, objectFit: 'contain' }}
+                    draggable={false}
+                  />
                 </div>
 
                 {/* Tooltip */}
@@ -96,7 +101,7 @@ export default function GameHUD() {
                     pointerEvents: 'none'
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                      <IconComponent style={{ color: '#a855f7' }} />
+                      <img src={toolImg} alt={tool.name} style={{ width: 22, height: 22, objectFit: 'contain' }} />
                       <div style={{ fontWeight: 800, fontSize: 14 }}>{tool.name}</div>
                     </div>
                     <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', lineHeight: 1.5, wordBreak: 'keep-all' }}>
