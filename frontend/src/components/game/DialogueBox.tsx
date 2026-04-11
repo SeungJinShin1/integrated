@@ -130,13 +130,18 @@ export default function DialogueBox({
 
   // 피사체가 캔버스 안에서 작은 peer/무리 이미지 보정용 배율.
   // 컨테이너에 transform 적용 → 기존 breathing 애니메이션(이미지의 transform)과 충돌하지 않음.
-  const characterContainerStyle =
-    characterScale !== 1
-      ? {
-          transform: `scale(${characterScale})`,
-          transformOrigin: characterPosition === 'right' ? 'bottom right' : 'bottom left',
-        }
-      : undefined;
+  const isScaled = characterScale !== 1;
+  const characterContainerStyle = isScaled
+    ? {
+        transform: `scale(${characterScale})`,
+        transformOrigin: characterPosition === 'right' ? 'bottom right' : 'bottom left',
+      }
+    : undefined;
+  // peer/무리 이미지는 PNG 캔버스 내부 여백이 커서 object-fit:contain으로 가운데 정렬하면
+  // 피사체가 대화창과 멀어져 보임. 바닥에 붙도록 object-position을 아래로 당김.
+  const characterImgStyle: React.CSSProperties | undefined = isScaled
+    ? { objectPosition: 'bottom' }
+    : undefined;
 
   return (
     <div className="dialogue-container animate-fade-in">
@@ -148,7 +153,12 @@ export default function DialogueBox({
             className={`dialogue-character ${characterPosition === 'right' ? 'dialogue-character-right' : ''}`}
             style={characterContainerStyle}
           >
-            <img src={characterImage} alt={displaySpeaker} className="dialogue-character-img" />
+            <img
+              src={characterImage}
+              alt={displaySpeaker}
+              className="dialogue-character-img"
+              style={characterImgStyle}
+            />
           </div>
         )}
 

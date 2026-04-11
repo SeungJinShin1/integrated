@@ -12,14 +12,15 @@ import {
 } from '@/data/assetMap';
 import { useState } from 'react';
 
-// Six landmark positions roughly matching the 16:9 world map background.
+// Six landmark positions aligned with the 6 white circles on the world map background.
+// Order matches HIGH_STAGES (stage-1 … stage-6).
 const NODE_POSITIONS = [
-  { left: '14%', top: '32%' },
-  { left: '32%', top: '62%' },
-  { left: '50%', top: '28%' },
-  { left: '68%', top: '60%' },
-  { left: '85%', top: '32%' },
-  { left: '52%', top: '82%' },
+  { left: '19%', top: '33%' }, // stage-1 앵무새의 숲 — top-left forest circle
+  { left: '22%', top: '57%' }, // stage-2 폭탄이 터졌다 — mid-left circle (below forest)
+  { left: '57%', top: '26%' }, // stage-3 기차는 멈추지 않아 — top train hill circle
+  { left: '62%', top: '47%' }, // stage-4 사라진 퍼즐 조각 — mid-right mosaic circle
+  { left: '48%', top: '78%' }, // stage-5 갈림길의 기억 — bottom forest circle
+  { left: '82%', top: '62%' }, // stage-6 빛나는 우리 반 — prism-house circle (far right)
 ];
 
 export default function HighGradePage() {

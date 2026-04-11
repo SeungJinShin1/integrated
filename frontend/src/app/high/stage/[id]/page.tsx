@@ -219,7 +219,7 @@ function Stage1() {
           }
           characterPosition={dialogue.speaker === P ? 'right' : 'left'}
           // peer 스프라이트는 캔버스 대비 피사체가 작아 주요 캐릭터와 시각적 크기 통일을 위해 1.6배 확대
-          characterScale={dialogue.speaker === '옆 친구' ? 1.6 : 1}
+          characterScale={dialogue.speaker === '옆 친구' ? 1.85 : 1}
           enableTTS={false}
         />
       )}
@@ -699,7 +699,7 @@ function Stage4() {
           characterPosition={dialogue.speaker === P ? 'right' : 'left'}
           // peer 스프라이트 크기 보정
           characterScale={
-            dialogue.speaker === '조원 A' || dialogue.speaker === '조원 B' ? 1.6 : 1
+            dialogue.speaker === '조원 A' || dialogue.speaker === '조원 B' ? 1.85 : 1
           }
           enableTTS={false}
         />
@@ -879,7 +879,7 @@ function Stage5() {
           }
           characterPosition={dialogue.speaker === P ? 'right' : 'left'}
           // 친구 무리 이미지는 3~4명이 찍혀 있어 더 크게 확대
-          characterScale={dialogue.speaker === '친구들' ? 1.7 : 1}
+          characterScale={dialogue.speaker === '친구들' ? 1.95 : 1}
           enableTTS={false}
         />
       )}

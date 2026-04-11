@@ -449,28 +449,39 @@ body {
 }
 
 .start-title {
-  font-size: 64px;
-  font-weight: 800;
-  color: white;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  font-size: 96px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #fde68a 0%, #fbbf24 50%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.85));
   text-align: center;
   line-height: 1.2;
+  letter-spacing: -1px;
 }
 
 .start-subtitle {
-  font-size: 20px;
-  color: rgba(255, 255, 255, 0.85);
+  font-size: 22px;
+  color: #fef3c7;
+  font-weight: 700;
   margin-top: 16px;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.85);
 }
 
 .start-prompt {
-  margin-top: 60px;
-  padding: 16px 48px;
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  margin: 60px auto 0;
+  padding: 18px 56px;
+  border: 2px solid rgba(251, 191, 36, 0.7);
   border-radius: 40px;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 16px;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
+  color: #fef3c7;
+  font-size: 18px;
+  font-weight: 800;
+  text-align: center;
+  display: inline-block;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
   animation: pulse-glow 2s infinite;
 }
 
@@ -813,7 +824,7 @@ body {
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
   .start-title {
-    font-size: 36px;
+    font-size: 52px;
   }
 
   .dialogue-text {

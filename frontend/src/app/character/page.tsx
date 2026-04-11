@@ -4,14 +4,15 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGame } from '@/contexts/GameContext';
 import TopNavBar from '@/components/layout/TopNavBar';
-import { LOW_NPC_IMAGES, NPC_IMAGES, BG_IMAGES, LOW_BG_IMAGES } from '@/data/assetMap';
+import { LOW_NPC_IMAGES, NPC_IMAGES, PLAYER_IMAGES, BG_IMAGES, LOW_BG_IMAGES } from '@/data/assetMap';
 
 const DEFAULT_NAMES = { female: '승주', male: '성민' } as const;
 
 export default function CharacterCreationPage() {
   const router = useRouter();
   const { state, dispatch } = useGame();
-  const [gender, setGender] = useState<'female' | 'male'>('female');
+  const [npcGender, setNpcGender] = useState<'female' | 'male'>('female');
+  const [playerGender, setPlayerGender] = useState<'female' | 'male'>('female');
   const [name, setName] = useState('');
   const [touched, setTouched] = useState(false);
 
@@ -24,20 +25,17 @@ export default function CharacterCreationPage() {
 
   const isLow = state.gradeMode === 'low_grade';
 
-  // When gender changes, sync the placeholder/default name unless user has typed
+  // When NPC gender changes, sync the placeholder/default name unless user has typed
   useEffect(() => {
-    if (!touched) setName(DEFAULT_NAMES[gender]);
-  }, [gender, touched]);
-
-  const previewImage = isLow
-    ? LOW_NPC_IMAGES[gender].default
-    : NPC_IMAGES[gender].default;
+    if (!touched) setName(DEFAULT_NAMES[npcGender]);
+  }, [npcGender, touched]);
 
   const bgImage = isLow ? LOW_BG_IMAGES.intro : BG_IMAGES.classroom;
 
   const handleStart = () => {
-    const finalName = name.trim() || DEFAULT_NAMES[gender];
-    dispatch({ type: 'SET_NPC', payload: { name: finalName, gender } });
+    const finalName = name.trim() || DEFAULT_NAMES[npcGender];
+    dispatch({ type: 'SET_NPC', payload: { name: finalName, gender: npcGender } });
+    dispatch({ type: 'SET_PLAYER', payload: { gender: playerGender } });
     if (isLow) {
       dispatch({ type: 'SET_STAGE', payload: 'low_stage1' });
       router.push('/low/episode/1');
@@ -103,54 +101,125 @@ export default function CharacterCreationPage() {
           >
             <div style={{ textAlign: 'center', marginBottom: 24 }}>
               <h1 style={{ fontSize: 26, fontWeight: 800, color: '#1e293b', marginBottom: 6 }}>
-                함께할 친구를 골라주세요
+                캐릭터를 만들어 주세요
               </h1>
               <p style={{ fontSize: 14, color: '#64748b' }}>
-                친구의 모습과 이름을 정하고 모험을 시작해요
+                「나」와 함께할 친구를 고르고 모험을 시작해요
               </p>
             </div>
 
-            {/* Gender selection cards */}
+            {/* 나 (player) gender selection */}
+            <p style={{ fontSize: 13, fontWeight: 800, color: '#475569', marginBottom: 10, letterSpacing: 0.5 }}>
+              ① 나의 모습
+            </p>
             <div
               style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
-                gap: 16,
-                marginBottom: 24,
+                gap: 12,
+                marginBottom: 22,
               }}
             >
               {(['female', 'male'] as const).map((g) => {
-                const selected = gender === g;
-                const img = isLow ? LOW_NPC_IMAGES[g].default : NPC_IMAGES[g].default;
+                const selected = playerGender === g;
+                // Low grade는 별도의 '나' 스프라이트가 없으므로 LOW_NPC_IMAGES를 그대로 활용
+                const img = isLow ? LOW_NPC_IMAGES[g].default : PLAYER_IMAGES[g].talk;
                 return (
                   <button
                     key={g}
                     type="button"
-                    onClick={() => setGender(g)}
+                    onClick={() => setPlayerGender(g)}
                     style={{
-                      background: selected ? '#eef2ff' : '#f8fafc',
-                      border: selected ? '3px solid #6366f1' : '2px solid #e2e8f0',
-                      borderRadius: 20,
-                      padding: 16,
+                      background: selected ? '#fef3c7' : '#f8fafc',
+                      border: selected ? '3px solid #f59e0b' : '2px solid #e2e8f0',
+                      borderRadius: 18,
+                      padding: 12,
                       cursor: 'pointer',
                       transition: 'all 0.2s',
                       transform: selected ? 'translateY(-2px)' : 'translateY(0)',
                       boxShadow: selected
-                        ? '0 12px 28px rgba(99,102,241,0.25)'
+                        ? '0 10px 24px rgba(245,158,11,0.25)'
                         : '0 4px 12px rgba(0,0,0,0.05)',
                     }}
                   >
                     <div
                       style={{
                         width: '100%',
-                        height: 160,
-                        borderRadius: 14,
+                        height: 130,
+                        borderRadius: 12,
                         background: selected ? '#ffffff' : '#f1f5f9',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         overflow: 'hidden',
-                        marginBottom: 10,
+                        marginBottom: 8,
+                      }}
+                    >
+                      <img
+                        src={img}
+                        alt={g === 'female' ? '나 (여자)' : '나 (남자)'}
+                        style={{ height: '100%', objectFit: 'contain' }}
+                      />
+                    </div>
+                    <p
+                      style={{
+                        fontSize: 14,
+                        fontWeight: 800,
+                        color: selected ? '#b45309' : '#475569',
+                        margin: 0,
+                      }}
+                    >
+                      {g === 'female' ? '나 · 여자' : '나 · 남자'}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* NPC (친구) gender selection */}
+            <p style={{ fontSize: 13, fontWeight: 800, color: '#475569', marginBottom: 10, letterSpacing: 0.5 }}>
+              ② 함께할 친구
+            </p>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: 12,
+                marginBottom: 22,
+              }}
+            >
+              {(['female', 'male'] as const).map((g) => {
+                const selected = npcGender === g;
+                const img = isLow ? LOW_NPC_IMAGES[g].default : NPC_IMAGES[g].default;
+                return (
+                  <button
+                    key={g}
+                    type="button"
+                    onClick={() => setNpcGender(g)}
+                    style={{
+                      background: selected ? '#eef2ff' : '#f8fafc',
+                      border: selected ? '3px solid #6366f1' : '2px solid #e2e8f0',
+                      borderRadius: 18,
+                      padding: 12,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      transform: selected ? 'translateY(-2px)' : 'translateY(0)',
+                      boxShadow: selected
+                        ? '0 10px 24px rgba(99,102,241,0.25)'
+                        : '0 4px 12px rgba(0,0,0,0.05)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '100%',
+                        height: 130,
+                        borderRadius: 12,
+                        background: selected ? '#ffffff' : '#f1f5f9',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        overflow: 'hidden',
+                        marginBottom: 8,
                       }}
                     >
                       <img
@@ -161,7 +230,7 @@ export default function CharacterCreationPage() {
                     </div>
                     <p
                       style={{
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: 800,
                         color: selected ? '#4338ca' : '#475569',
                         margin: 0,
@@ -171,7 +240,7 @@ export default function CharacterCreationPage() {
                     </p>
                     <p
                       style={{
-                        fontSize: 12,
+                        fontSize: 11,
                         color: selected ? '#6366f1' : '#94a3b8',
                         marginTop: 2,
                       }}
@@ -187,13 +256,14 @@ export default function CharacterCreationPage() {
             <label
               style={{
                 display: 'block',
-                fontSize: 14,
-                fontWeight: 700,
+                fontSize: 13,
+                fontWeight: 800,
                 color: '#475569',
                 marginBottom: 8,
+                letterSpacing: 0.5,
               }}
             >
-              친구의 이름
+              ③ 친구의 이름
             </label>
             <input
               type="text"
@@ -203,7 +273,7 @@ export default function CharacterCreationPage() {
                 setName(e.target.value);
               }}
               maxLength={10}
-              placeholder={DEFAULT_NAMES[gender]}
+              placeholder={DEFAULT_NAMES[npcGender]}
               style={{
                 width: '100%',
                 padding: '14px 16px',
@@ -220,7 +290,7 @@ export default function CharacterCreationPage() {
               onBlur={(e) => (e.target.style.borderColor = '#e2e8f0')}
             />
             <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 6 }}>
-              비워두면 기본 이름 「{DEFAULT_NAMES[gender]}」(이)로 시작해요.
+              비워두면 기본 이름 「{DEFAULT_NAMES[npcGender]}」(이)로 시작해요.
             </p>
 
             <button
