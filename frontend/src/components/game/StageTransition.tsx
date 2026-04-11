@@ -26,7 +26,6 @@ export default function StageTransition({ targetStage, onComplete }: StageTransi
       transition: 'opacity 0.4s ease',
     }}>
       <div style={{ textAlign: 'center', color: 'white' }}>
-        <div style={{ fontSize: 48, marginBottom: 12 }}>🌟</div>
         <div style={{ fontSize: 18, fontWeight: 700, opacity: 0.9 }}>Loading...</div>
       </div>
     </div>

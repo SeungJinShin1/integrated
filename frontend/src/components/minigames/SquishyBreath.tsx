@@ -106,18 +106,21 @@ export default function SquishyBreath({ onComplete }: { onComplete: () => void }
               userSelect: 'none',
             }}>
             <span style={{
-              fontSize: 36,
+              fontSize: 16,
+              fontWeight: 800,
+              color: 'rgba(255,255,255,0.9)',
+              letterSpacing: 0.5,
               transition: 'transform 0.15s',
               transform: pressing ? 'scale(0.85)' : 'scale(1)',
             }}>
-              {pressing ? '😊' : isComplete ? '🎉' : '🫧'}
+              {pressing ? '꾹' : isComplete ? '완료' : '꾹 누르기'}
             </span>
           </div>
         </div>
 
         {isComplete && (
           <p className="minigame-success animate-success-scale" style={{ marginTop: 20 }}>
-            ✅ 마음이 차분해졌어요!
+            마음이 차분해졌어요!
           </p>
         )}
       </div>

@@ -103,7 +103,7 @@ export default function CharacterCreationPage() {
           >
             <div style={{ textAlign: 'center', marginBottom: 24 }}>
               <h1 style={{ fontSize: 26, fontWeight: 800, color: '#1e293b', marginBottom: 6 }}>
-                🤝 함께할 친구를 골라주세요
+                함께할 친구를 골라주세요
               </h1>
               <p style={{ fontSize: 14, color: '#64748b' }}>
                 친구의 모습과 이름을 정하고 모험을 시작해요
@@ -167,7 +167,7 @@ export default function CharacterCreationPage() {
                         margin: 0,
                       }}
                     >
-                      {g === 'female' ? '👧 여자 친구' : '👦 남자 친구'}
+                      {g === 'female' ? '여자 친구' : '남자 친구'}
                     </p>
                     <p
                       style={{
@@ -244,7 +244,7 @@ export default function CharacterCreationPage() {
               onMouseEnter={(e) => ((e.target as HTMLElement).style.transform = 'translateY(-2px)')}
               onMouseLeave={(e) => ((e.target as HTMLElement).style.transform = 'translateY(0)')}
             >
-              🚀 모험 시작하기
+              모험 시작하기
             </button>
           </div>
         </div>

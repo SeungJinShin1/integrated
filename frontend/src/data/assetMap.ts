@@ -77,6 +77,8 @@ export const BG_IMAGES = {
   highMap: '/assets/hiddenpiece/고학년 미션 월드맵 배경 (169, 6개 랜드마크 자리 분포).png',
   foggyForest: '/assets/hiddenpiece/Stage 5 - 안개 낀 숲 갈림길 (인트로용).png',
   deadEnd: '/assets/hiddenpiece/Stage 5 - 막다른 길 (오답 루트, 선택).png',
+  // Stage 3: 운동장 모래에 그려진 지하철 노선도 — 승주의 특별 관심사 장면 배경
+  sandPlayground: '/assets/hiddenpiece/Stage_3_-_운동장_모래에_그려진_지하철_노선도__선택.png',
 } as const;
 
 // 고학년 월드맵 노드 (랜드마크 일러스트)
@@ -105,7 +107,6 @@ export const ITEM_IMAGES = {
   // 새 누적 아이템
   yellowCrayon: '/assets/hiddenpiece/Stage_1_-_노란_크레파스__선택.png',
   subwayMapItem: '/assets/hiddenpiece/Stage 3 - 지하철 노선도 아이템 (선택).png',
-  sandSubwayMap: '/assets/hiddenpiece/Stage_3_-_운동장_모래에_그려진_지하철_노선도__선택.png',
 } as const;
 
 // UI Icon Images — 저작권 보호를 위해 기존의 react-icons 대신

@@ -49,7 +49,7 @@ export default function ScratchFog({ bgImage, onComplete, ribbonImage }: Scratch
     ctx.font = 'bold 16px "Nanum Gothic", sans-serif';
     ctx.fillStyle = 'rgba(255,255,255,0.5)';
     ctx.textAlign = 'center';
-    ctx.fillText('🖐️ 여기를 문질러 주세요', 170, 110);
+    ctx.fillText('여기를 문질러 주세요', 170, 110);
   }, []);
 
   const scratch = (x: number, y: number) => {
@@ -113,7 +113,7 @@ export default function ScratchFog({ bgImage, onComplete, ribbonImage }: Scratch
       />
 
       <div style={{ position: 'relative', zIndex: 5 }}>
-        <p className="minigame-title">🖐️ 안개를 문질러 지우세요!</p>
+        <p className="minigame-title">안개를 문질러 지우세요!</p>
 
         <div style={{
           position: 'relative',
@@ -232,12 +232,12 @@ export default function ScratchFog({ bgImage, onComplete, ribbonImage }: Scratch
 
         {fogCleared && !completed && (
           <p className="minigame-success animate-success-scale" style={{ marginTop: 8, color: '#fbbf24' }}>
-            👆 리본을 터치하세요!
+            리본을 터치하세요!
           </p>
         )}
         {completed && (
           <p className="minigame-success animate-success-scale" style={{ marginTop: 8 }}>
-            🎗️ 노란 리본을 발견했어요!
+            노란 리본을 발견했어요!
           </p>
         )}
       </div>

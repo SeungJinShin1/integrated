@@ -56,7 +56,6 @@ export default function RegisterPage() {
       <div className="auth-container" style={{ backgroundImage: `url(${BG_IMAGES.dataworld})` }}>
         <div className="auth-overlay" />
         <div className="auth-card" style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 64, marginBottom: 16 }}>🎉</div>
           <h1 className="auth-title">가입 완료!</h1>
           <p style={{ color: '#94a3b8', marginBottom: 24 }}>
             아래 인증번호를 학생들에게 배포하세요.

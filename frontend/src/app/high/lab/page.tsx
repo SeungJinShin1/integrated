@@ -20,7 +20,7 @@ RULES:
 - Answer ONLY questions related to: autism, disabilities, inclusion, empathy, understanding differences, and how to help friends with ASD.
 - Use simple Korean appropriate for 10-11 year old students.
 - Be warm, encouraging, and educational.
-- If a student asks unrelated questions, gently redirect: "그건 제 전문 분야가 아니에요. 😊 승주 같은 친구들에 대해 궁금한 건 뭐든 물어보세요!"
+- If a student asks unrelated questions, gently redirect: "그건 제 전문 분야가 아니에요. 승주 같은 친구들에 대해 궁금한 건 뭐든 물어보세요!"
 - Never use medical jargon. Explain concepts through relatable examples.
 - Always emphasize that autism is not a disease, but a different way of experiencing the world.
 - Keep responses under 150 words.`;
@@ -55,7 +55,6 @@ export default function LabPage() {
         <TopNavBar />
         <div className="game-area" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f172a' }}>
           <div style={{ textAlign: 'center', color: 'white' }}>
-            <div style={{ fontSize: 64, marginBottom: 16 }}>🔒</div>
             <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 12 }}>「빛나는 우리 반」 잠금</h1>
             <p style={{ color: '#94a3b8', marginBottom: 24 }}>1~5단계를 모두 완료해야 「빛나는 우리 반」을 완성할 수 있어요!</p>
             <button onClick={() => router.push('/high')} style={{
@@ -85,13 +84,13 @@ export default function LabPage() {
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
         console.error('AI API error:', res.status, errorData);
-        return `🔌 서버 오류(${res.status}): ${errorData.detail || '알 수 없는 오류가 발생했습니다.'}`;
+        return `서버 오류(${res.status}): ${errorData.detail || '알 수 없는 오류가 발생했습니다.'}`;
       }
       const data = await res.json();
       return data.reply || '답변을 생성하지 못했어요. 다시 질문해 주세요!';
     } catch (err) {
       console.error('AI fetch error:', err);
-      return '🔌 서버가 잠에서 깨어나는 중이거나 연결 오류가 발생했어요. 잠시 후 다시 시도해 주세요.';
+      return '서버가 잠에서 깨어나는 중이거나 연결 오류가 발생했어요. 잠시 후 다시 시도해 주세요.';
     }
   };
 
@@ -110,15 +109,15 @@ export default function LabPage() {
   const empathyScore = Math.round(((stats.understanding || 0) + (stats.trust || 0) + (stats.communication || 0) + (stats.patience || 0)) / 4);
   const logs = state.logs || { tool_attempts: 0, tool_accuracy: 0, waiting_count: 0 };
   const accuracy = logs.tool_attempts > 0 ? Math.round((logs.tool_accuracy / logs.tool_attempts) * 100) : 100;
-  const grade = empathyScore >= 80 ? '🏆 S등급 - 히든피스 마스터' : empathyScore >= 60 ? '🥇 A등급 - 히든피스 탐험가' : empathyScore >= 40 ? '🥈 B등급 - 히든피스 수습생' : '🥉 C등급 - 히든피스 입문자';
+  const grade = empathyScore >= 80 ? 'S등급 — 히든피스 마스터' : empathyScore >= 60 ? 'A등급 — 히든피스 탐험가' : empathyScore >= 40 ? 'B등급 — 히든피스 수습생' : 'C등급 — 히든피스 입문자';
 
   const usedTools = state.usedTools || [];
   const badges: string[] = [];
-  if (usedTools.includes('aac')) badges.push('🏅 소통의 배지');
-  if (usedTools.includes('headset')) badges.push('🛡️ 배려의 방패');
-  if (usedTools.includes('timer')) badges.push('⏰ 약속의 시계');
-  if (usedTools.includes('pecs')) badges.push('💡 협력의 전구');
-  if (usedTools.includes('ribbon') || usedTools.includes('map')) badges.push('🌈 다빛 팀');
+  if (usedTools.includes('aac')) badges.push('소통의 배지');
+  if (usedTools.includes('headset')) badges.push('배려의 방패');
+  if (usedTools.includes('timer')) badges.push('약속의 시계');
+  if (usedTools.includes('pecs')) badges.push('협력의 전구');
+  if (usedTools.includes('ribbon') || usedTools.includes('map')) badges.push('다빛 팀');
 
   const radarData = {
     labels: ['이해', '신뢰', '소통', '인내'],
@@ -180,7 +179,7 @@ export default function LabPage() {
 
         <div style={{ position: 'relative', zIndex: 10, padding: 16 }}>
           <div style={{ textAlign: 'center', marginBottom: 16 }}>
-            <h1 style={{ fontSize: 22, fontWeight: 800, color: 'white', textShadow: '0 2px 12px rgba(0,0,0,0.5)' }}>🌈 6단계: 빛나는 우리 반</h1>
+            <h1 style={{ fontSize: 22, fontWeight: 800, color: 'white', textShadow: '0 2px 12px rgba(0,0,0,0.5)' }}>6단계: 빛나는 우리 반</h1>
             <p style={{ fontSize: 14, color: '#a5b4fc' }}>히든피스 완성 & 다빛 규칙</p>
           </div>
 
@@ -189,7 +188,13 @@ export default function LabPage() {
             <div className="animate-fade-in" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(16px)', borderRadius: 24, padding: 28, maxWidth: 480, width: '100%', boxShadow: '0 20px 60px rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.2)' }}>
                 <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
-                  <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, boxShadow: '0 4px 12px rgba(99,102,241,0.2)' }}>🌈</div>
+                  <div style={{
+                    width: 52, height: 52, borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 15, fontWeight: 800, color: '#4f46e5', letterSpacing: 0.5,
+                    boxShadow: '0 4px 12px rgba(99,102,241,0.2)',
+                  }}>AI</div>
                   <div>
                     <p style={{ fontSize: 13, color: '#6366f1', fontWeight: 700 }}>AI 길잡이</p>
                     <p style={{ color: '#334155', fontSize: 15, lineHeight: 1.5 }}>&quot;오늘 {N}(이)와 함께하며 느낀 점은?&quot;</p>
@@ -209,7 +214,7 @@ export default function LabPage() {
                     boxShadow: journal.trim() ? '0 8px 24px rgba(99,102,241,0.3)' : 'none',
                     transition: 'all 0.2s',
                   }}>
-                  📝 일지 저장 & 다음
+                  일지 저장 & 다음
                 </button>
               </div>
             </div>
@@ -231,13 +236,15 @@ export default function LabPage() {
               }}>
                 {chatMessages.map((m, i) => (
                   <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 14, flexDirection: m.role === 'user' ? 'row-reverse' : 'row' }}>
-                    <div style={{ 
-                      width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                    <div style={{
+                      width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
                       overflow: 'hidden', border: '2px solid', borderColor: m.role === 'ai' ? '#c7d2fe' : '#a5b4fc',
                       flexShrink: 0, background: m.role === 'ai' ? '#eef2ff' : '#f5f3ff',
                       boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                     }}>
-                      {m.role === 'ai' ? <span style={{ fontSize: 20 }}>🔬</span> : <img src={playerImg} alt={P} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                      {m.role === 'ai'
+                        ? <span style={{ fontSize: 12, fontWeight: 800, color: '#4f46e5', letterSpacing: 0.3 }}>AI</span>
+                        : <img src={playerImg} alt={P} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
                     </div>
                     <div style={{ 
                       maxWidth: '75%', borderRadius: m.role === 'ai' ? '4px 18px 18px 18px' : '18px 4px 18px 18px', 
@@ -252,9 +259,9 @@ export default function LabPage() {
                 ))}
                 {loading && (
                   <div style={{ display: 'flex', gap: 10 }}>
-                    <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #c7d2fe' }}>🔬</div>
+                    <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #c7d2fe', fontSize: 12, fontWeight: 800, color: '#4f46e5', letterSpacing: 0.3 }}>AI</div>
                     <div style={{ background: '#eef2ff', borderRadius: '4px 18px 18px 18px', padding: '12px 18px', fontSize: 14, color: '#6366f1', display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span className="animate-pulse">💭 생각 중...</span>
+                      <span className="animate-pulse">생각 중...</span>
                     </div>
                   </div>
                 )}
@@ -294,11 +301,11 @@ export default function LabPage() {
                 />
                 <button onClick={sendMessage} disabled={loading || !chatInput.trim()} style={{
                   padding: '14px 22px', background: 'linear-gradient(135deg, #6366f1, #a855f7)', color: 'white',
-                  borderRadius: 14, border: 'none', fontWeight: 700, cursor: 'pointer', 
+                  borderRadius: 14, border: 'none', fontWeight: 700, cursor: 'pointer',
                   opacity: loading || !chatInput.trim() ? 0.5 : 1,
                   boxShadow: '0 4px 16px rgba(99,102,241,0.3)',
-                  transition: 'all 0.2s', fontSize: 16,
-                }}>➤</button>
+                  transition: 'all 0.2s', fontSize: 14, letterSpacing: 0.3,
+                }}>전송</button>
               </div>
 
               {/* Proceed to Report Button */}
@@ -315,7 +322,7 @@ export default function LabPage() {
                 onMouseEnter={e => { (e.target as HTMLElement).style.background = 'linear-gradient(135deg, rgba(99,102,241,0.35), rgba(168,85,247,0.35))'; }}
                 onMouseLeave={e => { (e.target as HTMLElement).style.background = 'linear-gradient(135deg, rgba(99,102,241,0.2), rgba(168,85,247,0.2))'; }}
               >
-                📊 결과 카드 확인 & 엔딩
+                결과 카드 확인 & 엔딩
               </button>
             </div>
           )}
@@ -328,7 +335,7 @@ export default function LabPage() {
                 boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
                 border: '1px solid rgba(255,255,255,0.3)',
               }}>
-                <h2 style={{ fontSize: 20, fontWeight: 800, color: '#1e293b', textAlign: 'center', marginBottom: 4 }}>🌈 히든피스 결과 카드</h2>
+                <h2 style={{ fontSize: 20, fontWeight: 800, color: '#1e293b', textAlign: 'center', marginBottom: 4 }}>히든피스 결과 카드</h2>
                 <p style={{ fontSize: 12, color: '#94a3b8', textAlign: 'center', marginBottom: 20 }}>Hidden Piece: Our Class Treasure Hunt</p>
 
                 <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginBottom: 20 }}>
@@ -338,7 +345,7 @@ export default function LabPage() {
                     </div>
                     <p style={{ fontSize: 12, color: '#475569', marginTop: 6, fontWeight: 700 }}>{P}</p>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', fontSize: 28 }}>🤝</div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, color: '#94a3b8', fontSize: 22, fontWeight: 800 }}>&amp;</div>
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ width: 68, height: 84, borderRadius: 14, background: '#fffbeb', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', boxShadow: '0 4px 12px rgba(251,191,36,0.15)' }}>
                       <img src={npcImg} alt={N} style={{ height: '100%', objectFit: 'contain' }} />
@@ -357,7 +364,7 @@ export default function LabPage() {
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 20 }}>
-                  {[{ l: '💡 이해', v: stats.understanding }, { l: '🤝 신뢰', v: stats.trust }, { l: '💬 소통', v: stats.communication }, { l: '🧘 인내', v: stats.patience }].map(s => (
+                  {[{ l: '이해', v: stats.understanding }, { l: '신뢰', v: stats.trust }, { l: '소통', v: stats.communication }, { l: '인내', v: stats.patience }].map(s => (
                     <div key={s.l} style={{ background: '#f8fafc', borderRadius: 10, padding: 10, textAlign: 'center', border: '1px solid #f1f5f9' }}>
                       <p style={{ fontSize: 11, color: '#64748b', fontWeight: 600 }}>{s.l}</p>
                       <p style={{ fontSize: 22, fontWeight: 800, color: '#4f46e5' }}>{s.v}</p>
@@ -367,14 +374,14 @@ export default function LabPage() {
 
                 {journal && (
                   <div style={{ background: '#fffbeb', borderRadius: 14, padding: 16, border: '1px solid #fde68a', marginBottom: 16 }}>
-                    <p style={{ fontSize: 13, fontWeight: 700, color: '#92400e', marginBottom: 6 }}>📝 나의 탐구 일지</p>
+                    <p style={{ fontSize: 13, fontWeight: 700, color: '#92400e', marginBottom: 6 }}>나의 탐구 일지</p>
                     <p style={{ fontSize: 14, color: '#b45309', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{journal}</p>
                   </div>
                 )}
 
                 {badges.length > 0 && (
                   <div style={{ background: '#fffbeb', borderRadius: 14, padding: 14, border: '1px solid #fde68a', marginBottom: 16 }}>
-                    <p style={{ fontSize: 13, fontWeight: 700, color: '#92400e', marginBottom: 8 }}>🎖️ 획득한 배지</p>
+                    <p style={{ fontSize: 13, fontWeight: 700, color: '#92400e', marginBottom: 8 }}>획득한 배지</p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
                       {badges.map((b, i) => <span key={i} style={{ padding: '5px 14px', background: '#fef3c7', borderRadius: 20, fontSize: 13, color: '#92400e', fontWeight: 600 }}>{b}</span>)}
                     </div>
@@ -382,9 +389,9 @@ export default function LabPage() {
                 )}
 
                 <div style={{ background: '#f8fafc', borderRadius: 14, padding: 14, fontSize: 14, marginBottom: 16, border: '1px solid #f1f5f9' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}><span style={{ color: '#64748b' }}>⏳ 기다려준 횟수</span><span style={{ fontWeight: 700, color: '#334155' }}>{logs.waiting_count || 0}회</span></div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}><span style={{ color: '#64748b' }}>🎯 도구 정확도</span><span style={{ fontWeight: 700, color: '#334155' }}>{accuracy}%</span></div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#64748b' }}>🧰 사용한 도구</span><span style={{ fontWeight: 700, color: '#334155' }}>{usedTools.length}개</span></div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}><span style={{ color: '#64748b' }}>기다려준 횟수</span><span style={{ fontWeight: 700, color: '#334155' }}>{logs.waiting_count || 0}회</span></div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}><span style={{ color: '#64748b' }}>도구 정확도</span><span style={{ fontWeight: 700, color: '#334155' }}>{accuracy}%</span></div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#64748b' }}>사용한 도구</span><span style={{ fontWeight: 700, color: '#334155' }}>{usedTools.length}개</span></div>
                 </div>
 
                 <div style={{ background: 'linear-gradient(135deg, #eef2ff, #f3e8ff)', borderRadius: 14, padding: 14, textAlign: 'center' }}>

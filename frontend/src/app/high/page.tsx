@@ -52,7 +52,8 @@ export default function HighGradePage() {
         <div
           className="world-map"
           style={{
-            backgroundImage: `url(${BG_IMAGES.highMap})`,
+            // 파일명에 공백/괄호가 있어 CSS url()이 그대로 파싱 못 함 → 인코딩 + 따옴표로 감쌈
+            backgroundImage: `url("${encodeURI(BG_IMAGES.highMap)}")`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
@@ -71,7 +72,7 @@ export default function HighGradePage() {
               fontSize: 24, fontWeight: 800, color: 'white',
               textShadow: '0 2px 12px rgba(0,0,0,0.7)',
             }}>
-              🗺️ 우리 반 보물찾기 지도
+              우리 반 보물찾기 지도
             </h1>
             <p style={{
               fontSize: 13, color: 'rgba(255,255,255,0.85)', marginTop: 4,
@@ -187,7 +188,7 @@ export default function HighGradePage() {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  {stage.emoji} {stage.title}
+                  {stage.title}
                 </div>
               </button>
             );
@@ -202,7 +203,6 @@ export default function HighGradePage() {
               padding: '32px 40px', textAlign: 'center', zIndex: 9999,
               boxShadow: '0 24px 48px rgba(0,0,0,0.5)',
             }}>
-              <div style={{ fontSize: 48, marginBottom: 12 }}>🔒</div>
               <h2 style={{ color: '#ef4444', fontSize: 20, fontWeight: 800, marginBottom: 8 }}>
                 잠금 상태
               </h2>

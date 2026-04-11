@@ -8,11 +8,12 @@ import { LOW_BG_IMAGES } from '@/data/assetMap';
 import Icon from '@/components/ui/Icon';
 import { useTTS } from '@/hooks/useTTS';
 
+// 각 스티커는 라벨(한글) + 배경 색상으로만 구분. 이모지는 저작권 이슈로 사용하지 않습니다.
 const STICKERS = [
-  { id: 'happy', emoji: '😊', label: '기뻐요' },
-  { id: 'proud', emoji: '😎', label: '자랑스러워요' },
-  { id: 'calm', emoji: '😌', label: '편안해요' },
-  { id: 'surprised', emoji: '😲', label: '놀라워요' },
+  { id: 'happy', label: '기뻐요', color: '#fde68a', border: '#f59e0b' },
+  { id: 'proud', label: '자랑스러워요', color: '#c7d2fe', border: '#6366f1' },
+  { id: 'calm', label: '편안해요', color: '#bbf7d0', border: '#22c55e' },
+  { id: 'surprised', label: '놀라워요', color: '#fbcfe8', border: '#ec4899' },
 ];
 
 export default function LowEndingPage() {
@@ -66,24 +67,16 @@ export default function LowEndingPage() {
     const playerName = state.player.name === '나' ? '히든피스 새싹' : `${state.player.name} 새싹`;
     ctx.fillText(playerName, canvas.width / 2, 380);
 
-    // Hearts
-    ctx.fillStyle = '#ec4899';
-    ctx.font = '60px "Nanum Gothic", sans-serif';
+    // Hearts — 텍스트만 (이모지 없이)
     const heartCount = Math.max(1, state.hearts);
-    let heartsStr = '';
-    for (let i = 0; i < heartCount; i++) heartsStr += '💖 ';
-    ctx.fillText(heartsStr, canvas.width / 2, 500);
+    ctx.fillStyle = '#ec4899';
+    ctx.font = 'bold 50px "Nanum Gothic", sans-serif';
+    ctx.fillText(`획득한 하트 ${heartCount}개`, canvas.width / 2, 520);
 
-    ctx.fillStyle = '#475569';
-    ctx.font = '30px "Nanum Gothic", sans-serif';
-    ctx.fillText(`획득한 하트: ${heartCount}개`, canvas.width / 2, 560);
-
-    // Sticker
+    // Sticker — 라벨만
     ctx.fillStyle = '#334155';
-    ctx.font = '40px "Nanum Gothic", sans-serif';
-    ctx.fillText('나의 감정:', canvas.width / 2 - 80, 680);
-    ctx.font = '80px "Nanum Gothic", sans-serif';
-    ctx.fillText(selectedSticker.emoji, canvas.width / 2 + 80, 700);
+    ctx.font = 'bold 42px "Nanum Gothic", sans-serif';
+    ctx.fillText(`나의 감정: ${selectedSticker.label}`, canvas.width / 2, 680);
 
     // Footer
     ctx.fillStyle = '#94a3b8';
@@ -117,7 +110,6 @@ export default function LowEndingPage() {
 
             {!selectedSticker ? (
               <div className="animate-fade-in">
-                <div style={{ fontSize: 64, marginBottom: 16 }}>🎉</div>
                 <h2 style={{ fontSize: 32, fontWeight: 800, color: '#166534', marginBottom: 16 }}>모든 미션 완료!</h2>
                 
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, background: '#fdf2f8', padding: '12px 24px', borderRadius: 30, border: '2px solid #fbcfe8', marginBottom: 32 }}>
@@ -132,11 +124,11 @@ export default function LowEndingPage() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
                   {STICKERS.map(sticker => (
                     <button key={sticker.id} onClick={() => setSelectedSticker(sticker)} style={{
-                      display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '24px 16px', background: '#f8fafc',
-                      border: '2px solid #e2e8f0', borderRadius: 24, cursor: 'pointer', transition: 'all 0.2s',
-                    }} className="hover:bg-green-50 hover:border-green-400 hover:scale-105">
-                      <span style={{ fontSize: 48, marginBottom: 16 }}>{sticker.emoji}</span>
-                      <span style={{ fontSize: 16, fontWeight: 800, color: '#475569' }}>{sticker.label}</span>
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 110, padding: '24px 16px',
+                      background: sticker.color,
+                      border: `3px solid ${sticker.border}`, borderRadius: 24, cursor: 'pointer', transition: 'all 0.2s',
+                    }} className="hover:scale-105">
+                      <span style={{ fontSize: 22, fontWeight: 800, color: '#1e293b' }}>{sticker.label}</span>
                     </button>
                   ))}
                 </div>
@@ -146,7 +138,6 @@ export default function LowEndingPage() {
                 <h2 style={{ fontSize: 28, fontWeight: 800, color: '#166534', marginBottom: 24 }}>히든피스 새싹 수료증 발급 준비 완료!</h2>
 
                 <div style={{ background: '#f0fdf4', padding: '32px 24px', borderRadius: 24, border: '2px solid #bbf7d0', position: 'relative', overflow: 'hidden', marginBottom: 32 }}>
-                  <span style={{ position: 'absolute', top: -20, right: -20, fontSize: 80, opacity: 0.2, transform: 'rotate(15deg)' }}>{selectedSticker.emoji}</span>
                   <div style={{ position: 'relative', zIndex: 10 }}>
                     <h3 style={{ fontSize: 24, fontWeight: 800, color: '#14532d', marginBottom: 12 }}>
                       {state.player.name === '나' ? '나' : state.player.name} 새싹
@@ -154,8 +145,13 @@ export default function LowEndingPage() {
                     <p style={{ fontSize: 18, color: '#15803d', marginBottom: 16, fontWeight: 700 }}>
                       훌륭하게 배려와 기다림을 실천했습니다.
                     </p>
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
-                      {[...Array(Math.max(1, state.hearts))].map((_, i) => <span key={i} style={{ fontSize: 24 }}>💖</span>)}
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 16px', background: 'rgba(255,255,255,0.6)', borderRadius: 999, border: '1px solid #bbf7d0' }}>
+                      <span style={{ fontSize: 14, color: '#166534', fontWeight: 800 }}>나의 감정:</span>
+                      <span style={{
+                        fontSize: 14, fontWeight: 800, color: '#1e293b',
+                        padding: '4px 12px', borderRadius: 999,
+                        background: selectedSticker.color, border: `2px solid ${selectedSticker.border}`,
+                      }}>{selectedSticker.label}</span>
                     </div>
                   </div>
                 </div>

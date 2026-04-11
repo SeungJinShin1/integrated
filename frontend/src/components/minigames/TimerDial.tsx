@@ -129,7 +129,7 @@ export default function TimerDial({ onComplete }: { onComplete: () => void }) {
       />
 
       <div style={{ position: 'relative', zIndex: 5 }}>
-        <p className="minigame-title">⏳ 비주얼 타이머</p>
+        <p className="minigame-title">비주얼 타이머</p>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
           <canvas ref={canvasRef} style={{ borderRadius: '50%' }} />
         </div>
@@ -146,12 +146,12 @@ export default function TimerDial({ onComplete }: { onComplete: () => void }) {
               boxShadow: '0 8px 24px rgba(99,102,241,0.4)',
               transition: 'all 0.2s',
             }}>
-            ▶ 타이머 시작
+            타이머 시작
           </button>
         ) : time > 0 ? (
           <p style={{ fontSize: 14, color: '#94a3b8' }}>타이머가 작동 중...</p>
         ) : (
-          <p className="minigame-success animate-success-scale">✅ 시간 종료!</p>
+          <p className="minigame-success animate-success-scale">시간 종료!</p>
         )}
       </div>
     </div>

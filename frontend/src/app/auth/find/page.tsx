@@ -41,7 +41,6 @@ export default function FindAccountPage() {
       <div className="auth-card" style={{ textAlign: 'center' }}>
         {sent ? (
           <>
-            <div style={{ fontSize: 64, marginBottom: 16 }}>📧</div>
             <h1 className="auth-title">이메일 발송 완료</h1>
             <p style={{ color: '#94a3b8', marginBottom: 24 }}>
               {email}으로 아이디와 임시 비밀번호를 보내드렸습니다.<br />

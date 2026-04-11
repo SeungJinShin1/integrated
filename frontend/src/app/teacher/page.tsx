@@ -125,7 +125,7 @@ export default function TeacherDashboard() {
                     {Object.keys(student.stages || {}).map(stageId => (
                       <div key={stageId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'white', padding: '10px 14px', borderRadius: 12, fontSize: 14 }}>
                         <span style={{ fontWeight: 700, color: '#475569' }}>{stageId.replace('stage-', '단계 ')}</span>
-                        <span style={{ color: '#6366f1', fontWeight: 800 }}>완료 ✅</span>
+                        <span style={{ color: '#6366f1', fontWeight: 800 }}>완료</span>
                       </div>
                     ))}
                     {Object.keys(student.stages || {}).length === 0 && (

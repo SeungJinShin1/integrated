@@ -12,12 +12,12 @@ export const TOOLS: Record<string, ToolInfo> = {
 export const STAGE_NAMES: Record<string, string> = {
   mode_select: '모드 선택',
   prologue: 'Prologue',
-  'stage-1': '🦜 1단계: 앵무새의 숲',
-  'stage-2': '💥 2단계: 폭탄이 터졌다!',
-  'stage-3': '🚂 3단계: 기차는 멈추지 않아',
-  'stage-4': '🧩 4단계: 사라진 퍼즐 조각',
-  'stage-5': '🌲 5단계: 갈림길의 기억',
-  'stage-6': '🌈 6단계: 빛나는 우리 반',
+  'stage-1': '1단계: 앵무새의 숲',
+  'stage-2': '2단계: 폭탄이 터졌다!',
+  'stage-3': '3단계: 기차는 멈추지 않아',
+  'stage-4': '4단계: 사라진 퍼즐 조각',
+  'stage-5': '5단계: 갈림길의 기억',
+  'stage-6': '6단계: 빛나는 우리 반',
   encyclopedia: '도감',
   low_intro: '히든피스 새싹',
   low_stage1: '먼저 물어봐주기',
@@ -27,11 +27,12 @@ export const STAGE_NAMES: Record<string, string> = {
   low_ending: '수료증 발급',
 };
 
+// 고학년 월드맵 랜드마크 목록. 이모지는 저작권 이슈로 제거했고, 지도 노드의 썸네일 일러스트(STAGE_NODE_IMAGES)가 시각적 아이덴티티를 담당합니다.
 export const HIGH_STAGES = [
-  { id: 'stage-1', title: '앵무새의 숲', subtitle: '반향어 & 소통', emoji: '🦜' },
-  { id: 'stage-2', title: '폭탄이 터졌다!', subtitle: '감각 과부하 & 조절', emoji: '💥' },
-  { id: 'stage-3', title: '기차는 멈추지 않아', subtitle: '전이 & 감각 조절', emoji: '🚂' },
-  { id: 'stage-4', title: '사라진 퍼즐 조각', subtitle: '강점 & 주체성', emoji: '🧩' },
-  { id: 'stage-5', title: '갈림길의 기억', subtitle: '통합 & 신뢰', emoji: '🌲' },
-  { id: 'stage-6', title: '빛나는 우리 반', subtitle: '히든피스 완성 & 다빛 규칙', emoji: '🌈', locked: true },
+  { id: 'stage-1', title: '앵무새의 숲', subtitle: '반향어 & 소통' },
+  { id: 'stage-2', title: '폭탄이 터졌다!', subtitle: '감각 과부하 & 조절' },
+  { id: 'stage-3', title: '기차는 멈추지 않아', subtitle: '전이 & 감각 조절' },
+  { id: 'stage-4', title: '사라진 퍼즐 조각', subtitle: '강점 & 주체성' },
+  { id: 'stage-5', title: '갈림길의 기억', subtitle: '통합 & 신뢰' },
+  { id: 'stage-6', title: '빛나는 우리 반', subtitle: '히든피스 완성 & 다빛 규칙', locked: true },
 ];

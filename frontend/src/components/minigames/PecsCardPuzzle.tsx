@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import ParticleCanvas from './ParticleCanvas';
 
+// PECS 카드는 라벨만 사용. 이모지는 저작권 이슈로 제거.
 const PECS_CARDS = [
-  { id: 1, emoji: '🖐️', label: '나', type: 'subject' },
-  { id: 2, emoji: '🎨', label: '할 수 있어', type: 'verb' },
-  { id: 3, emoji: '🧩', label: '퍼즐', type: 'object' },
+  { id: 1, label: '나', type: 'subject' },
+  { id: 2, label: '할 수 있어', type: 'verb' },
+  { id: 3, label: '퍼즐', type: 'object' },
 ];
 
 export default function PecsCardPuzzle({ npcName, onComplete }: { npcName: string; onComplete: () => void }) {
@@ -37,7 +38,7 @@ export default function PecsCardPuzzle({ npcName, onComplete }: { npcName: strin
 
       <div style={{ position: 'relative', zIndex: 5 }}>
         <p className="minigame-title">
-          💬 {npcName}(이)의 PECS 카드를 조합하세요
+          {npcName}(이)의 PECS 카드를 조합하세요
         </p>
 
         <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginBottom: 20 }}>
@@ -76,14 +77,7 @@ export default function PecsCardPuzzle({ npcName, onComplete }: { npcName: strin
                     {orderIndex + 1}
                   </div>
                 )}
-                <div style={{
-                  fontSize: 36, marginBottom: 8,
-                  transition: 'transform 0.3s',
-                  transform: isSelected ? 'scale(1.15)' : 'scale(1)',
-                }}>
-                  {card.emoji}
-                </div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: '#e2e8f0' }}>{card.label}</div>
+                <div style={{ fontSize: 16, fontWeight: 800, color: '#e2e8f0', padding: '12px 4px' }}>{card.label}</div>
               </button>
             );
           })}
@@ -103,7 +97,6 @@ export default function PecsCardPuzzle({ npcName, onComplete }: { npcName: strin
                 const card = PECS_CARDS.find(c => c.id === id);
                 return (
                   <div key={id} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <span style={{ fontSize: 20 }}>{card?.emoji}</span>
                     <span style={{ fontSize: 15, color: '#c4b5fd', fontWeight: 700 }}>{card?.label}</span>
                     {i < selected.length - 1 && <span style={{ color: '#64748b', margin: '0 4px' }}>+</span>}
                   </div>
@@ -115,7 +108,7 @@ export default function PecsCardPuzzle({ npcName, onComplete }: { npcName: strin
 
         {completed && (
           <p className="minigame-success animate-success-scale">
-            ✅ &quot;나 할 수 있어 퍼즐&quot; - 메시지 완성!
+            &quot;나 할 수 있어 퍼즐&quot; — 메시지 완성!
           </p>
         )}
       </div>

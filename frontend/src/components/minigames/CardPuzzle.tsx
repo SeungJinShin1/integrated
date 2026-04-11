@@ -8,11 +8,12 @@ interface CardPuzzleProps {
   onComplete: () => void;
 }
 
+// 카드는 라벨만 표시. 이모지/아이콘은 저작권 이슈로 제거했습니다.
 const CARDS = [
-  { id: 1, emoji: '🖍️', label: '크레파스', correct: true },
-  { id: 2, emoji: '📚', label: '책', correct: false },
-  { id: 3, emoji: '🍎', label: '사과', correct: false },
-  { id: 4, emoji: '✂️', label: '가위', correct: false },
+  { id: 1, label: '크레파스', correct: true },
+  { id: 2, label: '책', correct: false },
+  { id: 3, label: '사과', correct: false },
+  { id: 4, label: '가위', correct: false },
 ];
 
 export default function CardPuzzle({ npcName, onComplete }: CardPuzzleProps) {
@@ -77,7 +78,7 @@ export default function CardPuzzle({ npcName, onComplete }: CardPuzzleProps) {
 
       <div style={{ position: 'relative', zIndex: 5 }}>
         <p className="minigame-title">
-          🎮 {npcName}(이)가 찾고 있는 것은?
+          {npcName}(이)가 찾고 있는 것은?
         </p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
           {CARDS.map((card, idx) => (
@@ -106,23 +107,15 @@ export default function CardPuzzle({ npcName, onComplete }: CardPuzzleProps) {
                   ? '0 0 30px rgba(34,197,94,0.4)'
                   : hoveredId === card.id ? '0 0 20px rgba(99,102,241,0.2)' : 'none',
               }}>
-              <div style={{
-                fontSize: 42,
-                marginBottom: 8,
-                transition: 'transform 0.3s',
-                transform: hoveredId === card.id ? 'scale(1.2) rotate(5deg)' : 'scale(1)',
-              }}>
-                {card.emoji}
-              </div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#e2e8f0' }}>{card.label}</div>
+              <div style={{ fontSize: 20, fontWeight: 800, color: '#e2e8f0', padding: '16px 4px' }}>{card.label}</div>
             </button>
           ))}
         </div>
         {result === 'correct' && (
-          <p className="minigame-success animate-success-scale">✅ 정답! 노란색 크레파스를 찾았어요!</p>
+          <p className="minigame-success animate-success-scale">정답! 노란색 크레파스를 찾았어요!</p>
         )}
         {result === 'wrong' && (
-          <p className="minigame-fail">❌ 다시 생각해 보세요!</p>
+          <p className="minigame-fail">다시 생각해 보세요!</p>
         )}
       </div>
     </div>

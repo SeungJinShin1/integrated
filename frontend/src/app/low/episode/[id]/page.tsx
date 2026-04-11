@@ -67,13 +67,12 @@ function LowStage1() {
               border: '4px solid #818cf8', boxShadow: '0 12px 24px rgba(99,102,241,0.2)',
               cursor: 'pointer', marginBottom: 24,
             }}>
-              <span style={{ fontSize: 24, fontWeight: 800, color: '#4f46e5' }}>같이 놀자! 👋</span>
+              <span style={{ fontSize: 24, fontWeight: 800, color: '#4f46e5' }}>같이 놀자!</span>
             </div>
           )}
 
           <div style={{ height: '40vh', position: 'relative' }}>
             <img src={getLowNpcImage(state.npc.gender, isComplete ? 'happy2' : 'default')} alt={state.npc.name} style={{ height: '100%', objectFit: 'contain' }} />
-            {isComplete && <div style={{ position: 'absolute', top: '20%', right: -20, fontSize: 48, animation: 'pulse 1s infinite' }}>💖</div>}
           </div>
         </div>
 
@@ -258,13 +257,12 @@ function LowStage4() {
             <div onClick={() => { if (tapCount + 1 >= 3) { setPhase('done'); addHeart(); } else { setTapCount(v => v + 1); } }} style={{ position: 'relative', cursor: 'pointer', padding: 32 }}>
               <div style={{ position: 'absolute', inset: 0, background: '#f9a8d4', borderRadius: '50%', opacity: 0.5, animation: 'ping 1s infinite' }} />
               <img src={ITEM_IMAGES.squishy} alt="말랑이" style={{ position: 'relative', zIndex: 10, width: 150, height: 150, objectFit: 'contain', transform: `scale(${1 + tapCount * 0.1})`, transition: 'transform 0.2s' }} />
-              <div style={{ position: 'absolute', bottom: -10, left: '50%', transform: 'translateX(-50%)', background: 'white', padding: '8px 24px', borderRadius: 24, fontSize: 18, fontWeight: 800, color: '#db2777', whiteSpace: 'nowrap', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 20 }}>눌러주세요! 🖐</div>
+              <div style={{ position: 'absolute', bottom: -10, left: '50%', transform: 'translateX(-50%)', background: 'white', padding: '8px 24px', borderRadius: 24, fontSize: 18, fontWeight: 800, color: '#db2777', whiteSpace: 'nowrap', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 20 }}>눌러주세요!</div>
             </div>
           )}
 
           <div style={{ height: '35vh', position: 'relative' }}>
             <img src={getLowNpcImage(state.npc.gender, phase === 'done' ? 'happy' : 'upset')} alt={state.npc.name} style={{ height: '100%', objectFit: 'contain' }} />
-            {phase === 'done' && <div style={{ position: 'absolute', top: 20, right: -20, fontSize: 48, animation: 'bounce 1s infinite' }}>✨</div>}
           </div>
 
         </div>

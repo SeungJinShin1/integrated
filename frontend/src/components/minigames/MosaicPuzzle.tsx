@@ -46,7 +46,7 @@ export default function MosaicPuzzle({ onComplete }: { onComplete: () => void })
       />
 
       <div style={{ position: 'relative', zIndex: 5 }}>
-        <p className="minigame-title">🧩 올바른 파란색 조각을 찾으세요!</p>
+        <p className="minigame-title">올바른 파란색 조각을 찾으세요!</p>
 
         {/* Target area with gradient */}
         <div style={{
@@ -74,7 +74,7 @@ export default function MosaicPuzzle({ onComplete }: { onComplete: () => void })
             </span>
           </div>
           <p style={{ fontSize: 16, fontWeight: 800, color: '#93c5fd', marginTop: 10 }}>빈 칸의 색: 파란색</p>
-          <p style={{ fontSize: 14, color: '#fcd34d', marginTop: 6 }}>💡 힌트: '파란색'은 연한색과 진한색의 중간 정도로 가장 선명한 파란색이에요.</p>
+          <p style={{ fontSize: 14, color: '#fcd34d', marginTop: 6 }}>힌트: '파란색'은 연한색과 진한색의 중간 정도로 가장 선명한 파란색이에요.</p>
         </div>
 
         {/* Color pieces grid */}
@@ -131,10 +131,10 @@ export default function MosaicPuzzle({ onComplete }: { onComplete: () => void })
         </div>
 
         {result === 'correct' && (
-          <p className="minigame-success animate-success-scale">✅ 완벽한 조각을 찾았어요!</p>
+          <p className="minigame-success animate-success-scale">완벽한 조각을 찾았어요!</p>
         )}
         {result === 'wrong' && (
-          <p className="minigame-fail">❌ 조금 다른 색이에요, 다시 시도!</p>
+          <p className="minigame-fail">조금 다른 색이에요, 다시 시도!</p>
         )}
       </div>
     </div>
