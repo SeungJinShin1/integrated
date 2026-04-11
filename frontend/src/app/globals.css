@@ -821,42 +821,117 @@ body {
   background: rgba(255, 255, 255, 0.25);
 }
 
-/* ===== Responsive ===== */
-@media (max-width: 768px) {
-  .start-title {
-    font-size: 52px;
-  }
+/* ============================================================
+   Responsive — 10~13" 태블릿 최적화
+   대상 뷰포트:
+   · 10" 태블릿(iPad 10.2, Galaxy Tab A8): 810×1080 / 1080×810
+   · 11" 태블릿(iPad Air, iPad Pro 11): 834×1194 / 1194×834
+   · 12.9" 태블릿(iPad Pro 12.9): 1024×1366 / 1366×1024
+   · 13" Chromebook: 1366×768
+   ============================================================ */
 
-  .dialogue-text {
-    font-size: 14px;
-  }
-
-  .dialogue-character-img {
-    width: 160px;
-    height: 200px;
-  }
-
-  .dialogue-box {
-    padding: 20px 24px !important;
-  }
-
-  .character-sprite {
-    width: 100px;
-    height: 130px;
-  }
-
-  .auth-card {
-    padding: 28px 20px;
+/* 터치 타겟 최소 크기(44px) 강제 — 접근성 권장치 */
+@media (hover: none) and (pointer: coarse) {
+  .nav-btn,
+  .choice-btn,
+  .auth-btn,
+  .map-node,
+  button {
+    touch-action: manipulation;
   }
 }
 
-@media (max-width: 480px) {
-  .dialogue-character-img {
-    width: 120px;
-    height: 150px;
-  }
+/* --- 태블릿 가로(1024~1366px): iPad Pro 12.9 가로, Chromebook 13" --- */
+@media (max-width: 1366px) {
+  .start-title { font-size: clamp(48px, 9vw, 88px); }
+  .start-prompt { font-size: 17px; padding: 16px 48px; margin-top: 48px; }
 
-  .dialogue-box {
-    padding: 16px 20px !important;
-  }
+  .dialogue-integrated { max-width: 940px; padding: 0 20px 16px; }
+  .dialogue-character-img { width: 200px; height: 250px; }
+  .dialogue-text { font-size: 20px; line-height: 1.55; }
+  .dialogue-box { padding: 22px 30px; min-height: 112px; }
+
+  .stage-title { font-size: 17px; }
+  .choice-btn { font-size: 15px; padding: 13px 20px; }
+}
+
+/* --- 태블릿 세로(768~1024px): iPad 세로, 10~11" 태블릿 세로 --- */
+@media (max-width: 1024px) {
+  :root { --nav-height: 52px; }
+
+  .top-nav { padding: 0 12px; }
+  .nav-btn { width: 42px; height: 42px; font-size: 17px; }
+  .nav-title { font-size: 13px; max-width: 240px; }
+  .nav-group { gap: 6px; }
+
+  .start-title { font-size: clamp(44px, 8.5vw, 72px); }
+  .start-subtitle { font-size: 18px; }
+  .start-prompt { font-size: 16px; padding: 14px 40px; margin-top: 40px; }
+
+  .dialogue-integrated { max-width: 100%; padding: 0 16px 14px; }
+  .dialogue-character { left: 12px; bottom: calc(100% - 52px); }
+  .dialogue-character-right { left: auto; right: 12px; }
+  .dialogue-character-img { width: 172px; height: 214px; }
+  .dialogue-text { font-size: 18px; line-height: 1.55; }
+  .dialogue-box { padding: 20px 24px; min-height: 100px; border-radius: 18px; }
+  .dialogue-character + .dialogue-box,
+  .dialogue-box:first-child { padding-left: 28px; }
+  .dialogue-speaker { font-size: 12px; padding: 3px 14px; top: -12px; left: 20px; }
+
+  .stage-header { top: 12px; }
+  .stage-title { font-size: 16px; }
+  .stage-subtitle { font-size: 12px; }
+
+  .minigame-area { max-width: 480px; width: 92%; }
+  .minigame-card { padding: 22px 20px; border-radius: 20px; }
+  .minigame-card .minigame-title { font-size: 15px; margin-bottom: 16px; }
+
+  .choice-btn { font-size: 15px; padding: 14px 18px; border-radius: 12px; }
+
+  .auth-card { padding: 32px 24px; max-width: 440px; }
+  .auth-title { font-size: 26px; margin-bottom: 26px; }
+  .auth-input { padding: 13px 14px; font-size: 15px; }
+  .auth-btn { padding: 15px; font-size: 15px; margin-top: 24px; }
+
+  .mode-card { padding: 28px 22px; }
+}
+
+/* --- 좁은 태블릿 세로(≤820px): 8~10" 태블릿 세로 --- */
+@media (max-width: 820px) {
+  .start-title { font-size: clamp(40px, 9vw, 60px); }
+  .dialogue-character-img { width: 148px; height: 188px; }
+  .dialogue-text { font-size: 17px; }
+  .dialogue-box { padding: 18px 22px; min-height: 92px; }
+  .dialogue-character { bottom: calc(100% - 48px); }
+  .nav-title { max-width: 180px; font-size: 12px; }
+}
+
+/* --- 모바일/소형 화면(≤640px) --- */
+@media (max-width: 640px) {
+  :root { --nav-height: 48px; }
+  .start-title { font-size: clamp(36px, 10vw, 48px); }
+  .dialogue-character-img { width: 128px; height: 164px; }
+  .dialogue-text { font-size: 16px; }
+  .dialogue-box { padding: 16px 20px !important; }
+  .character-sprite { width: 96px; height: 124px; }
+  .auth-card { padding: 26px 18px; }
+  .nav-title { max-width: 120px; }
+}
+
+/* --- 낮은 세로 높이(세로<820px & 가로모드): 태블릿 가로에서 상하 공간 확보 --- */
+@media (max-height: 820px) and (orientation: landscape) {
+  .dialogue-character-img { width: 180px; height: 224px; }
+  .dialogue-character { bottom: calc(100% - 50px); }
+  .dialogue-box { min-height: 96px; padding: 18px 28px; }
+  .dialogue-text { font-size: 18px; line-height: 1.5; }
+  .stage-header { top: 10px; }
+  .stage-title { font-size: 15px; }
+}
+
+@media (max-height: 720px) and (orientation: landscape) {
+  .dialogue-character-img { width: 156px; height: 196px; }
+  .dialogue-text { font-size: 17px; }
+  .dialogue-box { min-height: 88px; padding: 16px 24px; }
+  .start-title { font-size: clamp(40px, 7vw, 60px); }
+  .start-prompt { margin-top: 28px; padding: 12px 36px; font-size: 15px; }
 }

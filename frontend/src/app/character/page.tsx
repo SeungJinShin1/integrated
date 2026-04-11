@@ -81,10 +81,13 @@ export default function CharacterCreationPage() {
             position: 'relative',
             zIndex: 10,
             display: 'flex',
-            alignItems: 'center',
+            alignItems: 'flex-start',
             justifyContent: 'center',
             minHeight: '100%',
-            padding: 24,
+            // 세로가 짧은 태블릿 가로 모드에서도 카드가 잘리지 않게 위 여백 줄이고 스크롤 허용
+            padding: 'clamp(16px, 3vw, 24px)',
+            paddingTop: 'clamp(20px, 4vh, 48px)',
+            paddingBottom: 'clamp(20px, 4vh, 48px)',
           }}
         >
           <div
@@ -92,18 +95,18 @@ export default function CharacterCreationPage() {
               background: 'rgba(255,255,255,0.96)',
               backdropFilter: 'blur(20px)',
               borderRadius: 28,
-              padding: '36px 32px',
+              padding: 'clamp(22px, 3vw, 36px) clamp(20px, 3vw, 32px)',
               maxWidth: 560,
               width: '100%',
               boxShadow: '0 24px 60px rgba(0,0,0,0.35)',
               border: '1px solid rgba(255,255,255,0.4)',
             }}
           >
-            <div style={{ textAlign: 'center', marginBottom: 24 }}>
-              <h1 style={{ fontSize: 26, fontWeight: 800, color: '#1e293b', marginBottom: 6 }}>
+            <div style={{ textAlign: 'center', marginBottom: 'clamp(16px, 2.5vw, 24px)' }}>
+              <h1 style={{ fontSize: 'clamp(20px, 2.6vw, 26px)', fontWeight: 800, color: '#1e293b', marginBottom: 6 }}>
                 캐릭터를 만들어 주세요
               </h1>
-              <p style={{ fontSize: 14, color: '#64748b' }}>
+              <p style={{ fontSize: 'clamp(12px, 1.3vw, 14px)', color: '#64748b' }}>
                 「나」와 함께할 친구를 고르고 모험을 시작해요
               </p>
             </div>
@@ -145,7 +148,7 @@ export default function CharacterCreationPage() {
                     <div
                       style={{
                         width: '100%',
-                        height: 130,
+                        height: 'clamp(104px, 13vw, 140px)',
                         borderRadius: 12,
                         background: selected ? '#ffffff' : '#f1f5f9',
                         display: 'flex',
@@ -212,7 +215,7 @@ export default function CharacterCreationPage() {
                     <div
                       style={{
                         width: '100%',
-                        height: 130,
+                        height: 'clamp(104px, 13vw, 140px)',
                         borderRadius: 12,
                         background: selected ? '#ffffff' : '#f1f5f9',
                         display: 'flex',

@@ -66,17 +66,17 @@ export default function HighGradePage() {
 
           {/* Title */}
           <div style={{
-            position: 'absolute', top: 16, left: '50%', transform: 'translateX(-50%)',
-            textAlign: 'center', zIndex: 20,
+            position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)',
+            textAlign: 'center', zIndex: 20, width: '92%',
           }}>
             <h1 style={{
-              fontSize: 24, fontWeight: 800, color: 'white',
+              fontSize: 'clamp(18px, 2.6vw, 26px)', fontWeight: 800, color: 'white',
               textShadow: '0 2px 12px rgba(0,0,0,0.7)',
             }}>
               우리 반 보물찾기 지도
             </h1>
             <p style={{
-              fontSize: 13, color: 'rgba(255,255,255,0.85)', marginTop: 4,
+              fontSize: 'clamp(11px, 1.4vw, 14px)', color: 'rgba(255,255,255,0.85)', marginTop: 4,
               textShadow: '0 1px 8px rgba(0,0,0,0.6)',
             }}>
               단계를 선택하여 히든피스를 찾으러 떠나요
@@ -112,8 +112,9 @@ export default function HighGradePage() {
                 <div
                   style={{
                     position: 'relative',
-                    width: 132,
-                    height: 132,
+                    // 태블릿(10~13")에서도 적정 크기를 유지하도록 vw 기반 fluid 사이즈
+                    width: 'clamp(84px, 10vw, 132px)',
+                    height: 'clamp(84px, 10vw, 132px)',
                     margin: '0 auto',
                     transition: 'transform 0.2s ease',
                     filter: isLocked
@@ -161,10 +162,10 @@ export default function HighGradePage() {
                       alt="완료"
                       style={{
                         position: 'absolute',
-                        top: -10,
-                        right: -10,
-                        width: 56,
-                        height: 56,
+                        top: -8,
+                        right: -8,
+                        width: 'clamp(36px, 4.2vw, 56px)',
+                        height: 'clamp(36px, 4.2vw, 56px)',
                         objectFit: 'contain',
                         pointerEvents: 'none',
                         filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.4))',
@@ -177,12 +178,12 @@ export default function HighGradePage() {
                   style={{
                     marginTop: 6,
                     display: 'inline-block',
-                    background: 'rgba(15,23,42,0.78)',
+                    background: 'rgba(15,23,42,0.82)',
                     backdropFilter: 'blur(6px)',
                     color: 'white',
-                    padding: '6px 14px',
+                    padding: 'clamp(4px, 0.6vw, 6px) clamp(10px, 1.2vw, 14px)',
                     borderRadius: 14,
-                    fontSize: 13,
+                    fontSize: 'clamp(11px, 1.1vw, 13px)',
                     fontWeight: 800,
                     border: '1px solid rgba(255,255,255,0.18)',
                     boxShadow: '0 4px 14px rgba(0,0,0,0.35)',

@@ -25,21 +25,27 @@ export default function ModeSelectPage() {
       <div className="game-area" style={{
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         background: 'linear-gradient(135deg, #0f172a, #1e1b4b)',
-        padding: 24,
+        padding: 'clamp(16px, 3vw, 24px)',
       }}>
         <div style={{
           background: 'var(--bg-card)', borderRadius: 28,
-          padding: '48px 40px', maxWidth: 700, width: '100%',
+          padding: 'clamp(28px, 4vw, 48px) clamp(22px, 3vw, 40px)',
+          maxWidth: 700, width: '100%',
           boxShadow: '0 24px 48px rgba(0,0,0,0.3)',
         }}>
-          <div style={{ textAlign: 'center', marginBottom: 40 }}>
-            <h1 style={{ fontSize: 28, fontWeight: 800, color: '#1e293b', marginBottom: 8 }}>
+          <div style={{ textAlign: 'center', marginBottom: 'clamp(24px, 3vw, 40px)' }}>
+            <h1 style={{ fontSize: 'clamp(22px, 3vw, 28px)', fontWeight: 800, color: '#1e293b', marginBottom: 8 }}>
               히든피스: 우리 반 보물찾기
             </h1>
-            <p style={{ color: '#64748b', fontSize: 15 }}>학년에 맞는 모드를 선택해 주세요</p>
+            <p style={{ color: '#64748b', fontSize: 'clamp(13px, 1.4vw, 15px)' }}>학년에 맞는 모드를 선택해 주세요</p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+          <div style={{
+            display: 'grid',
+            // 좁은 태블릿 세로에서는 자동으로 1열로 스택
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+            gap: 20,
+          }}>
             {/* 저학년 */}
             <div
               className="mode-card"
