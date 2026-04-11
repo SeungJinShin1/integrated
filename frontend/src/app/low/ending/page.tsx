@@ -100,8 +100,8 @@ export default function LowEndingPage() {
   return (
     <>
       <TopNavBar />
-      <div className="game-area" style={{ position: 'relative', overflowY: 'auto', background: '#f0fdf4' }}>
-        <img src={LOW_BG_IMAGES.ending} alt="배경" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.1 }} />
+      <div className="game-area" style={{ background: '#f0fdf4' }}>
+        <img src={LOW_BG_IMAGES.ending} alt="배경" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.1, pointerEvents: 'none' }} />
 
         <canvas ref={canvasRef} style={{ display: 'none' }} />
 

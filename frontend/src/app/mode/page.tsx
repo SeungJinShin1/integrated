@@ -23,10 +23,16 @@ export default function ModeSelectPage() {
     <>
       <TopNavBar />
       <div className="game-area" style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
         background: 'linear-gradient(135deg, #0f172a, #1e1b4b)',
-        padding: 'clamp(16px, 3vw, 24px)',
       }}>
+        <div style={{
+          minHeight: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 'clamp(16px, 3vw, 24px)',
+          boxSizing: 'border-box',
+        }}>
         <div style={{
           background: 'var(--bg-card)', borderRadius: 28,
           padding: 'clamp(28px, 4vw, 48px) clamp(22px, 3vw, 40px)',
@@ -92,6 +98,7 @@ export default function ModeSelectPage() {
               </p>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </>

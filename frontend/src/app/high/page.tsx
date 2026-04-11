@@ -14,13 +14,16 @@ import { useState } from 'react';
 
 // Six landmark positions aligned with the 6 white circles on the world map background.
 // Order matches HIGH_STAGES (stage-1 … stage-6).
+// 좌표는 배경 이미지(고학년 미션 월드맵) 안의 하얀색 빈 원 중심점을 기준으로
+// 실측하여 잡았습니다. 퍼센트는 배경 이미지가 cover 로 깔린 .world-map 의
+// 너비·높이에 상대적입니다.
 const NODE_POSITIONS = [
-  { left: '19%', top: '33%' }, // stage-1 앵무새의 숲 — top-left forest circle
-  { left: '22%', top: '57%' }, // stage-2 폭탄이 터졌다 — mid-left circle (below forest)
-  { left: '57%', top: '26%' }, // stage-3 기차는 멈추지 않아 — top train hill circle
-  { left: '62%', top: '47%' }, // stage-4 사라진 퍼즐 조각 — mid-right mosaic circle
-  { left: '48%', top: '78%' }, // stage-5 갈림길의 기억 — bottom forest circle
-  { left: '82%', top: '62%' }, // stage-6 빛나는 우리 반 — prism-house circle (far right)
+  { left: '19%', top: '34%' }, // stage-1 앵무새의 숲 — 좌상단 숲 속 흰 원
+  { left: '17%', top: '66%' }, // stage-2 폭탄이 터졌다 — 좌측 하단 흰 원 (화산 왼쪽)
+  { left: '54%', top: '30%' }, // stage-3 기차는 멈추지 않아 — 상단 기차 언덕 아래 흰 원
+  { left: '61%', top: '52%' }, // stage-4 사라진 퍼즐 조각 — 모자이크 탑 오른쪽 흰 원
+  { left: '49%', top: '83%' }, // stage-5 갈림길의 기억 — 하단 숲으로 둘러싸인 흰 원
+  { left: '78%', top: '60%' }, // stage-6 빛나는 우리 반 — 프리즘 수정집 옆 흰 원
 ];
 
 export default function HighGradePage() {

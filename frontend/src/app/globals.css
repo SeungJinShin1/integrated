@@ -41,6 +41,17 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* 좁은 태블릿/모바일에서는 body 도 스크롤 허용.
+   .auth-container, .start-screen 처럼 .game-area 를 안 쓰는 페이지에서
+   콘텐츠가 뷰포트보다 길어질 때 아래까지 접근할 수 있게 합니다. */
+@media (max-width: 1180px), (max-height: 820px) {
+  html, body {
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 * {
   font-family: 'Nanum Gothic', 'NanumSquareRound', sans-serif !important;
 }
@@ -113,7 +124,11 @@ body {
   max-width: 400px;
 }
 
-/* ===== Main Game Area ===== */
+/* ===== Main Game Area =====
+   · 탑 내비바 아래 전체 영역을 차지하는 컨테이너
+   · 콘텐츠가 세로로 넘칠 경우 자체 overflow-y: auto 로 스크롤
+   · 스테이지/월드맵처럼 position: absolute 기준점이 필요한 페이지를 위해
+     position: fixed 를 유지합니다 */
 .game-area {
   position: fixed;
   top: var(--nav-height);
@@ -122,10 +137,24 @@ body {
   bottom: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 .game-area.no-nav {
   top: 0;
+}
+
+/* 스크롤이 필요한 폼/카드 페이지용 래퍼
+   (.game-area 의 내부에 두어 최소 높이를 보장하면서도
+    콘텐츠가 길어지면 자연스럽게 스크롤을 유발) */
+.game-area-scroll {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(16px, 3vw, 32px);
+  box-sizing: border-box;
 }
 
 /* ===== Dialogue Box (Integrated Character Design like 7.png) ===== */
@@ -487,13 +516,18 @@ body {
 
 /* ===== Auth Forms ===== */
 .auth-container {
+  /* 100dvh 로 주면 모바일 브라우저 주소창 높이를 반영합니다 (폴백: 100vh) */
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
   background-size: cover;
   background-position: center;
   position: relative;
+  /* 좁은 화면에서 폼이 길어져도 아래까지 접근 가능하도록 */
+  padding: 24px 16px;
+  box-sizing: border-box;
 }
 
 .auth-overlay {
@@ -801,6 +835,65 @@ body {
   align-items: center;
   justify-content: center;
   z-index: 99999;
+}
+
+/* ===== Portrait Orientation Notice (Tablet) =====
+   태블릿을 세로로 들고 있을 때만 노출되는 "가로로 돌려 주세요" 안내.
+   · 데스크탑/노트북: 표시 안 함 (max-width 로 차단)
+   · 태블릿 세로: 표시
+   · 태블릿 가로: 표시 안 함 (orientation: landscape) */
+.portrait-notice {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  color: #fef3c7;
+  padding: 40px 32px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.portrait-notice-inner {
+  max-width: 520px;
+}
+
+.portrait-notice-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  animation: rotateHint 2.4s ease-in-out infinite;
+}
+
+.portrait-notice h2 {
+  font-size: 26px;
+  font-weight: 900;
+  margin-bottom: 12px;
+  color: #fde68a;
+  letter-spacing: -0.5px;
+}
+
+.portrait-notice p {
+  font-size: 16px;
+  font-weight: 700;
+  color: rgba(254, 243, 199, 0.8);
+  line-height: 1.6;
+}
+
+@keyframes rotateHint {
+  0%, 20% { transform: rotate(0deg); }
+  50%, 70% { transform: rotate(-90deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* 터치 디바이스 & 세로 방향 & 태블릿/모바일 크기에서만 노출.
+   데스크탑 모니터를 세로로 쓰는 경우(드물지만)는 hover/pointer 조건에서 걸러짐. */
+@media (orientation: portrait) and (max-width: 1180px) and (hover: none) and (pointer: coarse) {
+  .portrait-notice { display: flex; }
+  /* 안내가 떠 있는 동안 뒤쪽 스크롤 잠금 */
+  body:has(.portrait-notice) { overflow: hidden; }
 }
 
 /* ===== Scrollbar ===== */

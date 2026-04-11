@@ -6,15 +6,17 @@ import { useGame } from '@/contexts/GameContext';
 import TopNavBar from '@/components/layout/TopNavBar';
 import { LOW_NPC_IMAGES, NPC_IMAGES, PLAYER_IMAGES, BG_IMAGES, LOW_BG_IMAGES } from '@/data/assetMap';
 
-const DEFAULT_NAMES = { female: '승주', male: '성민' } as const;
+const DEFAULT_NPC_NAMES = { female: '승주', male: '성민' } as const;
+const DEFAULT_PLAYER_NAME = '나';
 
 export default function CharacterCreationPage() {
   const router = useRouter();
   const { state, dispatch } = useGame();
   const [npcGender, setNpcGender] = useState<'female' | 'male'>('female');
   const [playerGender, setPlayerGender] = useState<'female' | 'male'>('female');
-  const [name, setName] = useState('');
-  const [touched, setTouched] = useState(false);
+  const [playerName, setPlayerName] = useState(DEFAULT_PLAYER_NAME);
+  const [npcName, setNpcName] = useState('');
+  const [npcNameTouched, setNpcNameTouched] = useState(false);
 
   // Guard: must have a grade mode set; otherwise return to mode select
   useEffect(() => {
@@ -27,15 +29,16 @@ export default function CharacterCreationPage() {
 
   // When NPC gender changes, sync the placeholder/default name unless user has typed
   useEffect(() => {
-    if (!touched) setName(DEFAULT_NAMES[npcGender]);
-  }, [npcGender, touched]);
+    if (!npcNameTouched) setNpcName(DEFAULT_NPC_NAMES[npcGender]);
+  }, [npcGender, npcNameTouched]);
 
   const bgImage = isLow ? LOW_BG_IMAGES.intro : BG_IMAGES.classroom;
 
   const handleStart = () => {
-    const finalName = name.trim() || DEFAULT_NAMES[npcGender];
-    dispatch({ type: 'SET_NPC', payload: { name: finalName, gender: npcGender } });
-    dispatch({ type: 'SET_PLAYER', payload: { gender: playerGender } });
+    const finalPlayerName = playerName.trim() || DEFAULT_PLAYER_NAME;
+    const finalNpcName = npcName.trim() || DEFAULT_NPC_NAMES[npcGender];
+    dispatch({ type: 'SET_PLAYER', payload: { name: finalPlayerName, gender: playerGender } });
+    dispatch({ type: 'SET_NPC', payload: { name: finalNpcName, gender: npcGender } });
     if (isLow) {
       dispatch({ type: 'SET_STAGE', payload: 'low_stage1' });
       router.push('/low/episode/1');
@@ -47,35 +50,15 @@ export default function CharacterCreationPage() {
   return (
     <>
       <TopNavBar />
-      <div className="game-area" style={{ position: 'relative', overflow: 'auto' }}>
-        {/* Background */}
-        <img
-          src={bgImage}
-          alt="배경"
-          style={{
-            position: 'fixed',
-            top: 'var(--nav-height)',
-            left: 0,
-            right: 0,
-            bottom: 0,
-            width: '100%',
-            height: 'calc(100% - var(--nav-height))',
-            objectFit: 'cover',
-            zIndex: 0,
-          }}
-        />
-        <div
-          style={{
-            position: 'fixed',
-            top: 'var(--nav-height)',
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(15,23,42,0.55)',
-            zIndex: 1,
-          }}
-        />
-
+      <div
+        className="game-area"
+        style={{
+          // 배경을 CSS 배경으로 깔아두어 콘텐츠와 별도로 렌더링
+          // → 콘텐츠가 뷰포트보다 길면 .game-area 의 overflow-y:auto 가 동작하고,
+          //   배경은 자연스럽게 제자리에 남습니다.
+          background: `linear-gradient(rgba(15,23,42,0.55), rgba(15,23,42,0.55)), url("${encodeURI(bgImage)}") center/cover no-repeat`,
+        }}
+      >
         <div
           style={{
             position: 'relative',
@@ -179,9 +162,48 @@ export default function CharacterCreationPage() {
               })}
             </div>
 
+            {/* Player name input */}
+            <label
+              style={{
+                display: 'block',
+                fontSize: 13,
+                fontWeight: 800,
+                color: '#475569',
+                marginBottom: 8,
+                letterSpacing: 0.5,
+              }}
+            >
+              ② 나의 이름
+            </label>
+            <input
+              type="text"
+              value={playerName}
+              onChange={(e) => setPlayerName(e.target.value)}
+              maxLength={10}
+              placeholder={DEFAULT_PLAYER_NAME}
+              style={{
+                width: '100%',
+                padding: '14px 16px',
+                borderRadius: 14,
+                border: '2px solid #e2e8f0',
+                fontSize: 16,
+                fontWeight: 600,
+                color: '#1e293b',
+                outline: 'none',
+                transition: 'border-color 0.2s',
+                fontFamily: "'Nanum Gothic', sans-serif",
+                marginBottom: 4,
+              }}
+              onFocus={(e) => (e.target.style.borderColor = '#f59e0b')}
+              onBlur={(e) => (e.target.style.borderColor = '#e2e8f0')}
+            />
+            <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 6, marginBottom: 22 }}>
+              비워두면 기본 이름 「{DEFAULT_PLAYER_NAME}」(으)로 시작해요.
+            </p>
+
             {/* NPC (친구) gender selection */}
             <p style={{ fontSize: 13, fontWeight: 800, color: '#475569', marginBottom: 10, letterSpacing: 0.5 }}>
-              ② 함께할 친구
+              ③ 함께할 친구
             </p>
             <div
               style={{
@@ -248,14 +270,14 @@ export default function CharacterCreationPage() {
                         marginTop: 2,
                       }}
                     >
-                      기본 이름 · {DEFAULT_NAMES[g]}
+                      기본 이름 · {DEFAULT_NPC_NAMES[g]}
                     </p>
                   </button>
                 );
               })}
             </div>
 
-            {/* Name input */}
+            {/* NPC Name input */}
             <label
               style={{
                 display: 'block',
@@ -266,17 +288,17 @@ export default function CharacterCreationPage() {
                 letterSpacing: 0.5,
               }}
             >
-              ③ 친구의 이름
+              ④ 친구의 이름
             </label>
             <input
               type="text"
-              value={name}
+              value={npcName}
               onChange={(e) => {
-                setTouched(true);
-                setName(e.target.value);
+                setNpcNameTouched(true);
+                setNpcName(e.target.value);
               }}
               maxLength={10}
-              placeholder={DEFAULT_NAMES[npcGender]}
+              placeholder={DEFAULT_NPC_NAMES[npcGender]}
               style={{
                 width: '100%',
                 padding: '14px 16px',
@@ -293,7 +315,7 @@ export default function CharacterCreationPage() {
               onBlur={(e) => (e.target.style.borderColor = '#e2e8f0')}
             />
             <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 6 }}>
-              비워두면 기본 이름 「{DEFAULT_NAMES[npcGender]}」(이)로 시작해요.
+              비워두면 기본 이름 「{DEFAULT_NPC_NAMES[npcGender]}」(이)로 시작해요.
             </p>
 
             <button
