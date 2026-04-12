@@ -89,7 +89,7 @@ function Stage1() {
           speaker: '해설', text: `${N}(이)가 **같은 말을 반복**하고 있어요. 같은 말을 반복하는 건 **무의미한 게 아니라**, 무언가를 말하려는 시도일 수 있어요.`,
           choices: [
             { text: `"${N}아, 무슨 말인지 모르겠어! 똑바로 말해!" (화남)`, action: () => { addStat('trust', -10); setStep(10); } },
-            { text: `"노란색? 혹시 노란색이 필요한 거야?" (해석 시도)`, action: () => { addStat('understanding', 10); setStep(20); } },
+            { text: `"노란색? 혹시 노란색이 필요한 거야?" (해석 시도)`, action: () => { addStat('understanding', 10); setStep(15); } },
           ]
         });
         break;
@@ -104,6 +104,35 @@ function Stage1() {
       case 11:
         setDialogue({
           speaker: N, text: '(...왜 화가 났지? 나는 그냥 노란색이 필요한데.)',
+          onNext: () => setStep(12),
+        });
+        break;
+      case 12:
+        setPlayerPose('thinking');
+        setDialogue({
+          speaker: P, text: '(화를 내니까 더 움츠러들었어… 이러면 안 되겠다. 차분하게 도와줄 방법을 찾아보자.)',
+          onNext: () => setStep(15),
+        });
+        break;
+      // --- 소통 브릿지: AAC 도구 발견 ---
+      case 15:
+        setNpcEmotion('memory');
+        setDialogue({
+          speaker: N, text: '"노란색… 노란색…" (색연필 통을 가리키며 더 말하려 하지만, 같은 말만 반복된다)',
+          onNext: () => setStep(16),
+        });
+        break;
+      case 16:
+        setPlayerPose('thinking');
+        setDialogue({
+          speaker: P, text: '(노란색이 필요한 건 알겠는데, 정확히 뭘 원하는지 말로는 전달이 안 돼… 다른 방법이 필요해.)',
+          onNext: () => setStep(17),
+        });
+        break;
+      case 17:
+        setPlayerPose('talk');
+        setDialogue({
+          speaker: P, text: `(마침 교실 한쪽에 그림으로 소통할 수 있는 태블릿이 놓여 있다!) "${N}아, 잠깐만. 이걸로 보여줄 수 있을 거야!"`,
           onNext: () => setStep(20),
         });
         break;
@@ -307,19 +336,51 @@ function Stage2() {
           ]
         });
         break;
+      // --- 화냄 루트 ---
       case 10:
         setNpcEmotion('pain');
-        setDialogue({ speaker: N, text: '(더 크게 소리질러 귀를 막음) "아악!! 시끄러워!!"', onNext: () => setStep(40) });
+        setDialogue({ speaker: N, text: '(더 크게 소리질러 귀를 막음) "아악!! 시끄러워!!"', onNext: () => setStep(11) });
         break;
+      case 11:
+        setPlayerPose('thinking');
+        setDialogue({
+          speaker: P, text: '(같이 소리를 지르니까 더 심해졌어… 이건 화가 나서 그런 게 아니야. 진짜 아파하고 있어.)',
+          onNext: () => setStep(35),
+        });
+        break;
+      // --- 회피 루트 ---
       case 20:
-        setDialogue({ speaker: '해설', text: '선생님이 오시기까지 시간이 걸립니다. 그 사이에도 소음은 계속...', onNext: () => setStep(40) });
+        setDialogue({ speaker: '해설', text: '선생님이 오시기까지 시간이 걸립니다. 그 사이에도 소음은 계속…', onNext: () => setStep(21) });
         break;
+      case 21:
+        setPlayerPose('thinking');
+        setDialogue({
+          speaker: P, text: `(선생님을 기다리는 동안에도 ${N}(이)는 계속 귀를 막고 웅크려 있어… 지금 당장 뭔가 해줘야 해.)`,
+          onNext: () => setStep(35),
+        });
+        break;
+      // --- 관찰 루트 ---
       case 30:
-        setDialogue({ speaker: '해설', text: `${N}(이)가 양쪽 귀를 꽉 막고 있는 것이 보입니다. 소리 때문에 **고통받고** 있어요!`, onNext: () => setStep(40) });
+        setDialogue({ speaker: '해설', text: `${N}(이)가 양쪽 귀를 꽉 막고 있는 것이 보입니다. 소리 때문에 **고통받고** 있어요!`, onNext: () => setStep(35) });
+        break;
+      // --- 공통 브릿지: 헤드셋 발견 ---
+      case 35:
+        setPlayerPose('thinking');
+        setDialogue({
+          speaker: P, text: '(귀를 막고 있어… 소리가 너무 크게 들리는 거구나. 소음을 줄여줄 수 있는 게 없을까?)',
+          onNext: () => setStep(36),
+        });
+        break;
+      case 36:
+        setPlayerPose('talk');
+        setDialogue({
+          speaker: P, text: `(맞다, 가방에 담임 선생님이 넣어 주신 헤드셋이 있었지!) "${N}아, 잠깐만!"`,
+          onNext: () => setStep(40),
+        });
         break;
       // --- 미니게임 ---
       case 40:
-        setDialogue({ speaker: '해설', text: `비상 사태! 소음 수치가 위험합니다! **노이즈 캔슬링 헤드셋** 다이얼을 조절해 ${N}(이)를 진정시키세요.` });
+        setDialogue({ speaker: '해설', text: `**노이즈 캔슬링 헤드셋**의 다이얼을 조절해 소음을 줄여 주세요!` });
         setShowMinigame(true);
         break;
       // --- 미니게임 성공 후 ---
@@ -685,10 +746,31 @@ function Stage4() {
         setDialogue({
           speaker: P, text: `(${N}(이)가 조각을 들고 무언가 보여주려 하고 있다...)`,
           choices: [
-            { text: `"${N}아, 넌 가만히 있는 게 도와주는 거야." (배제)`, action: () => { addStat('trust', -10); setStep(40); } },
-            { text: `"${N}(이)가 뭘 하려는지 한번 볼까?" (관찰)`, action: () => { logWaiting(); addStat('trust', 10); addStat('communication', 10); setStep(40); } },
+            { text: `"${N}아, 넌 가만히 있는 게 도와주는 거야." (배제)`, action: () => { addStat('trust', -10); setStep(8); } },
+            { text: `"${N}(이)가 뭘 하려는지 한번 볼까?" (관찰)`, action: () => { logWaiting(); addStat('trust', 10); addStat('communication', 10); setStep(15); } },
             { text: `"${N}아, 이거 네가 해볼래?" (참여 유도)`, action: () => { logWaiting(); addStat('understanding', 15); addStat('trust', 10); setStep(40); } },
           ]
+        });
+        break;
+      // --- 배제 브릿지: 승주의 의지 ---
+      case 8:
+        setDialogue({
+          speaker: N, text: '(…앉아 있으라고? 하지만 나는 이 조각이 맞다는 걸 알아. 포기할 수 없어.)',
+          onNext: () => setStep(9),
+        });
+        break;
+      case 9:
+        setDialogue({
+          speaker: '해설', text: `그런데 ${N}(이)가 조용히 자리에서 일어나 주머니를 뒤지기 시작합니다.`,
+          onNext: () => setStep(40),
+        });
+        break;
+      // --- 관찰 브릿지 ---
+      case 15:
+        setPlayerPose('thinking');
+        setDialogue({
+          speaker: P, text: `(조용히 지켜본다. ${N}(이)가 뭔가 보여주려고 하고 있어… 기다려 보자.)`,
+          onNext: () => setStep(40),
         });
         break;
       // --- PECS 미니게임 ---
