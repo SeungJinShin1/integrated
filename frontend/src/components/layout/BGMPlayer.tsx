@@ -164,6 +164,24 @@ export default function BGMPlayer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
+  // 음성 나레이션 재생 시 BGM 볼륨 덕(duck) / 복원
+  useEffect(() => {
+    const handleDuck = () => {
+      const el = audioRef.current;
+      if (el && !mutedRef.current) fadeTo(el, 0.02, 300);
+    };
+    const handleRestore = () => {
+      const el = audioRef.current;
+      if (el && !mutedRef.current) fadeTo(el, TARGET_VOLUME, 500);
+    };
+    window.addEventListener('bgm-duck', handleDuck);
+    window.addEventListener('bgm-restore', handleRestore);
+    return () => {
+      window.removeEventListener('bgm-duck', handleDuck);
+      window.removeEventListener('bgm-restore', handleRestore);
+    };
+  }, []);
+
   // 음소거 토글 반응
   useEffect(() => {
     const el = audioRef.current;

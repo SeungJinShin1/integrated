@@ -182,6 +182,21 @@ export const LOW_NPC_IMAGES = {
   },
 } as const;
 
+// 저학년 음성 나레이션 (타입캐스트 녹음 — NPC 이름 대신 "친구" 사용)
+export const LOW_VOICE = {
+  ep1_intro: '/assets/sprout/voice_ep1_intro.mp3',
+  ep1_complete: '/assets/sprout/voice_ep1_complete.mp3',
+  ep2_intro: '/assets/sprout/voice_ep2_intro.mp3',
+  ep2_complete: '/assets/sprout/voice_ep2_complete.mp3',
+  ep3_intro: '/assets/sprout/voice_ep3_intro.mp3',
+  ep3_complete: '/assets/sprout/voice_ep3_complete.mp3',
+  ep4_card: '/assets/sprout/voice_ep4_card.mp3',
+  ep4_squishy: '/assets/sprout/voice_ep4_squishy.mp3',
+  ep4_complete: '/assets/sprout/voice_ep4_complete.mp3',
+  ending_intro: '/assets/sprout/voice_ending_intro.mp3',
+  ending_cert: '/assets/sprout/voice_ending_cert.mp3',
+} as const;
+
 export const LOW_BG_IMAGES = {
   intro: '/assets/sprout/3_BG_intro.png',
   stages: '/assets/sprout/3_BG1,BG2,BG3,BG4.png',

@@ -7,7 +7,8 @@ import TopNavBar from '@/components/layout/TopNavBar';
 import { getLowNpcImage, LOW_BG_IMAGES, ITEM_IMAGES } from '@/data/assetMap';
 import Icon from '@/components/ui/Icon';
 import ParticleCanvas from '@/components/minigames/ParticleCanvas';
-import { useTTS } from '@/hooks/useTTS';
+import { useVoiceNarration } from '@/hooks/useVoiceNarration';
+import { LOW_VOICE } from '@/data/assetMap';
 
 // Hook to track container dimensions for ParticleCanvas
 function useContainerSize(ref: React.RefObject<HTMLDivElement | null>) {
@@ -95,10 +96,8 @@ function LowStage1() {
     addHeart();
   };
 
-  const ttsText = isComplete
-    ? `잘했어요! ${state.npc.name}가 활짝 웃고 있어요. 먼저 다가가면 친구도 기뻐해요!`
-    : `${state.npc.name}가 교실 한쪽에서 혼자 클레이 놀이를 하고 있어요. 아무도 다가가지 않았네요. 우리가 먼저 인사를 건네볼까요? 같이 놀자 말풍선을 눌러주세요.`;
-  useTTS(ttsText);
+  const voiceSrc = isComplete ? LOW_VOICE.ep1_complete : LOW_VOICE.ep1_intro;
+  useVoiceNarration(voiceSrc);
 
   return (
     <div ref={containerRef} style={{ position: 'relative', width: '100%', minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -173,10 +172,8 @@ function LowStage2() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width, height } = useContainerSize(containerRef);
 
-  const ttsText = isComplete
-    ? `와! 헤드폰 덕분에 소음이 줄어들었어요. ${state.npc.name}가 다시 편안해졌어요. 같은 소리도 사람마다 다르게 느낄 수 있어요!`
-    : `앗, 밖에서 공사 소리가 쿵쿵 울려요! 우리한테는 그냥 좀 시끄러운 소리지만, ${state.npc.name}에게는 귀가 아플 만큼 크게 들려요. 헤드폰을 눌러서 도와주세요!`;
-  useTTS(ttsText);
+  const voiceSrc = isComplete ? LOW_VOICE.ep2_complete : LOW_VOICE.ep2_intro;
+  useVoiceNarration(voiceSrc);
 
   return (
     <div ref={containerRef} style={{ position: 'relative', width: '100%', minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -259,10 +256,8 @@ function LowStage3() {
     if (isComplete) addHeart();
   }, [isComplete]);
 
-  const ttsText = isComplete
-    ? `참 잘했어요! 조금 기다려주니까 ${state.npc.name}가 자기 생각을 말할 수 있었어요. 기다림은 가장 쉬운 도움이에요!`
-    : `${state.npc.name}에게 질문을 했는데, 대답이 조금 늦어지고 있어요. 생각하는 데 시간이 더 필요한 친구도 있어요. 시계 버튼을 3번 눌러서 기다려줄까요?`;
-  useTTS(ttsText);
+  const voiceSrc = isComplete ? LOW_VOICE.ep3_complete : LOW_VOICE.ep3_intro;
+  useVoiceNarration(voiceSrc);
 
   return (
     <div ref={containerRef} style={{ position: 'relative', width: '100%', minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -335,12 +330,12 @@ function LowStage4() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width, height } = useContainerSize(containerRef);
 
-  const ttsText = phase === 'card_selection'
-    ? `${state.npc.name}가 속상해서 말로 표현하기 어려운 것 같아요. 그림 카드를 보여주면, 그림으로 자기 마음을 표현할 수 있어요!`
+  const voiceSrc = phase === 'card_selection'
+    ? LOW_VOICE.ep4_card
     : phase === 'squishy_tapping'
-    ? `${state.npc.name}가 그림 카드로 말랑이가 필요하다고 알려줬어요! 말랑이를 3번 눌러서 친구를 달래주세요.`
-    : `최고! 그림 카드와 말랑이 덕분에 ${state.npc.name}가 다시 편안해졌어요. 말로 표현하기 어려울 때, 다른 방법으로 도와줄 수 있어요!`;
-  useTTS(ttsText);
+    ? LOW_VOICE.ep4_squishy
+    : LOW_VOICE.ep4_complete;
+  useVoiceNarration(voiceSrc);
 
   return (
     <div ref={containerRef} style={{ position: 'relative', width: '100%', minHeight: '100%', display: 'flex', flexDirection: 'column' }}>

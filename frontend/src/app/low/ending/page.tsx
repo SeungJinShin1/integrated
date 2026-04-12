@@ -6,7 +6,8 @@ import { useGame } from '@/contexts/GameContext';
 import TopNavBar from '@/components/layout/TopNavBar';
 import { LOW_BG_IMAGES } from '@/data/assetMap';
 import Icon from '@/components/ui/Icon';
-import { useTTS } from '@/hooks/useTTS';
+import { useVoiceNarration } from '@/hooks/useVoiceNarration';
+import { LOW_VOICE } from '@/data/assetMap';
 
 // 각 스티커는 라벨(한글) + 배경 색상으로만 구분. 이모지는 저작권 이슈로 사용하지 않습니다.
 const STICKERS = [
@@ -23,11 +24,9 @@ export default function LowEndingPage() {
   const [isDownloading, setIsDownloading] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // TTS messages
-  const ttsText = selectedSticker
-    ? '정말 멋진 감정이네요. 히든피스 새싹 수료증을 받으세요! 다운로드 버튼을 눌러 이미지를 저장할 수 있어요.'
-    : '우와! 4개의 미션을 모두 완료했어요! 지금 기분이 어떤가요? 아래에서 감정 스티커를 하나 골라주세요.';
-  useTTS(ttsText);
+  // 음성 나레이션
+  const voiceSrc = selectedSticker ? LOW_VOICE.ending_cert : LOW_VOICE.ending_intro;
+  useVoiceNarration(voiceSrc);
 
   const downloadCertificate = () => {
     if (!selectedSticker) return;
