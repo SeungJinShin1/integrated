@@ -109,7 +109,7 @@ export default function LowEndingPage() {
 
             {!selectedSticker ? (
               <div className="animate-fade-in">
-                <h2 style={{ fontSize: 32, fontWeight: 800, color: '#166534', marginBottom: 16 }}>모든 미션 완료!</h2>
+                <h2 style={{ fontSize: 32, fontWeight: 800, color: '#166534', marginBottom: 16 }}>우와! 5개의 미션을 모두 완료했어요!</h2>
                 
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, background: '#fdf2f8', padding: '12px 24px', borderRadius: 30, border: '2px solid #fbcfe8', marginBottom: 32 }}>
                   <span style={{ fontWeight: 800, color: '#be185d', fontSize: 16 }}>모은 하트:</span>
@@ -118,7 +118,7 @@ export default function LowEndingPage() {
                   </div>
                 </div>
 
-                <p style={{ fontSize: 20, color: '#334155', marginBottom: 24, fontWeight: 700 }}>지금 당신의 기분은 어떤가요?</p>
+                <p style={{ fontSize: 20, color: '#334155', marginBottom: 24, fontWeight: 700 }}>지금 기분이 어떤가요? 아래에서 감정 스티커를 하나 골라주세요.</p>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
                   {STICKERS.map(sticker => (
@@ -134,7 +134,7 @@ export default function LowEndingPage() {
               </div>
             ) : (
               <div className="animate-fade-in-up">
-                <h2 style={{ fontSize: 28, fontWeight: 800, color: '#166534', marginBottom: 24 }}>히든피스 새싹 수료증 발급 준비 완료!</h2>
+                <h2 style={{ fontSize: 28, fontWeight: 800, color: '#166534', marginBottom: 24 }}>정말 멋진 감정이네요. 히든피스 새싹 수료증을 받으세요!</h2>
 
                 <div style={{ background: '#f0fdf4', padding: '32px 24px', borderRadius: 24, border: '2px solid #bbf7d0', position: 'relative', overflow: 'hidden', marginBottom: 32 }}>
                   <div style={{ position: 'relative', zIndex: 10 }}>

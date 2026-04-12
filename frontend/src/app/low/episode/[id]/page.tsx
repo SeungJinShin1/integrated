@@ -113,7 +113,7 @@ function LowStage1() {
             {isComplete ? '성공! 친구와 함께 놀게 되었어요.' : '친구에게 먼저 다가가 볼까요?'}
           </h2>
           <p style={TITLE_P}>
-            {isComplete ? `잘했어요! ${state.npc.name}가 활짝 웃고 있어요. 먼저 다가가면 친구도 기뻐해요!` : `${state.npc.name}가 교실 한쪽에서 혼자 놀고 있어요. '같이 놀자' 말풍선을 눌러주세요.`}
+            {isComplete ? '잘했어요! 친구가 활짝 웃고 있어요. 먼저 다가가면 친구도 기뻐해요!' : '친구가 교실 한쪽에서 혼자 클레이 놀이를 하고 있어요. 아무도 다가가지 않았네요. 우리가 먼저 인사를 건네볼까요? 같이 놀자 말풍선을 눌러주세요.'}
           </p>
         </div>
 
@@ -187,10 +187,10 @@ function LowStage2() {
 
         <div style={{ ...TITLE_CARD, border: `3px solid ${isComplete ? '#86efac' : '#fca5a5'}` }}>
           <h2 style={{ ...TITLE_H2, color: isComplete ? '#15803d' : '#b91c1c' }}>
-            {isComplete ? '헤드폰을 씌워주었어요!' : `${state.npc.name}가 시끄러운 소리 때문에 힘들어해요!`}
+            {isComplete ? '헤드폰을 씌워주었어요!' : '친구가 시끄러운 소리 때문에 힘들어해요!'}
           </h2>
           <p style={TITLE_P}>
-            {isComplete ? `와! 헤드폰 덕분에 소음이 줄어들었어요. ${state.npc.name}가 다시 편안해졌어요.` : `밖에서 공사 소리가 쿵쿵 울려요! ${state.npc.name}에게는 귀가 아플 만큼 크게 들려요.`}
+            {isComplete ? '와! 헤드폰 덕분에 소음이 줄어들었어요. 친구가 다시 편안해졌어요. 같은 소리도 사람마다 다르게 느낄 수 있어요!' : '앗, 밖에서 공사 소리가 쿵쿵 울려요! 우리한테는 그냥 좀 시끄러운 소리지만, 친구에게는 귀가 아플 만큼 크게 들려요. 헤드폰을 눌러서 도와주세요!'}
           </p>
         </div>
 
@@ -271,10 +271,10 @@ function LowStage3() {
 
         <div style={{ ...TITLE_CARD, border: '3px solid #c7d2fe' }}>
           <h2 style={{ ...TITLE_H2, color: isComplete ? '#15803d' : '#1e293b' }}>
-            {isComplete ? `참 잘했어요! ${state.npc.name}가 대답을 했어요!` : `시계 버튼을 눌러주세요! (${tapCount}/3)`}
+            {isComplete ? '참 잘했어요! 친구가 대답을 했어요!' : `시계 버튼을 눌러주세요! (${tapCount}/3)`}
           </h2>
           <p style={TITLE_P}>
-            {isComplete ? `조금 기다려주니까 ${state.npc.name}가 자기 생각을 말할 수 있었어요. 기다림은 가장 쉬운 도움이에요!` : `${state.npc.name}에게 질문을 했는데, 생각하는 데 시간이 더 필요해요. 시계 버튼을 3번 눌러 기다려주세요.`}
+            {isComplete ? '조금 기다려주니까 친구가 자기 생각을 말할 수 있었어요. 기다림은 가장 쉬운 도움이에요!' : '친구에게 질문을 했는데, 대답이 조금 늦어지고 있어요. 생각하는 데 시간이 더 필요한 친구도 있어요. 시계 버튼을 3번 눌러서 기다려줄까요?'}
           </p>
         </div>
 
@@ -350,14 +350,14 @@ function LowStage4() {
 
         <div style={{ ...TITLE_CARD, border: '3px solid #a5b4fc' }}>
           <h2 style={{ ...TITLE_H2, color: phase === 'done' ? '#15803d' : '#1e293b' }}>
-            {phase === 'card_selection' && `${state.npc.name}가 많이 속상해 보여요.`}
+            {phase === 'card_selection' && '친구가 많이 속상해 보여요.'}
             {phase === 'squishy_tapping' && `말랑이를 3번 눌러주세요! (${tapCount}/3)`}
-            {phase === 'done' && `최고! ${state.npc.name}가 다시 편안해졌어요!`}
+            {phase === 'done' && '최고! 친구가 다시 편안해졌어요!'}
           </h2>
           <p style={TITLE_P}>
-            {phase === 'card_selection' && `${state.npc.name}가 속상해서 말로 표현하기 어려워요. 그림 카드를 보여주면, 그림으로 자기 마음을 표현할 수 있어요!`}
-            {phase === 'squishy_tapping' && `${state.npc.name}가 그림 카드로 말랑이가 필요하다고 알려줬어요! 말랑이를 눌러서 달래주세요.`}
-            {phase === 'done' && `그림 카드와 말랑이 덕분에 ${state.npc.name}가 편안해졌어요.`}
+            {phase === 'card_selection' && '친구가 속상해서 말로 표현하기 어려운 것 같아요. 그림 카드를 보여주면, 그림으로 자기 마음을 표현할 수 있어요!'}
+            {phase === 'squishy_tapping' && '친구가 그림 카드로 말랑이가 필요하다고 알려줬어요! 말랑이를 3번 눌러서 친구를 달래주세요.'}
+            {phase === 'done' && '그림 카드와 말랑이 덕분에 친구가 편안해졌어요. 말로 표현하기 어려울 때, 다른 방법으로 도와줄 수 있어요!'}
           </p>
         </div>
 
@@ -431,8 +431,8 @@ function LowStage5() {
           </h2>
           <p style={TITLE_P}>
             {isComplete
-              ? `잘했어요! ${state.npc.name}의 방법대로 같이 놀아줬더니 활짝 웃어요. 나와 다른 방법도 틀린 게 아니에요!`
-              : `${state.npc.name}가 블록을 높이 쌓지 않고, 일렬로 나열하고 있어요. 다르게 노는 것도 하나의 방법이에요!`}
+              ? '잘했어요! 친구의 방법대로 같이 놀아줬더니 친구가 활짝 웃어요. 나와 다른 방법도 틀린 게 아니에요!'
+              : "친구가 블록을 높이 쌓지 않고, 일렬로 나열하고 있어요. 다르게 노는 것도 하나의 방법이에요! '같이 해볼래!' 말풍선을 눌러주세요."}
           </p>
         </div>
 
