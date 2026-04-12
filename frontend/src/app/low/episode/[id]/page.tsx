@@ -86,6 +86,7 @@ const BUBBLE: React.CSSProperties = {
 function LowStage1() {
   const { state, completeStage, addHeart } = useGame();
   const router = useRouter();
+  const alreadyDone = (state.completedStages || []).includes('low_stage1');
   const [isComplete, setIsComplete] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { width, height } = useContainerSize(containerRef);
@@ -93,7 +94,7 @@ function LowStage1() {
   const handleTap = () => {
     if (isComplete) return;
     setIsComplete(true);
-    addHeart();
+    if (!alreadyDone) addHeart();
   };
 
   const voiceSrc = isComplete ? LOW_VOICE.ep1_complete : LOW_VOICE.ep1_intro;
@@ -168,6 +169,7 @@ function LowStage1() {
 function LowStage2() {
   const { state, completeStage, addHeart } = useGame();
   const router = useRouter();
+  const alreadyDone = (state.completedStages || []).includes('low_stage2');
   const [isComplete, setIsComplete] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { width, height } = useContainerSize(containerRef);
@@ -196,7 +198,7 @@ function LowStage2() {
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'clamp(24px, 4vw, 64px)', width: '100%', flexWrap: 'wrap' }}>
           {!isComplete && (
             <div
-              onClick={() => { setIsComplete(true); addHeart(); }}
+              onClick={() => { setIsComplete(true); if (!alreadyDone) addHeart(); }}
               style={{
                 background: 'white',
                 padding: 28,
@@ -247,13 +249,14 @@ function LowStage2() {
 function LowStage3() {
   const { state, completeStage, addHeart } = useGame();
   const router = useRouter();
+  const alreadyDone = (state.completedStages || []).includes('low_stage3');
   const [tapCount, setTapCount] = useState(0);
   const isComplete = tapCount >= 3;
   const containerRef = useRef<HTMLDivElement>(null);
   const { width, height } = useContainerSize(containerRef);
 
   useEffect(() => {
-    if (isComplete) addHeart();
+    if (isComplete && !alreadyDone) addHeart();
   }, [isComplete]);
 
   const voiceSrc = isComplete ? LOW_VOICE.ep3_complete : LOW_VOICE.ep3_intro;
@@ -325,6 +328,7 @@ function LowStage3() {
 function LowStage4() {
   const { state, completeStage, addHeart } = useGame();
   const router = useRouter();
+  const alreadyDone = (state.completedStages || []).includes('low_stage4');
   const [phase, setPhase] = useState<'card_selection' | 'squishy_tapping' | 'done'>('card_selection');
   const [tapCount, setTapCount] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -368,7 +372,7 @@ function LowStage4() {
           )}
 
           {phase === 'squishy_tapping' && (
-            <div onClick={() => { if (tapCount + 1 >= 3) { setPhase('done'); addHeart(); } else { setTapCount(v => v + 1); } }} style={{ position: 'relative', cursor: 'pointer', padding: 32 }}>
+            <div onClick={() => { if (tapCount + 1 >= 3) { setPhase('done'); if (!alreadyDone) addHeart(); } else { setTapCount(v => v + 1); } }} style={{ position: 'relative', cursor: 'pointer', padding: 32 }}>
               <div style={{ position: 'absolute', inset: 0, background: '#f9a8d4', borderRadius: '50%', opacity: 0.5, animation: 'ping 1s infinite' }} />
               <img src={ITEM_IMAGES.squishy} alt="말랑이" style={{ position: 'relative', zIndex: 10, width: 170, height: 170, objectFit: 'contain', transform: `scale(${1 + tapCount * 0.1})`, transition: 'transform 0.2s', display: 'block' }} />
               <div style={{ marginTop: 14, background: 'white', padding: '10px 26px', borderRadius: 24, fontSize: 20, fontWeight: 900, color: '#be185d', textAlign: 'center', boxShadow: '0 6px 16px rgba(0,0,0,0.12)' }}>눌러주세요!</div>

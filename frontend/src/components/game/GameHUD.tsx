@@ -55,7 +55,7 @@ export default function GameHUD() {
       {state.inventory.length > 0 && (
         <div style={{
           position: 'fixed',
-          bottom: 24,
+          bottom: 200,
           right: 24,
           zIndex: 999,
           display: 'flex',

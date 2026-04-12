@@ -776,7 +776,7 @@ function Stage4() {
       // --- PECS 미니게임 ---
       case 40:
         setNpcEmotion('discover');
-        setDialogue({ speaker: '해설', text: `${N}(이)가 주머니에서 **PECS(그림교환의사소통) 카드** 뭉치를 꺼냅니다. 카드를 확인하세요!` });
+        setDialogue({ speaker: '해설', text: `${N}(이)가 주머니에서 **의사소통 카드** 뭉치를 꺼냅니다. 카드를 확인하세요!` });
         setShowPecs(true);
         break;
       case 41:
