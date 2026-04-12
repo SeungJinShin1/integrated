@@ -19,11 +19,11 @@ import { useState } from 'react';
 // 너비·높이에 상대적입니다.
 const NODE_POSITIONS = [
   { left: '18%', top: '29%' }, // stage-1 앵무새의 숲 — 12시 소폭 ↑
-  { left: '30%', top: '66%' }, // stage-2 폭탄이 터졌다 — 3시 → (아직 원 밖)
+  { left: '29%', top: '66%' }, // stage-2 폭탄이 터졌다 — 9시 1% ←
   { left: '60%', top: '24%' }, // stage-3 기차는 멈추지 않아 — 9시 미세 ←
-  { left: '66%', top: '52%' }, // stage-4 사라진 퍼즐 조각 — 3시 미세 →
+  { left: '69%', top: '52%' }, // stage-4 사라진 퍼즐 조각 — 3시 1.5% →
   { left: '52%', top: '86%' }, // stage-5 갈림길의 기억 — 3시 미세 →
-  { left: '87%', top: '70%' }, // stage-6 빛나는 우리 반 — 5시 ↘ 추가
+  { left: '87%', top: '74%' }, // stage-6 빛나는 우리 반 — 6시 2% ↓
 ];
 
 export default function HighGradePage() {
