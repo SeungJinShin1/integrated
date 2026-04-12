@@ -293,7 +293,7 @@ function Stage2() {
         });
         break;
       case 6:
-        setNpcEmotion('tantrum'); setVignetteRed(true);
+        setNpcEmotion('pain'); setVignetteRed(true);
         setDialogue({ speaker: N, text: '"으아아악!! 멈춰!! 멈춰!!" (귀를 막으며 옆에 있던 나를 밀침)', onNext: () => setStep(7) });
         break;
       case 7:

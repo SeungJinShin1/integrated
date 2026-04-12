@@ -15,6 +15,18 @@ ChartJS.defaults.font.family = "'Nanum Gothic', sans-serif";
 
 const Radar = dynamic(() => import('react-chartjs-2').then(mod => mod.Radar), { ssr: false });
 
+/** 텍스트 안의 **bold** 마크다운을 <strong> 으로 변환하여 JSX 배열을 반환합니다. */
+function renderBoldMarkdown(text: string) {
+  // **…** 패턴을 기준으로 split 하면 홀수 인덱스가 bold 부분
+  const parts = text.split(/\*\*([^*]+)\*\*/g);
+  if (parts.length === 1) return text; // 마크다운 없음
+  return parts.map((part, i) =>
+    i % 2 === 1
+      ? <strong key={i} style={{ fontWeight: 900 }}>{part}</strong>
+      : <span key={i}>{part}</span>
+  );
+}
+
 const SYSTEM_PROMPT = `You are a friendly AI guide in the Korean educational game "히든피스: 우리 반 보물찾기" (Hidden Piece: Our Class Treasure Hunt) about understanding autism spectrum disorder (ASD) for elementary school students (5th grade).
 RULES:
 - Answer ONLY questions related to: autism, disabilities, inclusion, empathy, understanding differences, and how to help friends with ASD.
@@ -248,14 +260,14 @@ export default function LabPage() {
                         ? <span style={{ fontSize: 12, fontWeight: 800, color: '#4f46e5', letterSpacing: 0.3 }}>AI</span>
                         : <img src={playerImg} alt={P} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
                     </div>
-                    <div style={{ 
-                      maxWidth: '75%', borderRadius: m.role === 'ai' ? '4px 18px 18px 18px' : '18px 4px 18px 18px', 
-                      padding: '12px 18px', fontSize: 14, lineHeight: 1.7, 
-                      background: m.role === 'ai' ? '#eef2ff' : 'linear-gradient(135deg, #6366f1, #818cf8)', 
+                    <div style={{
+                      maxWidth: '75%', borderRadius: m.role === 'ai' ? '4px 18px 18px 18px' : '18px 4px 18px 18px',
+                      padding: '12px 18px', fontSize: 14, lineHeight: 1.7,
+                      background: m.role === 'ai' ? '#eef2ff' : 'linear-gradient(135deg, #6366f1, #818cf8)',
                       color: m.role === 'ai' ? '#334155' : 'white',
                       boxShadow: m.role === 'ai' ? '0 2px 8px rgba(0,0,0,0.06)' : '0 2px 12px rgba(99,102,241,0.3)',
                     }}>
-                      {m.text}
+                      {renderBoldMarkdown(m.text)}
                     </div>
                   </div>
                 ))}
