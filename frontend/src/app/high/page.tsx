@@ -18,12 +18,12 @@ import { useState } from 'react';
 // 실측하여 잡았습니다. 퍼센트는 배경 이미지가 cover 로 깔린 .world-map 의
 // 너비·높이에 상대적입니다.
 const NODE_POSITIONS = [
-  { left: '19%', top: '34%' }, // stage-1 앵무새의 숲 — 좌상단 숲 속 흰 원
-  { left: '17%', top: '66%' }, // stage-2 폭탄이 터졌다 — 좌측 하단 흰 원 (화산 왼쪽)
-  { left: '54%', top: '30%' }, // stage-3 기차는 멈추지 않아 — 상단 기차 언덕 아래 흰 원
-  { left: '61%', top: '52%' }, // stage-4 사라진 퍼즐 조각 — 모자이크 탑 오른쪽 흰 원
-  { left: '49%', top: '83%' }, // stage-5 갈림길의 기억 — 하단 숲으로 둘러싸인 흰 원
-  { left: '78%', top: '60%' }, // stage-6 빛나는 우리 반 — 프리즘 수정집 옆 흰 원
+  { left: '18%', top: '32%' }, // stage-1 앵무새의 숲 — 11시 방향으로 소폭 이동
+  { left: '26%', top: '66%' }, // stage-2 폭탄이 터졌다 — 3시 방향 큰 폭 이동
+  { left: '59%', top: '26%' }, // stage-3 기차는 멈추지 않아 — 1시 방향 이동
+  { left: '68%', top: '52%' }, // stage-4 사라진 퍼즐 조각 — 3시 방향 큰 폭 이동
+  { left: '53%', top: '83%' }, // stage-5 갈림길의 기억 — 3시 방향 소폭 이동
+  { left: '82%', top: '65%' }, // stage-6 빛나는 우리 반 — 5시 방향 이동
 ];
 
 export default function HighGradePage() {

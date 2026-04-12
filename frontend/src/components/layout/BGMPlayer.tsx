@@ -66,19 +66,29 @@ export default function BGMPlayer() {
   const currentSrcRef = useRef<string | null>(null);
   const unlockedRef = useRef(false);
   const fadeTimerRef = useRef<number | null>(null);
+  // 최신 isMuted 값을 stale-closure 없이 참조하기 위한 ref
+  const mutedRef = useRef(state.isMuted);
+  useEffect(() => {
+    mutedRef.current = state.isMuted;
+  }, [state.isMuted]);
 
   // 최초 사용자 상호작용이 일어날 때까지 autoplay 잠금 해제 대기
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
     const unlock = () => {
+      if (unlockedRef.current) return;
       unlockedRef.current = true;
-      // 잠금이 해제되는 시점에 이미 로드된 트랙이 있으면 바로 재생
+      // 잠금 해제 시점에 src 가 이미 세팅되어 있으면 무조건 재생 + 페이드인
+      // (이전에 autoplay 거부로 play() 가 실패한 상태일 수 있음)
       const el = audioRef.current;
-      if (el && currentSrcRef.current && !state.isMuted) {
-        el.play().catch(() => {
-          // 사용자 제스처가 없었다면 여전히 실패할 수 있음 — 무음 실패는 조용히 무시
-        });
+      if (el && currentSrcRef.current && !mutedRef.current) {
+        el.volume = 0;
+        el.play()
+          .then(() => fadeTo(el, TARGET_VOLUME, FADE_MS))
+          .catch(() => {
+            // 권한 거부 시 조용히 무시 (다음 상호작용에서 재시도 가능)
+          });
       }
       window.removeEventListener('pointerdown', unlock);
       window.removeEventListener('keydown', unlock);
@@ -94,8 +104,6 @@ export default function BGMPlayer() {
       window.removeEventListener('keydown', unlock);
       window.removeEventListener('touchstart', unlock);
     };
-    // state.isMuted 변화는 별도 effect 가 처리
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // audio 엘리먼트 초기화 (1회)

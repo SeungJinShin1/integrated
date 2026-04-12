@@ -117,7 +117,7 @@ export default function LabPage() {
   if (usedTools.includes('headset')) badges.push('배려의 방패');
   if (usedTools.includes('timer')) badges.push('약속의 시계');
   if (usedTools.includes('pecs')) badges.push('협력의 전구');
-  if (usedTools.includes('ribbon') || usedTools.includes('map')) badges.push('다빛 팀');
+  if (usedTools.includes('ribbon') || usedTools.includes('map')) badges.push('함께의 팀');
 
   const radarData = {
     labels: ['이해', '신뢰', '소통', '인내'],
@@ -180,7 +180,7 @@ export default function LabPage() {
         <div style={{ position: 'relative', zIndex: 10, padding: 16 }}>
           <div style={{ textAlign: 'center', marginBottom: 16 }}>
             <h1 style={{ fontSize: 22, fontWeight: 800, color: 'white', textShadow: '0 2px 12px rgba(0,0,0,0.5)' }}>6단계: 빛나는 우리 반</h1>
-            <p style={{ fontSize: 14, color: '#a5b4fc' }}>히든피스 완성 & 다빛 규칙</p>
+            <p style={{ fontSize: 14, color: '#a5b4fc' }}>히든피스 완성</p>
           </div>
 
           {/* Phase 1: Journal */}

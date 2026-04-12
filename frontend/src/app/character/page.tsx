@@ -90,120 +90,124 @@ export default function CharacterCreationPage() {
                 캐릭터를 만들어 주세요
               </h1>
               <p style={{ fontSize: 'clamp(12px, 1.3vw, 14px)', color: '#64748b' }}>
-                「나」와 함께할 친구를 고르고 모험을 시작해요
+                {isLow ? '함께할 친구를 골라 모험을 시작해요' : '「나」와 함께할 친구를 고르고 모험을 시작해요'}
               </p>
             </div>
 
-            {/* 나 (player) gender selection */}
-            <p style={{ fontSize: 13, fontWeight: 800, color: '#475569', marginBottom: 10, letterSpacing: 0.5 }}>
-              ① 나의 모습
-            </p>
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: 12,
-                marginBottom: 22,
-              }}
-            >
-              {(['female', 'male'] as const).map((g) => {
-                const selected = playerGender === g;
-                // Low grade는 별도의 '나' 스프라이트가 없으므로 LOW_NPC_IMAGES를 그대로 활용
-                const img = isLow ? LOW_NPC_IMAGES[g].default : PLAYER_IMAGES[g].talk;
-                return (
-                  <button
-                    key={g}
-                    type="button"
-                    onClick={() => setPlayerGender(g)}
-                    style={{
-                      background: selected ? '#fef3c7' : '#f8fafc',
-                      border: selected ? '3px solid #f59e0b' : '2px solid #e2e8f0',
-                      borderRadius: 18,
-                      padding: 12,
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                      transform: selected ? 'translateY(-2px)' : 'translateY(0)',
-                      boxShadow: selected
-                        ? '0 10px 24px rgba(245,158,11,0.25)'
-                        : '0 4px 12px rgba(0,0,0,0.05)',
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: '100%',
-                        height: 'clamp(104px, 13vw, 140px)',
-                        borderRadius: 12,
-                        background: selected ? '#ffffff' : '#f1f5f9',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        overflow: 'hidden',
-                        marginBottom: 8,
-                      }}
-                    >
-                      <img
-                        src={img}
-                        alt={g === 'female' ? '나 (여자)' : '나 (남자)'}
-                        style={{ height: '100%', objectFit: 'contain' }}
-                      />
-                    </div>
-                    <p
-                      style={{
-                        fontSize: 14,
-                        fontWeight: 800,
-                        color: selected ? '#b45309' : '#475569',
-                        margin: 0,
-                      }}
-                    >
-                      {g === 'female' ? '나 · 여자' : '나 · 남자'}
-                    </p>
-                  </button>
-                );
-              })}
-            </div>
+            {/* 나 (player) gender selection — 고학년에서만 노출
+                저학년은 '나' 스프라이트가 없고 학습 흐름상 친구만 선택합니다. */}
+            {!isLow && (
+              <>
+                <p style={{ fontSize: 13, fontWeight: 800, color: '#475569', marginBottom: 10, letterSpacing: 0.5 }}>
+                  ① 나의 모습
+                </p>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: 12,
+                    marginBottom: 22,
+                  }}
+                >
+                  {(['female', 'male'] as const).map((g) => {
+                    const selected = playerGender === g;
+                    const img = PLAYER_IMAGES[g].talk;
+                    return (
+                      <button
+                        key={g}
+                        type="button"
+                        onClick={() => setPlayerGender(g)}
+                        style={{
+                          background: selected ? '#fef3c7' : '#f8fafc',
+                          border: selected ? '3px solid #f59e0b' : '2px solid #e2e8f0',
+                          borderRadius: 18,
+                          padding: 12,
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                          transform: selected ? 'translateY(-2px)' : 'translateY(0)',
+                          boxShadow: selected
+                            ? '0 10px 24px rgba(245,158,11,0.25)'
+                            : '0 4px 12px rgba(0,0,0,0.05)',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: '100%',
+                            height: 'clamp(104px, 13vw, 140px)',
+                            borderRadius: 12,
+                            background: selected ? '#ffffff' : '#f1f5f9',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            overflow: 'hidden',
+                            marginBottom: 8,
+                          }}
+                        >
+                          <img
+                            src={img}
+                            alt={g === 'female' ? '나 (여자)' : '나 (남자)'}
+                            style={{ height: '100%', objectFit: 'contain' }}
+                          />
+                        </div>
+                        <p
+                          style={{
+                            fontSize: 14,
+                            fontWeight: 800,
+                            color: selected ? '#b45309' : '#475569',
+                            margin: 0,
+                          }}
+                        >
+                          {g === 'female' ? '나 · 여자' : '나 · 남자'}
+                        </p>
+                      </button>
+                    );
+                  })}
+                </div>
 
-            {/* Player name input */}
-            <label
-              style={{
-                display: 'block',
-                fontSize: 13,
-                fontWeight: 800,
-                color: '#475569',
-                marginBottom: 8,
-                letterSpacing: 0.5,
-              }}
-            >
-              ② 나의 이름
-            </label>
-            <input
-              type="text"
-              value={playerName}
-              onChange={(e) => setPlayerName(e.target.value)}
-              maxLength={10}
-              placeholder={DEFAULT_PLAYER_NAME}
-              style={{
-                width: '100%',
-                padding: '14px 16px',
-                borderRadius: 14,
-                border: '2px solid #e2e8f0',
-                fontSize: 16,
-                fontWeight: 600,
-                color: '#1e293b',
-                outline: 'none',
-                transition: 'border-color 0.2s',
-                fontFamily: "'Nanum Gothic', sans-serif",
-                marginBottom: 4,
-              }}
-              onFocus={(e) => (e.target.style.borderColor = '#f59e0b')}
-              onBlur={(e) => (e.target.style.borderColor = '#e2e8f0')}
-            />
-            <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 6, marginBottom: 22 }}>
-              비워두면 기본 이름 「{DEFAULT_PLAYER_NAME}」(으)로 시작해요.
-            </p>
+                {/* Player name input (고학년 전용) */}
+                <label
+                  style={{
+                    display: 'block',
+                    fontSize: 13,
+                    fontWeight: 800,
+                    color: '#475569',
+                    marginBottom: 8,
+                    letterSpacing: 0.5,
+                  }}
+                >
+                  ② 나의 이름
+                </label>
+                <input
+                  type="text"
+                  value={playerName}
+                  onChange={(e) => setPlayerName(e.target.value)}
+                  maxLength={10}
+                  placeholder={DEFAULT_PLAYER_NAME}
+                  style={{
+                    width: '100%',
+                    padding: '14px 16px',
+                    borderRadius: 14,
+                    border: '2px solid #e2e8f0',
+                    fontSize: 16,
+                    fontWeight: 600,
+                    color: '#1e293b',
+                    outline: 'none',
+                    transition: 'border-color 0.2s',
+                    fontFamily: "'Nanum Gothic', sans-serif",
+                    marginBottom: 4,
+                  }}
+                  onFocus={(e) => (e.target.style.borderColor = '#f59e0b')}
+                  onBlur={(e) => (e.target.style.borderColor = '#e2e8f0')}
+                />
+                <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 6, marginBottom: 22 }}>
+                  비워두면 기본 이름 「{DEFAULT_PLAYER_NAME}」(으)로 시작해요.
+                </p>
+              </>
+            )}
 
             {/* NPC (친구) gender selection */}
             <p style={{ fontSize: 13, fontWeight: 800, color: '#475569', marginBottom: 10, letterSpacing: 0.5 }}>
-              ③ 함께할 친구
+              {isLow ? '① 함께할 친구' : '③ 함께할 친구'}
             </p>
             <div
               style={{
@@ -288,7 +292,7 @@ export default function CharacterCreationPage() {
                 letterSpacing: 0.5,
               }}
             >
-              ④ 친구의 이름
+              {isLow ? '② 친구의 이름' : '④ 친구의 이름'}
             </label>
             <input
               type="text"

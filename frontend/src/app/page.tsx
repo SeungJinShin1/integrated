@@ -38,8 +38,25 @@ export default function IntroPage() {
     router.push('/start');
   };
 
+  // 화면 아무 곳이나 누르면 다음 슬라이드로. 마지막 슬라이드에서는 /start 로 이동.
+  // (브라우저 autoplay 정책을 해제할 수 있도록 사용자 제스처를 적극적으로 받아들임.)
+  const handleAdvance = () => {
+    setFadeIn(false);
+    setTimeout(() => {
+      if (currentSlide >= INTRO_SLIDES.length - 1) {
+        router.push('/start');
+        return;
+      }
+      setCurrentSlide(prev => prev + 1);
+      setFadeIn(true);
+    }, 300);
+  };
+
   return (
-    <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden', background: '#020617' }}>
+    <div
+      style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden', background: '#020617', cursor: 'pointer' }}
+      onClick={handleAdvance}
+    >
       {/* Background Image */}
       <img
         src={INTRO_SLIDES[currentSlide].image}
@@ -91,7 +108,13 @@ export default function IntroPage() {
       </div>
 
       {/* Skip Button */}
-      <button className="skip-btn" onClick={handleSkip}>
+      <button
+        className="skip-btn"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleSkip();
+        }}
+      >
         건너뛰기 &gt;&gt;
       </button>
     </div>
