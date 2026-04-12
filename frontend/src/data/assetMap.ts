@@ -193,6 +193,8 @@ export const LOW_VOICE = {
   ep4_card: '/assets/sprout/voice_ep4_card.mp3',
   ep4_squishy: '/assets/sprout/voice_ep4_squishy.mp3',
   ep4_complete: '/assets/sprout/voice_ep4_complete.mp3',
+  ep5_intro: '/assets/sprout/voice_ep5_intro.mp3',
+  ep5_complete: '/assets/sprout/voice_ep5_complete.mp3',
   ending_intro: '/assets/sprout/voice_ending_intro.mp3',
   ending_cert: '/assets/sprout/voice_ending_cert.mp3',
 } as const;

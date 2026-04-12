@@ -390,7 +390,89 @@ function LowStage4() {
 
         <div style={{ minHeight: 72 }}>
           {phase === 'done' && (
-            <button onClick={() => { completeStage('low_stage4'); router.push('/low/ending'); }} style={NEXT_BTN}>
+            <button onClick={() => { completeStage('low_stage4'); router.push('/low/episode/5'); }} style={NEXT_BTN}>
+              다음으로 가기 ▸
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ===== Low Stage 5: 다르게 놀아도 괜찮아 =====
+function LowStage5() {
+  const { state, completeStage, addHeart } = useGame();
+  const router = useRouter();
+  const alreadyDone = (state.completedStages || []).includes('low_stage5');
+  const [isComplete, setIsComplete] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { width, height } = useContainerSize(containerRef);
+
+  const handleTap = () => {
+    if (isComplete) return;
+    setIsComplete(true);
+    if (!alreadyDone) addHeart();
+  };
+
+  const voiceSrc = isComplete ? LOW_VOICE.ep5_complete : LOW_VOICE.ep5_intro;
+  useVoiceNarration(voiceSrc);
+
+  return (
+    <div ref={containerRef} style={{ position: 'relative', width: '100%', minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
+      <img src={LOW_BG_IMAGES.stages} alt="bg" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} />
+      <ParticleCanvas effect={isComplete ? 'success' : 'ambient'} active={true} intensity={isComplete ? 2 : 0.5} width={width} height={height} style={{ pointerEvents: 'none', zIndex: 1 }} />
+
+      <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', gap: 28, width: '100%', minHeight: '100%', padding: 'clamp(16px, 2.5vw, 32px) clamp(16px, 2.5vw, 32px) clamp(24px, 3vw, 36px)' }}>
+
+        <div style={{ ...TITLE_CARD, border: '3px solid #c7d2fe' }}>
+          <h2 style={{ ...TITLE_H2, color: isComplete ? '#15803d' : '#1e293b' }}>
+            {isComplete ? '친구의 방법대로 같이 놀았어요!' : '친구가 블록을 다르게 놀고 있어요.'}
+          </h2>
+          <p style={TITLE_P}>
+            {isComplete
+              ? `잘했어요! ${state.npc.name}의 방법대로 같이 놀아줬더니 활짝 웃어요. 나와 다른 방법도 틀린 게 아니에요!`
+              : `${state.npc.name}가 블록을 높이 쌓지 않고, 일렬로 나열하고 있어요. 다르게 노는 것도 하나의 방법이에요!`}
+          </p>
+        </div>
+
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'clamp(24px, 4vw, 64px)', width: '100%', flexWrap: 'wrap' }}>
+          {!isComplete ? (
+            <div
+              onClick={handleTap}
+              className="animate-bounce"
+              style={{
+                ...BUBBLE,
+                background: 'white',
+                padding: '22px 36px',
+                borderRadius: '36px 36px 36px 6px',
+                border: '4px solid #818cf8',
+                fontSize: 28,
+                color: '#4338ca',
+                cursor: 'pointer',
+                boxShadow: '0 16px 32px rgba(99,102,241,0.28)',
+              }}
+            >
+              같이 해볼래!
+            </div>
+          ) : (
+            <div style={{ ...BUBBLE, borderColor: '#86efac', color: '#15803d', fontSize: 22 }}>
+              이렇게 나열하는 거구나!
+            </div>
+          )}
+
+          <div style={CHARACTER_BOX}>
+            <img
+              src={getLowNpcImage(state.npc.gender, isComplete ? 'happy2' : 'default')}
+              alt={state.npc.name}
+              style={{ height: '100%', objectFit: 'contain', filter: 'drop-shadow(0 12px 32px rgba(0,0,0,0.2))' }}
+            />
+          </div>
+        </div>
+
+        <div style={{ minHeight: 72 }}>
+          {isComplete && (
+            <button onClick={() => { completeStage('low_stage5'); router.push('/low/ending'); }} style={NEXT_BTN}>
               다음으로 가기 ▸
             </button>
           )}
@@ -401,7 +483,7 @@ function LowStage4() {
 }
 
 // ===== Main Stage Router =====
-const STAGE_COMPONENTS = [LowStage1, LowStage2, LowStage3, LowStage4];
+const STAGE_COMPONENTS = [LowStage1, LowStage2, LowStage3, LowStage4, LowStage5];
 
 export default function LowStagePage() {
   const params = useParams();
