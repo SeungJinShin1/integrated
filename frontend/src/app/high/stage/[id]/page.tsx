@@ -110,7 +110,7 @@ function Stage1() {
       // --- AAC 미니게임 ---
       case 20:
         setDialogue({
-          speaker: '해설', text: `**AAC 태블릿**으로 ${N}(이)가 말하고 싶은 것을 찾아보세요!`,
+          speaker: '해설', text: `**AAC(보완대체의사소통) 태블릿**으로 ${N}(이)가 말하고 싶은 것을 찾아보세요!`,
         });
         setShowMinigame(true);
         break;
@@ -119,7 +119,7 @@ function Stage1() {
         setShowMinigame(false);
         setNpcEmotion('happy');
         setDialogue({
-          speaker: N, text: '(AAC에서 "노란색 크레파스" 그림을 가리키며, 환하게 웃음) "노란색!"',
+          speaker: N, text: '(AAC(보완대체의사소통) 태블릿에서 "노란색 크레파스" 그림을 가리키며, 환하게 웃음) "노란색!"',
           onNext: () => setStep(31),
         });
         break;
@@ -153,7 +153,7 @@ function Stage1() {
       case 35:
         setDialogue({
           speaker: '해설',
-          text: `**소통의 배지** 획득! ${N}(이)가 "노란색"이라고 반복한 건 노란색 크레파스가 필요했기 때문이에요. 말이 잘 통하지 않을 때, **AAC 같은 도구**가 다리가 되어줄 수 있어요.`,
+          text: `**소통의 배지** 획득! ${N}(이)가 "노란색"이라고 반복한 건 노란색 크레파스가 필요했기 때문이에요. 말이 잘 통하지 않을 때, **AAC(보완대체의사소통) 같은 도구**가 다리가 되어줄 수 있어요.`,
           onNext: () => {
             completeStage('stage-1');
             setShowBadge(true);
@@ -628,7 +628,7 @@ function Stage4() {
       // --- PECS 미니게임 ---
       case 40:
         setNpcEmotion('discover');
-        setDialogue({ speaker: '해설', text: `${N}(이)가 주머니에서 **PECS 카드** 뭉치를 꺼냅니다. 카드를 확인하세요!` });
+        setDialogue({ speaker: '해설', text: `${N}(이)가 주머니에서 **PECS(그림교환의사소통) 카드** 뭉치를 꺼냅니다. 카드를 확인하세요!` });
         setShowPecs(true);
         break;
       case 41:

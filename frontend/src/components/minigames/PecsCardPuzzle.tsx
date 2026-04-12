@@ -38,7 +38,7 @@ export default function PecsCardPuzzle({ npcName, onComplete }: { npcName: strin
 
       <div style={{ position: 'relative', zIndex: 5 }}>
         <p className="minigame-title">
-          {npcName}(이)의 PECS 카드를 조합하세요
+          {npcName}(이)의 PECS(그림교환의사소통) 카드를 조합하세요
         </p>
 
         <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginBottom: 20 }}>
