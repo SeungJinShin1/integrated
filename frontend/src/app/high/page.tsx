@@ -10,13 +10,13 @@ import {
   LOCK_OVERLAY_IMAGE,
   BADGE_IMAGES,
 } from '@/data/assetMap';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 // Six landmark positions aligned with the 6 white circles on the world map background.
 // Order matches HIGH_STAGES (stage-1 … stage-6).
 // 좌표는 배경 이미지(고학년 미션 월드맵) 안의 하얀색 빈 원 중심점을 기준으로
-// 실측하여 잡았습니다. 퍼센트는 배경 이미지가 cover 로 깔린 .world-map 의
-// 너비·높이에 상대적입니다.
+// 실측하여 잡았습니다. 퍼센트는 이미지 렌더 영역(imgBounds)에 상대적이며,
+// contain 방식이므로 뷰포트 비율이 바뀌어도 위치가 유지됩니다.
 const NODE_POSITIONS = [
   { left: '18%', top: '29%' }, // stage-1 앵무새의 숲 — 12시 소폭 ↑
   { left: '29.5%', top: '66%' }, // stage-2 폭탄이 터졌다 — 3시 0.5% →
@@ -26,10 +26,42 @@ const NODE_POSITIONS = [
   { left: '87%', top: '74%' }, // stage-6 빛나는 우리 반 — 6시 2% ↓
 ];
 
+// 배경 이미지 원본 크기 2752×1536 의 가로세로비.
+// ResizeObserver 로 컨테이너를 감시하여, contain 방식으로 이미지가 렌더될 영역을
+// 계산하고 노드를 해당 영역 위에 배치합니다. → 뷰포트 비율이 바뀌어도 노드 위치 고정.
+const MAP_ASPECT = 2752 / 1536;
+
 export default function HighGradePage() {
   const router = useRouter();
   const { state, dispatch } = useGame();
   const [showLockedAlert, setShowLockedAlert] = useState(false);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [imgBounds, setImgBounds] = useState({ x: 0, y: 0, w: 0, h: 0 });
+
+  /* 컨테이너 크기가 바뀔 때마다 "contain" 렌더 영역 재계산 */
+  useEffect(() => {
+    const el = mapRef.current;
+    if (!el) return;
+    const calc = () => {
+      const cw = el.clientWidth;
+      const ch = el.clientHeight;
+      if (cw === 0 || ch === 0) return;
+      const cAspect = cw / ch;
+      let w: number, h: number, x: number, y: number;
+      if (cAspect > MAP_ASPECT) {
+        h = ch; w = ch * MAP_ASPECT;
+        x = (cw - w) / 2; y = 0;
+      } else {
+        w = cw; h = cw / MAP_ASPECT;
+        x = 0; y = (ch - h) / 2;
+      }
+      setImgBounds({ x, y, w, h });
+    };
+    calc();
+    const ro = new ResizeObserver(calc);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const completedStages = state.completedStages || [];
   const allPreviousComplete = ['stage-1', 'stage-2', 'stage-3', 'stage-4', 'stage-5']
@@ -54,16 +86,36 @@ export default function HighGradePage() {
       <TopNavBar />
       <div className="game-area">
         <div
+          ref={mapRef}
           className="world-map"
-          style={{
-            // 파일명에 공백/괄호가 있어 CSS url()이 그대로 파싱 못 함 → 인코딩 + 따옴표로 감쌈
-            backgroundImage: `url("${encodeURI(BG_IMAGES.highMap)}")`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            position: 'relative',
-          }}
+          style={{ background: '#0f172a' }}
         >
+          {/* 배경 이미지 — contain 방식으로 원본 비율 유지, 절대 크롭하지 않음 */}
+          {imgBounds.w > 0 && (
+            <img
+              src={encodeURI(BG_IMAGES.highMap)}
+              alt=""
+              draggable={false}
+              style={{
+                position: 'absolute',
+                left: imgBounds.x,
+                top: imgBounds.y,
+                width: imgBounds.w,
+                height: imgBounds.h,
+                pointerEvents: 'none',
+              }}
+            />
+          )}
+
+          {/* 이미지 영역 위에 정확히 겹치는 레이어 — 모든 노드 좌표의 기준점 */}
+          <div style={{
+            position: 'absolute',
+            left: imgBounds.x,
+            top: imgBounds.y,
+            width: imgBounds.w || '100%',
+            height: imgBounds.h || '100%',
+          }}>
+
           {/* Subtle overlay so the landmark sprites stay readable */}
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(15,23,42,0.18)' }} />
 
@@ -198,6 +250,8 @@ export default function HighGradePage() {
               </button>
             );
           })}
+
+          </div>{/* /이미지 영역 오버레이 */}
 
           {/* Locked Alert */}
           {showLockedAlert && (
