@@ -55,12 +55,14 @@ export default function GameHUD() {
       {state.inventory.length > 0 && (
         <div style={{
           position: 'fixed',
-          bottom: 200,
+          bottom: 24,
           right: 24,
           zIndex: 999,
-          display: 'flex',
-          gap: 12,
-          flexDirection: 'row-reverse'
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, auto)',
+          gap: 10,
+          justifyItems: 'center',
+          direction: 'rtl' as const
         }}>
           {state.inventory.map(toolId => {
             const tool = TOOLS[toolId];
