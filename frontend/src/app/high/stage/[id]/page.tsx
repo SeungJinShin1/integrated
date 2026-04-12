@@ -5,9 +5,10 @@ import { useRouter, useParams } from 'next/navigation';
 import { useGame } from '@/contexts/GameContext';
 import TopNavBar from '@/components/layout/TopNavBar';
 import DialogueBox from '@/components/game/DialogueBox';
-import { getNpcImage, getPlayerImage, BG_IMAGES, ITEM_IMAGES, PEER_IMAGES, GROUP_PRESSURE_IMAGE } from '@/data/assetMap';
+import { getNpcImage, getPlayerImage, BG_IMAGES, ITEM_IMAGES, PEER_IMAGES, GROUP_PRESSURE_IMAGE, BADGE_IMAGES, AAC_CHOICE_IMAGES, PECS_CARD_IMAGES } from '@/data/assetMap';
 import { DialogueData } from '@/types';
 import StageTransition from '@/components/game/StageTransition';
+import BadgePopup from '@/components/game/BadgePopup';
 import dynamic from 'next/dynamic';
 
 // Dynamic imports for minigames to keep bundle size manageable
@@ -30,6 +31,7 @@ function Stage1() {
   const [npcEmotion, setNpcEmotion] = useState('default');
   const [playerPose, setPlayerPose] = useState('thinking');
   const [showMinigame, setShowMinigame] = useState(false);
+  const [showBadge, setShowBadge] = useState(false);
 
   useEffect(() => { addInventory('aac'); }, []);
 
@@ -154,7 +156,7 @@ function Stage1() {
           text: `**소통의 배지** 획득! ${N}(이)가 "노란색"이라고 반복한 건 노란색 크레파스가 필요했기 때문이에요. 말이 잘 통하지 않을 때, **AAC 같은 도구**가 다리가 되어줄 수 있어요.`,
           onNext: () => {
             completeStage('stage-1');
-            router.push('/high');
+            setShowBadge(true);
           },
         });
         break;
@@ -223,6 +225,7 @@ function Stage1() {
           enableTTS={false}
         />
       )}
+      {showBadge && <BadgePopup badgeSrc={BADGE_IMAGES['stage-1'].src} label={BADGE_IMAGES['stage-1'].label} onClose={() => router.push('/high')} />}
     </div>
   );
 }
@@ -233,6 +236,7 @@ function Stage2() {
   const router = useRouter();
   const N = state.npc.name;
   const P = state.player.name;
+  const [showBadge, setShowBadge] = useState(false);
   const [step, setStep] = useState(0);
   const [dialogue, setDialogue] = useState<DialogueData | null>(null);
   const [npcEmotion, setNpcEmotion] = useState('anxious');
@@ -347,7 +351,7 @@ function Stage2() {
         setDialogue({
           speaker: '해설',
           text: `**배려의 방패** 획득! **감각 과민**이 있는 친구에게는 우리가 견딜 수 있는 소리도 고통이 될 수 있어요. 갑자기 밀치거나 소리 지르는 건 **공격이 아니라 자기 방어**예요.`,
-          onNext: () => { completeStage('stage-2'); router.push('/high'); },
+          onNext: () => { completeStage('stage-2'); setShowBadge(true); },
         });
         break;
     }
@@ -384,6 +388,7 @@ function Stage2() {
           enableTTS={false}
         />
       )}
+      {showBadge && <BadgePopup badgeSrc={BADGE_IMAGES['stage-2'].src} label={BADGE_IMAGES['stage-2'].label} onClose={() => router.push('/high')} />}
     </div>
   );
 }
@@ -394,6 +399,7 @@ function Stage3() {
   const router = useRouter();
   const N = state.npc.name;
   const P = state.player.name;
+  const [showBadge, setShowBadge] = useState(false);
   const [step, setStep] = useState(0);
   const [dialogue, setDialogue] = useState<DialogueData | null>(null);
   const [npcEmotion, setNpcEmotion] = useState('happy');
@@ -514,7 +520,7 @@ function Stage3() {
         setDialogue({
           speaker: '해설',
           text: '**약속의 시계** 획득! 갑작스러운 변화가 힘든 친구에게는 **미리 준비할 시간**과 **눈에 보이는 약속**(타이머)이 효과적이에요. 그리고 친구의 **특별한 관심사**를 존중해주세요.',
-          onNext: () => { completeStage('stage-3'); router.push('/high'); },
+          onNext: () => { completeStage('stage-3'); setShowBadge(true); },
         });
         break;
     }
@@ -548,6 +554,7 @@ function Stage3() {
           enableTTS={false}
         />
       )}
+      {showBadge && <BadgePopup badgeSrc={BADGE_IMAGES['stage-3'].src} label={BADGE_IMAGES['stage-3'].label} onClose={() => router.push('/high')} />}
     </div>
   );
 }
@@ -563,6 +570,7 @@ function Stage4() {
   const [npcEmotion, setNpcEmotion] = useState('default');
   const [playerPose, setPlayerPose] = useState('thinking');
   const [showPecs, setShowPecs] = useState(false);
+  const [showBadge, setShowBadge] = useState(false);
   const [showMosaic, setShowMosaic] = useState(false);
 
   useEffect(() => { addInventory('pecs'); }, []);
@@ -659,7 +667,7 @@ function Stage4() {
         setDialogue({
           speaker: '해설',
           text: `**협력의 전구** 획득! ${N}(이)는 남들이 보지 못하는 **미세한 차이**를 알아채는 뛰어난 눈을 가지고 있어요. **"못하는 것"만 보면 "잘하는 것"을 놓치게 돼요.**`,
-          onNext: () => { completeStage('stage-4'); router.push('/high'); },
+          onNext: () => { completeStage('stage-4'); setShowBadge(true); },
         });
         break;
     }
@@ -704,6 +712,7 @@ function Stage4() {
           enableTTS={false}
         />
       )}
+      {showBadge && <BadgePopup badgeSrc={BADGE_IMAGES['stage-4'].src} label={BADGE_IMAGES['stage-4'].label} onClose={() => router.push('/high')} />}
     </div>
   );
 }
@@ -717,6 +726,7 @@ function Stage5() {
   const [step, setStep] = useState(0);
   const [dialogue, setDialogue] = useState<DialogueData | null>(null);
   const [npcEmotion, setNpcEmotion] = useState('default');
+  const [showBadge, setShowBadge] = useState(false);
   const [playerPose, setPlayerPose] = useState('thinking');
   const [showScratch, setShowScratch] = useState(false);
   const [showFlashback, setShowFlashback] = useState(false);
@@ -807,7 +817,7 @@ function Stage5() {
         setDialogue({
           speaker: '해설',
           text: `**기억의 나침반** 획득! ${N}의 뛰어난 기억력이 길을 찾아주었어요. 누군가의 **다른 방식**을 믿는 것, 그것이 진짜 신뢰예요.`,
-          onNext: () => { completeStage('stage-5'); router.push('/high'); },
+          onNext: () => { completeStage('stage-5'); setShowBadge(true); },
         });
         break;
     }
@@ -883,6 +893,7 @@ function Stage5() {
           enableTTS={false}
         />
       )}
+      {showBadge && <BadgePopup badgeSrc={BADGE_IMAGES['stage-5'].src} label={BADGE_IMAGES['stage-5'].label} onClose={() => router.push('/high')} />}
     </div>
   );
 }

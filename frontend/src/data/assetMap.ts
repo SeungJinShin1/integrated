@@ -95,6 +95,31 @@ export const STAGE_NODE_IMAGES: Record<string, string> = {
 export const LOCK_OVERLAY_IMAGE = '/assets/hiddenpiece/잠금_오버레이_-_자물쇠와_사슬__선택.png';
 export const COMPLETE_BADGE_IMAGE = '/assets/hiddenpiece/완료_도장배지__선택.png';
 
+// 단계별 배지 이미지 (미션 완료 시 팝업, 월드맵 완료 표시, 결과 카드에 사용)
+export const BADGE_IMAGES: Record<string, { src: string; label: string }> = {
+  'stage-1': { src: '/assets/hiddenpiece/badge_소통.png', label: '소통의 배지' },
+  'stage-2': { src: '/assets/hiddenpiece/badge_배려.png', label: '배려의 방패' },
+  'stage-3': { src: '/assets/hiddenpiece/badge_약속.png', label: '약속의 시계' },
+  'stage-4': { src: '/assets/hiddenpiece/badge_강점.png', label: '강점의 전구' },
+  'stage-5': { src: '/assets/hiddenpiece/badge_신뢰.png', label: '신뢰의 리본' },
+  'stage-6': { src: '/assets/hiddenpiece/badge_완성.png', label: '히든피스 완성' },
+};
+
+// PECS 카드 이미지 (Stage 4 미니게임)
+export const PECS_CARD_IMAGES = {
+  me: '/assets/hiddenpiece/pecs_나.png',
+  canDo: '/assets/hiddenpiece/pecs_할수있어.png',
+  puzzle: '/assets/hiddenpiece/pecs_퍼즐.png',
+} as const;
+
+// AAC 태블릿 선택지 이미지 (Stage 1 미니게임)
+export const AAC_CHOICE_IMAGES = {
+  crayon: '/assets/hiddenpiece/aac_크레파스.png',
+  book: '/assets/hiddenpiece/aac_책.png',
+  apple: '/assets/hiddenpiece/aac_사과.png',
+  scissors: '/assets/hiddenpiece/aac_가위.png',
+} as const;
+
 export const ITEM_IMAGES = {
   aac: '/assets/hiddenpiece/6_CH1_아이템_AAC.png',
   headset: '/assets/hiddenpiece/6_CH2_아이템_헤드셋.png',

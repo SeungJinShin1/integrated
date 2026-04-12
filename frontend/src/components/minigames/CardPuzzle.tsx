@@ -2,18 +2,18 @@
 
 import { useState, useRef, useEffect } from 'react';
 import ParticleCanvas from './ParticleCanvas';
+import { AAC_CHOICE_IMAGES } from '@/data/assetMap';
 
 interface CardPuzzleProps {
   npcName: string;
   onComplete: () => void;
 }
 
-// 카드는 라벨만 표시. 이모지/아이콘은 저작권 이슈로 제거했습니다.
 const CARDS = [
-  { id: 1, label: '크레파스', correct: true },
-  { id: 2, label: '책', correct: false },
-  { id: 3, label: '사과', correct: false },
-  { id: 4, label: '가위', correct: false },
+  { id: 1, label: '크레파스', correct: true, img: AAC_CHOICE_IMAGES.crayon },
+  { id: 2, label: '책', correct: false, img: AAC_CHOICE_IMAGES.book },
+  { id: 3, label: '사과', correct: false, img: AAC_CHOICE_IMAGES.apple },
+  { id: 4, label: '가위', correct: false, img: AAC_CHOICE_IMAGES.scissors },
 ];
 
 export default function CardPuzzle({ npcName, onComplete }: CardPuzzleProps) {
@@ -107,7 +107,8 @@ export default function CardPuzzle({ npcName, onComplete }: CardPuzzleProps) {
                   ? '0 0 30px rgba(34,197,94,0.4)'
                   : hoveredId === card.id ? '0 0 20px rgba(99,102,241,0.2)' : 'none',
               }}>
-              <div style={{ fontSize: 20, fontWeight: 800, color: '#e2e8f0', padding: '16px 4px' }}>{card.label}</div>
+              <img src={card.img} alt={card.label} style={{ width: 56, height: 56, objectFit: 'contain', marginBottom: 6 }} draggable={false} />
+              <div style={{ fontSize: 16, fontWeight: 800, color: '#e2e8f0' }}>{card.label}</div>
             </button>
           ))}
         </div>

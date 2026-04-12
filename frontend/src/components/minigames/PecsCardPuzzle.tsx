@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import ParticleCanvas from './ParticleCanvas';
+import { PECS_CARD_IMAGES } from '@/data/assetMap';
 
-// PECS 카드는 라벨만 사용. 이모지는 저작권 이슈로 제거.
 const PECS_CARDS = [
-  { id: 1, label: '나', type: 'subject' },
-  { id: 2, label: '할 수 있어', type: 'verb' },
-  { id: 3, label: '퍼즐', type: 'object' },
+  { id: 1, label: '나', type: 'subject', img: PECS_CARD_IMAGES.me },
+  { id: 2, label: '할 수 있어', type: 'verb', img: PECS_CARD_IMAGES.canDo },
+  { id: 3, label: '퍼즐', type: 'object', img: PECS_CARD_IMAGES.puzzle },
 ];
 
 export default function PecsCardPuzzle({ npcName, onComplete }: { npcName: string; onComplete: () => void }) {
@@ -77,7 +77,8 @@ export default function PecsCardPuzzle({ npcName, onComplete }: { npcName: strin
                     {orderIndex + 1}
                   </div>
                 )}
-                <div style={{ fontSize: 16, fontWeight: 800, color: '#e2e8f0', padding: '12px 4px' }}>{card.label}</div>
+                <img src={card.img} alt={card.label} style={{ width: 52, height: 52, objectFit: 'contain', marginBottom: 4 }} draggable={false} />
+                <div style={{ fontSize: 14, fontWeight: 800, color: '#e2e8f0' }}>{card.label}</div>
               </button>
             );
           })}

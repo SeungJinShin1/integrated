@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGame } from '@/contexts/GameContext';
 import TopNavBar from '@/components/layout/TopNavBar';
-import { getNpcImage, getPlayerImage, BG_IMAGES } from '@/data/assetMap';
+import { getNpcImage, getPlayerImage, BG_IMAGES, BADGE_IMAGES } from '@/data/assetMap';
 import Icon from '@/components/ui/Icon';
 import dynamic from 'next/dynamic';
 import html2canvas from 'html2canvas';
@@ -112,12 +112,14 @@ export default function LabPage() {
   const grade = empathyScore >= 80 ? 'S등급 — 히든피스 마스터' : empathyScore >= 60 ? 'A등급 — 히든피스 탐험가' : empathyScore >= 40 ? 'B등급 — 히든피스 수습생' : 'C등급 — 히든피스 입문자';
 
   const usedTools = state.usedTools || [];
-  const badges: string[] = [];
-  if (usedTools.includes('aac')) badges.push('소통의 배지');
-  if (usedTools.includes('headset')) badges.push('배려의 방패');
-  if (usedTools.includes('timer')) badges.push('약속의 시계');
-  if (usedTools.includes('pecs')) badges.push('협력의 전구');
-  if (usedTools.includes('ribbon') || usedTools.includes('map')) badges.push('함께의 팀');
+  // 획득한 배지: stageId 로 매핑하여 이미지+라벨을 함께 사용
+  const earnedBadgeIds: string[] = [];
+  if (usedTools.includes('aac')) earnedBadgeIds.push('stage-1');
+  if (usedTools.includes('headset')) earnedBadgeIds.push('stage-2');
+  if (usedTools.includes('timer')) earnedBadgeIds.push('stage-3');
+  if (usedTools.includes('pecs')) earnedBadgeIds.push('stage-4');
+  if (usedTools.includes('ribbon') || usedTools.includes('map')) earnedBadgeIds.push('stage-5');
+  const badges = earnedBadgeIds.map(id => BADGE_IMAGES[id]?.label).filter(Boolean);
 
   const radarData = {
     labels: ['이해', '신뢰', '소통', '인내'],
@@ -379,11 +381,20 @@ export default function LabPage() {
                   </div>
                 )}
 
-                {badges.length > 0 && (
-                  <div style={{ background: '#fffbeb', borderRadius: 14, padding: 14, border: '1px solid #fde68a', marginBottom: 16 }}>
-                    <p style={{ fontSize: 13, fontWeight: 700, color: '#92400e', marginBottom: 8 }}>획득한 배지</p>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
-                      {badges.map((b, i) => <span key={i} style={{ padding: '5px 14px', background: '#fef3c7', borderRadius: 20, fontSize: 13, color: '#92400e', fontWeight: 600 }}>{b}</span>)}
+                {earnedBadgeIds.length > 0 && (
+                  <div style={{ background: '#fffbeb', borderRadius: 14, padding: 16, border: '1px solid #fde68a', marginBottom: 16 }}>
+                    <p style={{ fontSize: 13, fontWeight: 700, color: '#92400e', marginBottom: 12 }}>획득한 배지</p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, justifyContent: 'center' }}>
+                      {earnedBadgeIds.map(id => {
+                        const badge = BADGE_IMAGES[id];
+                        if (!badge) return null;
+                        return (
+                          <div key={id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                            <img src={badge.src} alt={badge.label} style={{ width: 52, height: 52, objectFit: 'contain' }} draggable={false} />
+                            <span style={{ fontSize: 11, color: '#92400e', fontWeight: 700 }}>{badge.label}</span>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}

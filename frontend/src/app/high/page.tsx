@@ -8,7 +8,7 @@ import {
   BG_IMAGES,
   STAGE_NODE_IMAGES,
   LOCK_OVERLAY_IMAGE,
-  COMPLETE_BADGE_IMAGE,
+  BADGE_IMAGES,
 } from '@/data/assetMap';
 import { useState } from 'react';
 
@@ -158,17 +158,17 @@ export default function HighGradePage() {
                     />
                   )}
 
-                  {/* Completed badge sprite */}
-                  {isCompleted && (
+                  {/* 단계별 배지 이미지 (기존 완료 도장 대신) */}
+                  {isCompleted && BADGE_IMAGES[stage.id] && (
                     <img
-                      src={COMPLETE_BADGE_IMAGE}
-                      alt="완료"
+                      src={BADGE_IMAGES[stage.id].src}
+                      alt={BADGE_IMAGES[stage.id].label}
                       style={{
                         position: 'absolute',
                         top: -8,
                         right: -8,
-                        width: 'clamp(36px, 4.2vw, 56px)',
-                        height: 'clamp(36px, 4.2vw, 56px)',
+                        width: 'clamp(40px, 4.8vw, 64px)',
+                        height: 'clamp(40px, 4.8vw, 64px)',
                         objectFit: 'contain',
                         pointerEvents: 'none',
                         filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.4))',
