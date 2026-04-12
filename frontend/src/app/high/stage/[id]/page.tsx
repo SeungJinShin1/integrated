@@ -507,44 +507,60 @@ function Stage3() {
           onNext: () => setStep(30),
         });
         break;
-      // --- 타이머 미니게임 ---
+      // --- 타이머 설명 → 미니게임 ---
       case 30:
-        setDialogue({ speaker: '해설', text: '이제 **비주얼 타이머**로 눈에 보이는 약속을 만들어 주세요!' });
+        setPlayerPose('talk');
+        setDialogue({
+          speaker: P, text: `"${N}아, 여기 봐. 이 빨간색이 줄어들어서 다 사라지면, 기차는 '교실역'으로 출발하는 거야."`,
+          onNext: () => setStep(31),
+        });
+        break;
+      case 31:
+        setDialogue({ speaker: '해설', text: '**비주얼 타이머**로 눈에 보이는 약속을 만들어 주세요!' });
         setShowDial(true);
         break;
+      // --- 타이머 반응: 시각적 안심, 그러나 신체 불안 ---
       case 40:
         setShowDial(false);
-        setDialogue({ speaker: P, text: `"${N}아, 이 빨간색이 다 사라지면 기차는 '교실역'으로 출발하는 거야."`, onNext: () => setStep(41) });
+        setNpcEmotion('calm');
+        setDialogue({
+          speaker: N, text: '"…빨간색이 줄어들고 있어. 끝나는 게 보여." (타이머를 뚫어지게 쳐다본다)',
+          onNext: () => setStep(41),
+        });
         break;
       case 41:
         setNpcEmotion('anxious');
-        setDialogue({ speaker: N, text: '"5분 길어. 지금? 아니야? 으으으..." (손톱을 물어뜯으며 다리를 떤다)', onNext: () => setStep(42) });
+        setDialogue({
+          speaker: N, text: '"근데… 아직 많이 남았어. 으으으…" (손톱을 물어뜯으며 다리를 떤다)',
+          onNext: () => setStep(42),
+        });
         break;
-      // --- 승주 속마음: 불안 ---
+      // --- 승주 속마음: 시각은 안심, 몸은 불안 ---
       case 42:
         setDialogue({
-          speaker: N, text: '(5분이 얼마나 긴 거지? 끝나는 게 보여야 하는데. 불안해.)',
+          speaker: N, text: '(끝나는 건 보여서 조금 나아. 근데 몸이 가만히 있질 못해. 손이 근질근질해.)',
           onNext: () => setStep(43),
         });
         break;
-      // --- 말랑이 브릿지: 플레이어 관찰 → 사고 ---
+      // --- 말랑이 브릿지: 관찰 → 주머니에서 꺼냄 ---
       case 43:
         setPlayerPose('thinking');
         setDialogue({
-          speaker: P, text: `(${N}(이)가 자꾸 손톱을 물어뜯고 다리를 떨고 있어… 기다리는 게 정말 힘든가 봐.)`,
+          speaker: P, text: `(타이머 덕분에 좀 나아진 것 같긴 한데, 몸은 여전히 불안해 보여… 손을 자꾸 물어뜯고 있어.)`,
           onNext: () => setStep(44),
         });
         break;
       case 44:
+        setPlayerPose('talk');
+        addInventory('squishy');
         setDialogue({
-          speaker: P, text: '(손에 쥐고 만질 수 있는 걸 주면 좀 나아지려나?)',
+          speaker: P, text: `"${N}아, 마침 주머니에 이게 있는데. 한번 쥐어 봐." (주머니에서 말랑이를 꺼내 건넨다)`,
           onNext: () => setStep(45),
         });
         break;
       // --- 말랑이 미니게임 ---
       case 45:
-        addInventory('squishy');
-        setDialogue({ speaker: '해설', text: '좋은 생각이에요! **말랑이**로 긴장을 풀어주세요!' });
+        setDialogue({ speaker: '해설', text: '손에 쥐고 천천히 누르면 마음이 편해져요. **말랑이**를 눌러 보세요!' });
         setShowSquishy(true);
         break;
       // --- 성공 후 ---
