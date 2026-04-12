@@ -448,12 +448,19 @@ function Stage3() {
         break;
       // --- 잡아끌기 루트 ---
       case 10:
-        setNpcEmotion('tantrum');
+        setNpcEmotion('pain');
         setDialogue({ speaker: N, text: '(바닥에 드러누우며) "안 가!! 기차 출발 안 했어!!"', onNext: () => setStep(11) });
         break;
       case 11:
         setDialogue({
           speaker: N, text: '(지금은 안 돼! 아직 4호선을 안 그렸어! 끝나지 않은 건 안 돼!)',
+          onNext: () => setStep(12),
+        });
+        break;
+      case 12:
+        setPlayerPose('thinking');
+        setDialogue({
+          speaker: P, text: '(잡아끄니까 오히려 더 심해졌어… 억지로는 안 되겠다. 다른 방법이 필요해.)',
           onNext: () => setStep(30),
         });
         break;
@@ -469,12 +476,40 @@ function Stage3() {
       case 22:
         setDialogue({
           speaker: N, text: '(이 사람이 내 지하철에 관심이 있어! 보여주고 싶어!)',
+          onNext: () => setStep(23),
+        });
+        break;
+      // --- 교실 전이 브릿지 (Route B) ---
+      case 23:
+        setPlayerPose('talk');
+        setDialogue({
+          speaker: P, text: `"${N}아, 이거 정말 대단하다. 근데 종이 벌써 쳤어. 우리 교실로 들어가야 해."`,
+          onNext: () => setStep(24),
+        });
+        break;
+      case 24:
+        setNpcEmotion('anxious');
+        setDialogue({
+          speaker: N, text: '"안 돼! 아직 4호선 안 그렸어. 여기 이거 끝내야 돼!" (바닥에 붙어서 떨어지지 않는다)',
+          onNext: () => setStep(25),
+        });
+        break;
+      case 25:
+        setDialogue({
+          speaker: N, text: '(끝나지 않은 건 안 돼. 4호선까지 다 그려야 하는데… 왜 멈추래?)',
+          onNext: () => setStep(26),
+        });
+        break;
+      case 26:
+        setPlayerPose('thinking');
+        setDialogue({
+          speaker: P, text: '(말로만 하니까 불안해하네… 끝나는 시간이 눈에 "보이게" 해 주면 어떨까?)',
           onNext: () => setStep(30),
         });
         break;
       // --- 타이머 미니게임 ---
       case 30:
-        setDialogue({ speaker: '해설', text: '말로만 하면 통하지 않습니다. **비주얼 타이머**로 눈에 보이는 약속을 하세요!' });
+        setDialogue({ speaker: '해설', text: '이제 **비주얼 타이머**로 눈에 보이는 약속을 만들어 주세요!' });
         setShowDial(true);
         break;
       case 40:
@@ -492,10 +527,24 @@ function Stage3() {
           onNext: () => setStep(43),
         });
         break;
-      // --- 말랑이 미니게임 ---
+      // --- 말랑이 브릿지: 플레이어 관찰 → 사고 ---
       case 43:
+        setPlayerPose('thinking');
+        setDialogue({
+          speaker: P, text: `(${N}(이)가 자꾸 손톱을 물어뜯고 다리를 떨고 있어… 기다리는 게 정말 힘든가 봐.)`,
+          onNext: () => setStep(44),
+        });
+        break;
+      case 44:
+        setDialogue({
+          speaker: P, text: '(손에 쥐고 만질 수 있는 걸 주면 좀 나아지려나?)',
+          onNext: () => setStep(45),
+        });
+        break;
+      // --- 말랑이 미니게임 ---
+      case 45:
         addInventory('squishy');
-        setDialogue({ speaker: '해설', text: '기다리는 시간은 지루하고 불안합니다. **말랑이**로 긴장을 풀어주세요!' });
+        setDialogue({ speaker: '해설', text: '좋은 생각이에요! **말랑이**로 긴장을 풀어주세요!' });
         setShowSquishy(true);
         break;
       // --- 성공 후 ---
@@ -534,7 +583,8 @@ function Stage3() {
 
   // 모래에 그린 지하철 노선도 장면은 인트로~관심 표현 구간(step ≤ 22)에서 배경으로 노출.
   // 그 이후에는 일반 운동장 배경으로 자연스럽게 전환.
-  const stage3Bg = step <= 22 ? BG_IMAGES.sandPlayground : BG_IMAGES.playground;
+  // 인트로~브릿지 구간(step < 30)은 모래 노선도 배경, 타이머 이후는 운동장 전경
+  const stage3Bg = step < 30 ? BG_IMAGES.sandPlayground : BG_IMAGES.playground;
 
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
