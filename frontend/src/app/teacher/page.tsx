@@ -28,6 +28,23 @@ export default function TeacherDashboard() {
   const [students, setStudents] = useState<StudentData[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const deleteStudent = async (studentId: string) => {
+    if (!user?.authCode) return;
+    if (!confirm('이 학생의 기록을 삭제하시겠습니까?')) return;
+    try {
+      const res = await fetch(`${API_URL}/api/teacher/students/${user.authCode}/${studentId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${user.authCode}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setStudents(prev => prev.filter(s => s.id !== studentId));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const fetchDashboard = async () => {
     if (!user?.authCode) return;
     setLoading(true);
@@ -71,7 +88,7 @@ export default function TeacherDashboard() {
     <div style={{ minHeight: '100vh', background: '#f8fafc', display: 'flex', flexDirection: 'column' }}>
       <TopNavBar />
       
-      <main style={{ flex: 1, padding: '32px 16px', maxWidth: 1200, margin: '0 auto', width: '100%' }}>
+      <main style={{ flex: 1, padding: '32px 16px', paddingTop: 'calc(var(--nav-height, 56px) + 32px)', maxWidth: 1200, margin: '0 auto', width: '100%' }}>
         
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
           <div>
@@ -119,6 +136,13 @@ export default function TeacherDashboard() {
                         <p style={{ fontSize: 12, color: '#64748b', margin: 0 }}>최근 활동: {new Date(student.lastActive + 'Z').toLocaleTimeString('ko-KR', { timeZone: 'Asia/Seoul' })}</p>
                       </div>
                     </div>
+                    <button
+                      onClick={() => deleteStudent(student.id)}
+                      title="학생 삭제"
+                      style={{ width: 32, height: 32, borderRadius: '50%', background: '#fef2f2', border: '1px solid #fecaca', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444', fontSize: 14, fontWeight: 800 }}
+                    >
+                      <Icon name="trash" size={16} alt="삭제" />
+                    </button>
                   </div>
                   
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
