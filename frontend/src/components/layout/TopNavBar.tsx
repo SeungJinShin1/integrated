@@ -99,8 +99,8 @@ export default function TopNavBar() {
         {user?.role === 'teacher' && (
           <button
             className="nav-btn"
-            onClick={() => router.push(pathname === '/teacher' ? '/mode' : '/teacher')}
-            title={pathname === '/teacher' ? '게임 참여하기' : '학생 모니터링'}
+            onClick={() => pathname === '/teacher' ? router.back() : router.push('/teacher')}
+            title={pathname === '/teacher' ? '게임으로 돌아가기' : '학생 모니터링'}
             style={pathname === '/teacher' ? { background: 'rgba(99,102,241,0.15)' } : undefined}
           >
             <Icon name={pathname === '/teacher' ? 'hiddenpiece' : 'users'} alt={pathname === '/teacher' ? '게임 참여' : '학생 모니터링'} />
