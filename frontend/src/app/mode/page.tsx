@@ -2,12 +2,14 @@
 
 import { useRouter } from 'next/navigation';
 import { useGame } from '@/contexts/GameContext';
+import { useAuth } from '@/contexts/AuthContext';
 import Icon from '@/components/ui/Icon';
 import TopNavBar from '@/components/layout/TopNavBar';
 
 export default function ModeSelectPage() {
   const router = useRouter();
   const { setGradeMode, dispatch } = useGame();
+  const { user } = useAuth();
 
   const handleLowGrade = () => {
     dispatch({ type: 'SET_PLAYER', payload: { name: '나', gender: 'male' } });
@@ -16,7 +18,13 @@ export default function ModeSelectPage() {
   };
 
   const handleHighGrade = () => {
-    router.push('/auth/login');
+    // 이미 로그인된 교사/학생은 로그인 건너뛰고 바로 캐릭터 선택
+    if (user) {
+      setGradeMode('high_grade');
+      router.push('/character');
+    } else {
+      router.push('/auth/login');
+    }
   };
 
   return (

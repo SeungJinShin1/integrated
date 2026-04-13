@@ -8,8 +8,8 @@ async def verify_admin_token(authorization: Optional[str] = Header(None)):
         raise HTTPException(status_code=401, detail="Unauthorized")
     token = authorization.split("Bearer ")[1]
     
-    admin_pass = os.getenv("ADMIN_PASS", "260420")
-    if token != admin_pass:
+    admin_pass = os.getenv("ADMIN_PASS")
+    if not admin_pass or token != admin_pass:
         raise HTTPException(status_code=403, detail="Forbidden: Invalid Admin Token")
     return token
 

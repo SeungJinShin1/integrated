@@ -52,9 +52,9 @@ def register_teacher(data: TeacherRegister):
 @router.post("/login")
 def login(data: TeacherLogin):
     # Check Admin first
-    admin_user = os.getenv("ADMIN_USER", "admin")
-    admin_pass = os.getenv("ADMIN_PASS", "260420")
-    if data.username == admin_user and data.password == admin_pass:
+    admin_user = os.getenv("ADMIN_USER")
+    admin_pass = os.getenv("ADMIN_PASS")
+    if admin_user and admin_pass and data.username == admin_user and data.password == admin_pass:
         return {"success": True, "role": "admin", "username": "Admin", "authCode": admin_pass}
 
     db = get_db()
