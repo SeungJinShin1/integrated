@@ -350,7 +350,7 @@ export default function LabPage() {
                 border: '1px solid rgba(255,255,255,0.3)',
               }}>
                 <h2 style={{ fontSize: 20, fontWeight: 800, color: '#1e293b', textAlign: 'center', marginBottom: 4 }}>히든피스 결과 카드</h2>
-                <p style={{ fontSize: 12, color: '#94a3b8', textAlign: 'center', marginBottom: 20 }}>Hidden Piece: Our Class Treasure Hunt</p>
+                <p style={{ fontSize: 12, color: '#94a3b8', textAlign: 'center', marginBottom: 20 }}>히든피스: 우리 반 보물찾기</p>
 
                 <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginBottom: 20 }}>
                   <div style={{ textAlign: 'center' }}>

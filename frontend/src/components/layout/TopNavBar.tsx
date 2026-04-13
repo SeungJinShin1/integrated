@@ -97,8 +97,13 @@ export default function TopNavBar() {
           <Icon name={state.isMuted ? 'volumeOff' : 'volumeOn'} alt={state.isMuted ? '음소거' : '소리 켜기'} />
         </button>
         {user?.role === 'teacher' && (
-          <button className="nav-btn" onClick={() => router.push('/teacher')} title="학생 모니터링">
-            <Icon name="users" alt="학생 모니터링" />
+          <button
+            className="nav-btn"
+            onClick={() => router.push(pathname === '/teacher' ? '/mode' : '/teacher')}
+            title={pathname === '/teacher' ? '게임 참여하기' : '학생 모니터링'}
+            style={pathname === '/teacher' ? { background: 'rgba(99,102,241,0.15)' } : undefined}
+          >
+            <Icon name={pathname === '/teacher' ? 'hiddenpiece' : 'users'} alt={pathname === '/teacher' ? '게임 참여' : '학생 모니터링'} />
           </button>
         )}
         {user && (

@@ -77,7 +77,7 @@ export default function TeacherDashboard() {
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 800, color: '#1e293b', display: 'flex', alignItems: 'center', gap: 12 }}>
               <Icon name="shield" alt="관리자" />
-              관리자 대시보드
+              학급 대시보드
             </h1>
             <p style={{ color: '#64748b', marginTop: 4 }}>학생들의 학습 현황을 실시간으로 확인하세요.</p>
           </div>
@@ -116,7 +116,7 @@ export default function TeacherDashboard() {
                       </div>
                       <div>
                         <p style={{ fontWeight: 800, color: '#1e293b', margin: 0 }}>{student.studentName}</p>
-                        <p style={{ fontSize: 12, color: '#64748b', margin: 0 }}>최근 활동: {new Date(student.lastActive).toLocaleTimeString()}</p>
+                        <p style={{ fontSize: 12, color: '#64748b', margin: 0 }}>최근 활동: {new Date(student.lastActive + 'Z').toLocaleTimeString('ko-KR', { timeZone: 'Asia/Seoul' })}</p>
                       </div>
                     </div>
                   </div>

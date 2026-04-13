@@ -153,7 +153,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
             body: JSON.stringify({
               authCode: user.authCode,
               studentId: user.uid,
-              studentName: user.username,
+              studentName: state.player.name || user.username,
               stage: stage,
               score: state.gradeMode === 'high_grade' ? Math.round((state.stats.understanding + state.stats.trust + state.stats.communication + state.stats.patience) / 4) : state.hearts * 25,
               usedTools: state.usedTools,

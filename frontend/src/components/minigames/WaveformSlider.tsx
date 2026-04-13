@@ -41,7 +41,7 @@ export default function WaveformSlider({ onComplete }: WaveformSliderProps) {
         <div style={{
           display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', marginBottom: 16
         }}>
-          <span style={{ fontSize: 12, fontWeight: 800, color: '#94a3b8', width: 28, textAlign: 'center' }}>큰</span>
+          <span style={{ fontSize: 12, fontWeight: 800, color: '#94a3b8', width: 28, textAlign: 'center' }}>작</span>
           <div style={{
             width: '100%', maxWidth: 300, height: 16, borderRadius: 8,
             background: 'rgba(255,255,255,0.1)', overflow: 'hidden', position: 'relative',
@@ -61,7 +61,7 @@ export default function WaveformSlider({ onComplete }: WaveformSliderProps) {
               }} />
             )}
           </div>
-          <span style={{ fontSize: 12, fontWeight: 800, color: '#94a3b8', width: 28, textAlign: 'center' }}>작</span>
+          <span style={{ fontSize: 12, fontWeight: 800, color: '#94a3b8', width: 28, textAlign: 'center' }}>큰</span>
         </div>
 
         {/* Noise level indicator */}

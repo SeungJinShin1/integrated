@@ -29,7 +29,7 @@ export default function LoginPage() {
       if (result.role === 'admin') {
         router.push('/admin');
       } else if (result.role === 'teacher') {
-        router.push('/teacher');
+        router.push('/mode');
       } else {
         setGradeMode('high_grade');
         router.push('/character');
