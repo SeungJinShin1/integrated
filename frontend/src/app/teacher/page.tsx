@@ -98,21 +98,21 @@ export default function TeacherDashboard() {
             </h1>
             <p style={{ color: '#64748b', marginTop: 4 }}>학생들의 학습 현황을 실시간으로 확인하세요.</p>
           </div>
-          <div style={{ background: 'white', padding: '16px 24px', borderRadius: 16, border: '2px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: 16, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-            <div>
-              <p style={{ fontSize: 13, color: '#64748b', fontWeight: 700, marginBottom: 4 }}>학생 접속용 인증번호</p>
-              <p style={{ fontSize: 32, fontWeight: 900, color: '#4f46e5', letterSpacing: 4, margin: 0, lineHeight: 1 }}>{user.authCode}</p>
-            </div>
-            <button onClick={fetchDashboard} style={{ width: 48, height: 48, borderRadius: '50%', background: '#f1f5f9', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', cursor: 'pointer', transition: 'all 0.2s' }} className="hover:bg-indigo-50 hover:text-indigo-600">
-              <Icon name="refresh" size={22} alt="새로고침" />
-            </button>
+          <div style={{ background: 'white', padding: '16px 24px', borderRadius: 16, border: '2px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+            <p style={{ fontSize: 13, color: '#64748b', fontWeight: 700, marginBottom: 4 }}>학생 접속용 인증번호</p>
+            <p style={{ fontSize: 32, fontWeight: 900, color: '#4f46e5', letterSpacing: 4, margin: 0, lineHeight: 1 }}>{user.authCode}</p>
           </div>
         </div>
 
         <div style={{ background: 'white', borderRadius: 24, padding: 24, boxShadow: '0 8px 32px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24, paddingBottom: 16, borderBottom: '1px solid #f1f5f9' }}>
-            <Icon name="users" size={26} alt="학생들" />
-            <h2 style={{ fontSize: 18, fontWeight: 700, color: '#334155', margin: 0 }}>접속 학생 목록 ({students.length}명)</h2>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, paddingBottom: 16, borderBottom: '1px solid #f1f5f9' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <Icon name="users" size={26} alt="학생들" />
+              <h2 style={{ fontSize: 18, fontWeight: 700, color: '#334155', margin: 0 }}>접속 학생 목록 ({students.length}명)</h2>
+            </div>
+            <button onClick={fetchDashboard} title="새로고침" style={{ width: 40, height: 40, borderRadius: '50%', background: '#f1f5f9', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b' }}>
+              <Icon name="refresh" size={20} alt="새로고침" />
+            </button>
           </div>
 
           {loading && students.length === 0 ? (

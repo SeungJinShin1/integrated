@@ -137,34 +137,42 @@ export function GameProvider({ children }: { children: ReactNode }) {
   
   const completeStage = useCallback(async (stage: string) => {
     dispatch({ type: 'COMPLETE_STAGE', payload: stage });
-    
+
     // Post progress to backend if logged in as student or teacher
     try {
       const savedUser = sessionStorage.getItem('authUser');
-      if (savedUser) {
-        const user = JSON.parse(savedUser);
-        if (user.authCode && user.uid) {
-          await fetch(`${API_URL}/api/student/progress`, {
-            method: 'POST',
-            headers: { 
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${user.authCode}`
-            },
-            body: JSON.stringify({
-              authCode: user.authCode,
-              studentId: user.uid,
-              studentName: state.player.name || user.username,
-              stage: stage,
-              score: state.gradeMode === 'high_grade' ? Math.round((state.stats.understanding + state.stats.trust + state.stats.communication + state.stats.patience) / 4) : state.hearts * 25,
-              usedTools: state.usedTools,
-              stats: state.stats,
-              logs: state.logs
-            })
-          });
-        }
+      if (!savedUser) return;
+      const user = JSON.parse(savedUser);
+      if (!user.authCode || !user.uid) return;
+
+      const payload = {
+        authCode: user.authCode,
+        studentId: user.uid,
+        studentName: state.player.name || user.username,
+        stage,
+        score: state.gradeMode === 'high_grade'
+          ? Math.round((state.stats.understanding + state.stats.trust + state.stats.communication + state.stats.patience) / 4)
+          : state.hearts * 25,
+        usedTools: state.usedTools,
+        stats: state.stats,
+        logs: state.logs,
+      };
+
+      const res = await fetch(`${API_URL}/api/student/progress`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.authCode}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const err = await res.text();
+        console.error(`Progress sync failed (${res.status}):`, err);
       }
     } catch (e) {
-      console.error('Failed to post progress', e);
+      console.error('Failed to post progress:', e);
     }
   }, [state]);
 
