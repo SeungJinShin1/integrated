@@ -35,7 +35,9 @@ async def chat_with_ai(req: AIChatRequest):
             config=types.GenerateContentConfig(
                 system_instruction=req.systemPrompt,
                 max_output_tokens=1024,
-                thinking_config=types.ThinkingConfig(thinking_level="medium"),
+                # gemini-3.5-flash defaults to "medium" thinking effort, which is
+                # the quality level we want — so we leave thinking_config unset
+                # (avoids a hard dependency on a newer SDK's thinking_level field).
             ),
         )
         return {"reply": (response.text or "").strip()}
