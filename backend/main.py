@@ -9,11 +9,14 @@ load_dotenv()
 
 app = FastAPI(title="Hidden Piece API", description="Backend for Disability Awareness Game")
 
-# Configure CORS for frontend access
+# Configure CORS for frontend access.
+# Auth uses Bearer headers (no cookies), so credentials are not needed.
+# Set ALLOWED_ORIGINS (comma-separated) to restrict origins in production.
+allowed_origins = [o.strip() for o in os.getenv("ALLOWED_ORIGINS", "*").split(",")]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Production: Should restrict to Vercel domain
-    allow_credentials=True,
+    allow_origins=allowed_origins,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )

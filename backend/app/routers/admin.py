@@ -3,7 +3,7 @@ from app.services.firebase import get_db
 from app.dependencies import verify_admin_token
 from app.models.schemas import AdminResetPassword
 import hashlib
-import random
+import secrets
 import string
 
 router = APIRouter()
@@ -15,7 +15,7 @@ def hash_pw(password: str) -> str:
 
 def _generate_temp_password(length: int = 10) -> str:
     alphabet = string.ascii_letters + string.digits
-    return ''.join(random.choices(alphabet, k=length))
+    return ''.join(secrets.choice(alphabet) for _ in range(length))
 
 
 @router.get("/dashboard")

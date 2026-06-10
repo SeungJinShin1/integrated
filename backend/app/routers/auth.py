@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException
 import hashlib
-import random
+import secrets
 import os
 import smtplib
 from email.message import EmailMessage
@@ -29,10 +29,10 @@ def register_teacher(data: TeacherRegister):
     if docs_email:
         raise HTTPException(status_code=400, detail="Email already exists")
 
-    auth_code = str(random.randint(100000, 999999))
+    auth_code = str(secrets.randbelow(900000) + 100000)
     # Ensure uniqueness of auth code
     while teachers_ref.where('authCode', '==', auth_code).get():
-        auth_code = str(random.randint(100000, 999999))
+        auth_code = str(secrets.randbelow(900000) + 100000)
 
     teacher_data = {
         "username": data.username,
@@ -96,6 +96,7 @@ def student_login(data: StudentLogin):
     }
 
 @router.post("/find")
+@router.post("/find-account")  # alias: frontend calls /api/auth/find-account
 def find_account(data: FindAccount):
     db = get_db()
     if not db:

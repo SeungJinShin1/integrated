@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List, Dict, Any
 
 class TeacherRegister(BaseModel):
@@ -17,8 +17,10 @@ class FindAccount(BaseModel):
     email: EmailStr
 
 class AIChatRequest(BaseModel):
-    message: str
-    systemPrompt: str
+    message: str = Field(min_length=1, max_length=2000)
+    # Accepted for backward compatibility with older clients, but ignored:
+    # the system prompt is fixed server-side (see routers/ai.py).
+    systemPrompt: Optional[str] = None
 
 class AdminResetPassword(BaseModel):
     newPassword: Optional[str] = None  # if omitted, server generates one
