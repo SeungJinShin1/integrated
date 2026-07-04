@@ -352,7 +352,11 @@ export default function AdminDashboard() {
                         {s.lastActive ? new Date(s.lastActive).toLocaleString() : '-'}
                       </td>
                       <td style={{ padding: '14px 16px', color: '#10b981', fontWeight: 700 }}>
-                        {Object.keys(s.stages || {}).length}단계 완료
+                        {Object.values(s.stages || {}).filter(v => {
+                          const e = v as { status?: string; completedAt?: string };
+                          // 진행 중 항목은 제외 — 완료 증거가 있거나 status가 없는(구버전) 기록만 집계
+                          return !!e && (e.completedAt || e.status === 'completed' || !e.status);
+                        }).length}단계 완료
                       </td>
                       <td style={{ padding: '14px 16px' }}>
                         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>

@@ -487,9 +487,16 @@ const STAGE_COMPONENTS = [LowStage1, LowStage2, LowStage3, LowStage4, LowStage5]
 
 export default function LowStagePage() {
   const params = useParams();
+  const { startStage } = useGame();
   const index = parseInt(params.id as string) - 1;
+  const isValid = index >= 0 && index < STAGE_COMPONENTS.length;
 
-  if (index < 0 || index >= STAGE_COMPONENTS.length) {
+  // 에피소드에 들어온 순간 교사 대시보드에 "진행 중"으로 표시
+  useEffect(() => {
+    if (isValid) startStage(`low_stage${index + 1}`);
+  }, [isValid, index, startStage]);
+
+  if (!isValid) {
     return <div style={{ color: 'white', padding: 40, textAlign: 'center' }}>잘못된 단계입니다.</div>;
   }
 

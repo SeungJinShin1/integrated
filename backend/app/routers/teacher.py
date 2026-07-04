@@ -4,6 +4,21 @@ from app.dependencies import verify_teacher_token
 
 router = APIRouter()
 
+
+def _normalize_student(item: dict) -> dict:
+    """Fold legacy literal "stages.<key>" top-level fields (written by the
+    old set(merge=True) dotted-key code) into the proper nested stages map."""
+    stages = dict(item.get('stages') or {})
+    for key in [k for k in list(item.keys()) if k.startswith('stages.')]:
+        val = item.pop(key)
+        stage_key = key[len('stages.'):]
+        if stage_key not in stages and isinstance(val, dict):
+            val.setdefault('status', 'completed')
+            stages[stage_key] = val
+    item['stages'] = stages
+    return item
+
+
 @router.get("/dashboard/{authCode}")
 def get_dashboard(authCode: str, token: str = Depends(verify_teacher_token)):
     if authCode != token:
@@ -14,13 +29,13 @@ def get_dashboard(authCode: str, token: str = Depends(verify_teacher_token)):
 
     try:
         students_ref = db.collection('classes').document(authCode).collection('students').get()
-        
+
         students_data = []
         for doc in students_ref:
             item = doc.to_dict()
             item['id'] = doc.id
-            students_data.append(item)
-            
+            students_data.append(_normalize_student(item))
+
         return {"success": True, "students": students_data}
     except Exception as e:
         print(f"Teacher Dashboard Error: {e}")

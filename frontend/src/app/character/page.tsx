@@ -11,7 +11,7 @@ const DEFAULT_PLAYER_NAME = '나';
 
 export default function CharacterCreationPage() {
   const router = useRouter();
-  const { state, dispatch } = useGame();
+  const { state, dispatch, registerStudent } = useGame();
   const [npcGender, setNpcGender] = useState<'female' | 'male'>('female');
   const [playerGender, setPlayerGender] = useState<'female' | 'male'>('female');
   const [playerName, setPlayerName] = useState(DEFAULT_PLAYER_NAME);
@@ -39,6 +39,8 @@ export default function CharacterCreationPage() {
     const finalNpcName = npcName.trim() || DEFAULT_NPC_NAMES[npcGender];
     dispatch({ type: 'SET_PLAYER', payload: { name: finalPlayerName, gender: playerGender } });
     dispatch({ type: 'SET_NPC', payload: { name: finalNpcName, gender: npcGender } });
+    // 인증코드로 로그인한 학생을 교사 대시보드에 즉시 등록
+    registerStudent(finalPlayerName);
     if (isLow) {
       dispatch({ type: 'SET_STAGE', payload: 'low_stage1' });
       router.push('/low/episode/1');
@@ -164,50 +166,52 @@ export default function CharacterCreationPage() {
                   })}
                 </div>
 
-                {/* Player name input (고학년 전용) */}
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: 13,
-                    fontWeight: 800,
-                    color: '#475569',
-                    marginBottom: 8,
-                    letterSpacing: 0.5,
-                  }}
-                >
-                  ② 나의 이름
-                </label>
-                <input
-                  type="text"
-                  value={playerName}
-                  onChange={(e) => setPlayerName(e.target.value)}
-                  maxLength={10}
-                  placeholder={DEFAULT_PLAYER_NAME}
-                  style={{
-                    width: '100%',
-                    padding: '14px 16px',
-                    borderRadius: 14,
-                    border: '2px solid #e2e8f0',
-                    fontSize: 16,
-                    fontWeight: 600,
-                    color: '#1e293b',
-                    outline: 'none',
-                    transition: 'border-color 0.2s',
-                    fontFamily: "'Nanum Gothic', sans-serif",
-                    marginBottom: 4,
-                  }}
-                  onFocus={(e) => (e.target.style.borderColor = '#f59e0b')}
-                  onBlur={(e) => (e.target.style.borderColor = '#e2e8f0')}
-                />
-                <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 6, marginBottom: 22 }}>
-                  비워두면 기본 이름 「{DEFAULT_PLAYER_NAME}」(으)로 시작해요.
-                </p>
               </>
             )}
 
+            {/* Player name input — 저학년/고학년 공통.
+                여기 입력한 이름이 선생님 대시보드에 학생 이름(ID)으로 표시됩니다. */}
+            <label
+              style={{
+                display: 'block',
+                fontSize: 13,
+                fontWeight: 800,
+                color: '#475569',
+                marginBottom: 8,
+                letterSpacing: 0.5,
+              }}
+            >
+              {isLow ? '① 나의 이름' : '② 나의 이름'}
+            </label>
+            <input
+              type="text"
+              value={playerName}
+              onChange={(e) => setPlayerName(e.target.value)}
+              maxLength={10}
+              placeholder={DEFAULT_PLAYER_NAME}
+              style={{
+                width: '100%',
+                padding: '14px 16px',
+                borderRadius: 14,
+                border: '2px solid #e2e8f0',
+                fontSize: 16,
+                fontWeight: 600,
+                color: '#1e293b',
+                outline: 'none',
+                transition: 'border-color 0.2s',
+                fontFamily: "'Nanum Gothic', sans-serif",
+                marginBottom: 4,
+              }}
+              onFocus={(e) => (e.target.style.borderColor = '#f59e0b')}
+              onBlur={(e) => (e.target.style.borderColor = '#e2e8f0')}
+            />
+            <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 6, marginBottom: 22 }}>
+              입력한 이름은 선생님 화면에 표시돼요. 비워두면 「{DEFAULT_PLAYER_NAME}」(으)로 시작해요.
+            </p>
+
             {/* NPC (친구) gender selection */}
             <p style={{ fontSize: 13, fontWeight: 800, color: '#475569', marginBottom: 10, letterSpacing: 0.5 }}>
-              {isLow ? '① 함께할 친구' : '③ 함께할 친구'}
+              {isLow ? '② 함께할 친구' : '③ 함께할 친구'}
             </p>
             <div
               style={{
@@ -292,7 +296,7 @@ export default function CharacterCreationPage() {
                 letterSpacing: 0.5,
               }}
             >
-              {isLow ? '② 친구의 이름' : '④ 친구의 이름'}
+              {isLow ? '③ 친구의 이름' : '④ 친구의 이름'}
             </label>
             <input
               type="text"

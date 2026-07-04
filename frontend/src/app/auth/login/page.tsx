@@ -1,16 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGame } from '@/contexts/GameContext';
 import { BG_IMAGES } from '@/data/assetMap';
 import Link from 'next/link';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
 export default function LoginPage() {
   const router = useRouter();
   const { login, loginWithCode } = useAuth();
   const { setGradeMode } = useGame();
+
+  // Render 무료 플랜은 15분 유휴 시 서버가 잠들어 첫 요청이 느립니다.
+  // 로그인 화면이 열리는 순간 미리 깨워서 로그인·진행 저장 지연을 줄입니다.
+  useEffect(() => {
+    fetch(`${API_URL}/`).catch(() => { /* warm-up ping — 실패해도 무시 */ });
+  }, []);
   const [mode, setMode] = useState<'credentials' | 'code'>('credentials');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');

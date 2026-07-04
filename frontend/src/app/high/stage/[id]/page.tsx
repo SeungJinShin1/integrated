@@ -1051,9 +1051,16 @@ const STAGE_COMPONENTS = [Stage1, Stage2, Stage3, Stage4, Stage5];
 
 export default function StagePage() {
   const params = useParams();
+  const { startStage } = useGame();
   const stageIndex = parseInt(params.id as string) - 1;
+  const isValid = stageIndex >= 0 && stageIndex < STAGE_COMPONENTS.length;
 
-  if (stageIndex < 0 || stageIndex >= STAGE_COMPONENTS.length) {
+  // 단계에 들어온 순간 교사 대시보드에 "진행 중"으로 표시
+  useEffect(() => {
+    if (isValid) startStage(`stage-${stageIndex + 1}`);
+  }, [isValid, stageIndex, startStage]);
+
+  if (!isValid) {
     return <div style={{ color: 'white', padding: 40, textAlign: 'center' }}>잘못된 단계입니다.</div>;
   }
 

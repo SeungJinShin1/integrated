@@ -41,7 +41,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export default function LabPage() {
   const router = useRouter();
-  const { state, resetGame, completeStage } = useGame();
+  const { state, resetGame, completeStage, startStage } = useGame();
   const N = state.npc.name;
   const P = state.player.name;
   const [phase, setPhase] = useState<'journal' | 'chat' | 'report'>('journal');
@@ -60,6 +60,11 @@ export default function LabPage() {
   const completedStages = state.completedStages || [];
   const allComplete = ['stage-1', 'stage-2', 'stage-3', 'stage-4', 'stage-5']
     .every(s => completedStages.includes(s));
+
+  // 6단계(빛나는 우리 반)에 들어온 순간 교사 대시보드에 "진행 중"으로 표시
+  useEffect(() => {
+    if (allComplete) startStage('stage-6');
+  }, [allComplete, startStage]);
 
   if (!allComplete) {
     return (
