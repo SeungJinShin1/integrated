@@ -9,7 +9,12 @@ import {
   STAGE_NODE_IMAGES,
   LOCK_OVERLAY_IMAGE,
   BADGE_IMAGES,
+  NPC_IMAGES,
+  PLAYER_IMAGES,
+  PEER_IMAGES,
+  GROUP_PRESSURE_IMAGE,
 } from '@/data/assetMap';
+import { preloadImages } from '@/utils/preloadImages';
 import { useState, useRef, useEffect } from 'react';
 
 // Six landmark positions aligned with the 6 white circles on the world map background.
@@ -62,6 +67,18 @@ export default function HighGradePage() {
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
+
+  /* 지도 화면에서 대기하는 동안, 선택한 캐릭터의 대화 스프라이트를
+     미리 받아둬 스테이지 안에서 캐릭터가 늦게 나타나는 팝인을 없앱니다. */
+  useEffect(() => {
+    preloadImages([
+      ...Object.values(NPC_IMAGES[state.npc.gender] || NPC_IMAGES.female),
+      ...Object.values(PLAYER_IMAGES[state.player.gender] || PLAYER_IMAGES.male),
+      ...Object.values(PEER_IMAGES.peerA_male),
+      ...Object.values(PEER_IMAGES.peerB_female),
+      GROUP_PRESSURE_IMAGE,
+    ]);
+  }, [state.npc.gender, state.player.gender]);
 
   const completedStages = state.completedStages || [];
   const allPreviousComplete = ['stage-1', 'stage-2', 'stage-3', 'stage-4', 'stage-5']

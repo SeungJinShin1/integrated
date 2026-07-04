@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useGame } from '@/contexts/GameContext';
 import TopNavBar from '@/components/layout/TopNavBar';
-import { getLowNpcImage, LOW_BG_IMAGES, ITEM_IMAGES } from '@/data/assetMap';
+import { getLowNpcImage, LOW_BG_IMAGES, ITEM_IMAGES, LOW_NPC_IMAGES } from '@/data/assetMap';
+import { preloadImages } from '@/utils/preloadImages';
 import Icon from '@/components/ui/Icon';
 import ParticleCanvas from '@/components/minigames/ParticleCanvas';
 import { useVoiceNarration } from '@/hooks/useVoiceNarration';
@@ -487,7 +488,7 @@ const STAGE_COMPONENTS = [LowStage1, LowStage2, LowStage3, LowStage4, LowStage5]
 
 export default function LowStagePage() {
   const params = useParams();
-  const { startStage } = useGame();
+  const { startStage, state } = useGame();
   const index = parseInt(params.id as string) - 1;
   const isValid = index >= 0 && index < STAGE_COMPONENTS.length;
 
@@ -495,6 +496,11 @@ export default function LowStagePage() {
   useEffect(() => {
     if (isValid) startStage(`low_stage${index + 1}`);
   }, [isValid, index, startStage]);
+
+  // 선택한 친구의 표정 스프라이트를 미리 받아 대화창 캐릭터 팝인을 없앰
+  useEffect(() => {
+    preloadImages(Object.values(LOW_NPC_IMAGES[state.npc.gender] || LOW_NPC_IMAGES.female));
+  }, [state.npc.gender]);
 
   if (!isValid) {
     return <div style={{ color: 'white', padding: 40, textAlign: 'center' }}>잘못된 단계입니다.</div>;
