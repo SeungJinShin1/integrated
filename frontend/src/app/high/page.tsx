@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useGame } from '@/contexts/GameContext';
+import { useAuth } from '@/contexts/AuthContext';
 import TopNavBar from '@/components/layout/TopNavBar';
 import { HIGH_STAGES } from '@/data/gameData';
 import {
@@ -39,6 +40,9 @@ const MAP_ASPECT = 2752 / 1536;
 export default function HighGradePage() {
   const router = useRouter();
   const { state, dispatch } = useGame();
+  const { isTeacher, isAdmin } = useAuth();
+  // 교사/관리자는 수업 준비를 위해 모든 단계를 미리 볼 수 있어야 함
+  const teacherPreview = isTeacher || isAdmin;
   const [showLockedAlert, setShowLockedAlert] = useState(false);
   const mapRef = useRef<HTMLDivElement>(null);
   const [imgBounds, setImgBounds] = useState({ x: 0, y: 0, w: 0, h: 0 });
@@ -85,7 +89,7 @@ export default function HighGradePage() {
     .every(s => completedStages.includes(s));
 
   const handleStageClick = (stageId: string, index: number) => {
-    if (stageId === 'stage-6' && !allPreviousComplete) {
+    if (stageId === 'stage-6' && !allPreviousComplete && !teacherPreview) {
       setShowLockedAlert(true);
       setTimeout(() => setShowLockedAlert(false), 3000);
       return;
@@ -158,7 +162,7 @@ export default function HighGradePage() {
           {/* Landmark nodes */}
           {HIGH_STAGES.map((stage, i) => {
             const isCompleted = completedStages.includes(stage.id);
-            const isLocked = stage.id === 'stage-6' && !allPreviousComplete;
+            const isLocked = stage.id === 'stage-6' && !allPreviousComplete && !teacherPreview;
             const nodeImage = STAGE_NODE_IMAGES[stage.id];
 
             return (

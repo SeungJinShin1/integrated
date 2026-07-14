@@ -190,7 +190,7 @@ export default function AdminDashboard() {
     <div style={{ minHeight: '100vh', background: '#f8fafc', display: 'flex', flexDirection: 'column' }}>
       <TopNavBar />
 
-      <main style={{ flex: 1, padding: '32px 16px', maxWidth: 1200, margin: '0 auto', width: '100%' }}>
+      <main style={{ flex: 1, padding: '32px 16px', paddingTop: 'calc(var(--nav-height, 56px) + 32px)', maxWidth: 1200, margin: '0 auto', width: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 800, color: '#1e293b', display: 'flex', alignItems: 'center', gap: 12 }}>

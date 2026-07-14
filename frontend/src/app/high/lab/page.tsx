@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGame } from '@/contexts/GameContext';
+import { useAuth } from '@/contexts/AuthContext';
 import TopNavBar from '@/components/layout/TopNavBar';
 import { getNpcImage, getPlayerImage, BG_IMAGES, BADGE_IMAGES } from '@/data/assetMap';
 import Icon from '@/components/ui/Icon';
@@ -42,6 +43,9 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 export default function LabPage() {
   const router = useRouter();
   const { state, resetGame, completeStage, startStage } = useGame();
+  const { isTeacher, isAdmin } = useAuth();
+  // 교사/관리자는 1~5단계를 완료하지 않아도 미리 볼 수 있음
+  const teacherPreview = isTeacher || isAdmin;
   const N = state.npc.name;
   const P = state.player.name;
   const [phase, setPhase] = useState<'journal' | 'chat' | 'report'>('journal');
@@ -66,7 +70,7 @@ export default function LabPage() {
     if (allComplete) startStage('stage-6');
   }, [allComplete, startStage]);
 
-  if (!allComplete) {
+  if (!allComplete && !teacherPreview) {
     return (
       <>
         <TopNavBar />
