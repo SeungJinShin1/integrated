@@ -87,10 +87,17 @@ if [ "${#KEYWORDS[@]}" -gt 0 ]; then
 fi
 
 # ---------- 4. 파일·폴더명 검사 ----------
+# 주의 1: 로컬 상위 경로(예: /c/Users/사용자명/...)가 키워드와 겹치는 오탐을
+#         막기 위해 USB 폴더 기준 상대 경로로 검사한다.
+# 주의 2: 이 환경의 grep 은 한글 패턴에 -i 를 붙이면 비정상 종료하므로
+#         키워드 검사는 대소문자를 구분한다 (필요한 표기 변형은 키워드
+#         파일에 각각 추가할 것).
 echo
-echo "== [2/2] 파일·폴더명 검사"
+echo "== [2/2] 파일·폴더명 검사 (USB 폴더 기준 상대 경로)"
 
-NAME_BUILTIN="$(find "$TARGET" | grep -iE "$BUILTIN" || true)"
+REL_NAMES="$(find "$TARGET" -mindepth 1 | sed "s|^$TARGET/||")"
+
+NAME_BUILTIN="$(printf '%s\n' "$REL_NAMES" | grep -iE "$BUILTIN" || true)"
 if [ -n "$NAME_BUILTIN" ]; then
   echo "[발견] 파일/폴더명에 배포·계정 흔적:"
   printf '%s\n' "$NAME_BUILTIN"
@@ -98,7 +105,7 @@ if [ -n "$NAME_BUILTIN" ]; then
 fi
 
 if [ "${#KEYWORDS[@]}" -gt 0 ]; then
-  NAME_KW="$(find "$TARGET" | grep -iF "${GREP_ARGS[@]}" || true)"
+  NAME_KW="$(printf '%s\n' "$REL_NAMES" | grep -F "${GREP_ARGS[@]}" || true)"
   if [ -n "$NAME_KW" ]; then
     echo "[발견] 파일/폴더명에 개인 키워드:"
     printf '%s\n' "$NAME_KW"
