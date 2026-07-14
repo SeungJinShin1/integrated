@@ -71,7 +71,9 @@ CREDIT_FONT = "네이버 나눔글꼴(OFL, 무료 사용)"
 def describe_image(rel_path: str) -> str:
     """파일명에서 설명 키워드 초안 생성. 예:
     1_CH1_승주_여__기본_정면.png → '승주 여 기본 정면 (고학년(3~6학년) 탐험가 모드 일러스트)'"""
-    folder = rel_path.split("/")[2] if rel_path.count("/") >= 2 else ""
+    # rel_path 예: frontend/public/assets/hiddenpiece/파일.png → 폴더는 4번째 조각
+    parts = rel_path.split("/")
+    folder = parts[3] if len(parts) >= 5 else ""
     stem = os.path.splitext(os.path.basename(rel_path))[0]
     cleaned = re.sub(r"^\d+_(CH\d+_)?", "", stem)      # 앞쪽 번호·차시 토큰 제거
     cleaned = re.sub(r"[_]+", " ", cleaned).strip()
@@ -135,7 +137,7 @@ dupes = {n for n in names if names.count(n) > 1}
 if dupes:
     print(f"[알림] 동일 파일명 존재 → 폴더 포함 표기 사용: {sorted(dupes)}")
     entries = [
-        (o, rel, t, "/".join(rel.split("/")[2:]) if n in dupes else n, s, d, c)
+        (o, rel, t, "/".join(rel.split("/")[3:]) if n in dupes else n, s, d, c)
         for (o, rel, t, n, s, d, c) in entries
     ]
 
