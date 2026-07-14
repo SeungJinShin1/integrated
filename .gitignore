@@ -36,3 +36,6 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 .claude/
+
+# 블라인드 검사 개인 키워드 (성명·학교명 등) — 절대 커밋 금지
+submission/blind_keywords.txt
