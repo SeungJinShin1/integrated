@@ -2,6 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { BG_IMAGES } from '@/data/assetMap';
+import ReportBadge from '@/components/layout/ReportBadge';
+import CreditNotice from '@/components/layout/CreditNotice';
 
 export default function StartPage() {
   const router = useRouter();
@@ -31,6 +33,10 @@ export default function StartPage() {
           학습을 시작하려면 클릭하세요
         </div>
       </div>
+
+      {/* 연구대회 제출용 표기: 제목은 위 h1에 이미 있으므로 대상학년만 표시 */}
+      <ReportBadge showTitle={false} />
+      <CreditNotice />
     </div>
   );
 }
