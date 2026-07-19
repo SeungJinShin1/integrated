@@ -1,0 +1,5 @@
+# 셸/파이썬 스크립트는 Windows 체크아웃에서도 LF 유지 (bash 실행 호환)
+submission/*.sh text eol=lf
+submission/*.py text eol=lf
+# 생성된 CSV는 개행 변환 금지 (한글 엑셀 호환 형식 보존)
+submission/*.csv -text

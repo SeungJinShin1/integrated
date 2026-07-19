@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { BG_IMAGES } from '@/data/assetMap';
+import ReportBadge from '@/components/layout/ReportBadge';
+import CreditNotice from '@/components/layout/CreditNotice';
 
 const INTRO_SLIDES = [
   { image: BG_IMAGES.dataworld, text: '어딘가에, 특별한 세상이 있습니다...' },
@@ -117,6 +119,10 @@ export default function IntroPage() {
       >
         건너뛰기 &gt;&gt;
       </button>
+
+      {/* 연구대회 제출용 표기: 인트로에는 제목이 없으므로 제목+대상학년 모두 표시 */}
+      <ReportBadge />
+      <CreditNotice />
     </div>
   );
 }
