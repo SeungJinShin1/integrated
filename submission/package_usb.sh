@@ -58,7 +58,9 @@ mkdir -p "$DEST/document" \
          "$DEST/media/image" "$DEST/media/movie" "$DEST/media/sound" \
          "$DEST/program" "$DEST/source"
 
-# document/ 안내문 (사용자가 직접 넣을 파일 목록)
+# document/ 안내문 — 폴더가 완전히 비어 있을 때만 생성.
+# 사용자가 document/ 를 직접 관리하기 시작한 뒤에는 일절 손대지 않는다.
+if [ -z "$(ls -A "$DEST/document" 2>/dev/null)" ]; then
 cat > "$DEST/document/_여기에_넣을_것.txt" <<'EOF'
 [document 폴더에 직접 넣어야 하는 파일]
 
@@ -72,6 +74,7 @@ cat > "$DEST/document/_여기에_넣을_것.txt" <<'EOF'
 
 ※ 이 안내문 파일은 USB에 최종 복사하기 전에 삭제하세요.
 EOF
+fi
 
 # ---------- 2. media/image : git 추적 이미지 (frontend/public/assets 하위) ----------
 # 소프트웨어가 실제 사용하는 git 추적 이미지만 복사 (하위폴더 구조 유지)
