@@ -814,7 +814,7 @@ function Stage4() {
       case 54:
         setDialogue({
           speaker: '해설',
-          text: `**협력의 전구** 획득! ${N}(이)는 남들이 보지 못하는 **미세한 차이**를 알아채는 뛰어난 눈을 가지고 있어요. **"못하는 것"만 보면 "잘하는 것"을 놓치게 돼요.**`,
+          text: `**강점의 전구** 획득! ${N}(이)는 남들이 보지 못하는 **미세한 차이**를 알아채는 뛰어난 눈을 가지고 있어요. **"못하는 것"만 보면 "잘하는 것"을 놓치게 돼요.**`,
           onNext: () => { completeStage('stage-4'); setShowBadge(true); },
         });
         break;
@@ -964,7 +964,7 @@ function Stage5() {
         addStat('understanding', 20); addStat('communication', 20);
         setDialogue({
           speaker: '해설',
-          text: `**기억의 나침반** 획득! ${N}의 뛰어난 기억력이 길을 찾아주었어요. 누군가의 **다른 방식**을 믿는 것, 그것이 진짜 신뢰예요.`,
+          text: `**신뢰의 리본** 획득! ${N}의 뛰어난 기억력이 길을 찾아주었어요. 누군가의 **다른 방식**을 믿는 것, 그것이 진짜 신뢰예요.`,
           onNext: () => { completeStage('stage-5'); setShowBadge(true); },
         });
         break;
