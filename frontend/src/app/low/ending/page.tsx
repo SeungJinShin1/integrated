@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGame } from '@/contexts/GameContext';
 import TopNavBar from '@/components/layout/TopNavBar';
@@ -18,11 +18,16 @@ const STICKERS = [
 ];
 
 export default function LowEndingPage() {
-  const { state, resetGame } = useGame();
+  const { state, resetGame, dispatch } = useGame();
   const router = useRouter();
   const [selectedSticker, setSelectedSticker] = useState<typeof STICKERS[0] | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // 상단 내비게이션 제목이 마지막 에피소드명에 머물지 않도록 갱신
+  useEffect(() => {
+    dispatch({ type: 'SET_STAGE', payload: 'low_ending' });
+  }, [dispatch]);
 
   // 음성 나레이션
   const voiceSrc = selectedSticker ? LOW_VOICE.ending_cert : LOW_VOICE.ending_intro;

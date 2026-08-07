@@ -28,6 +28,7 @@ export const STAGE_NAMES: Record<string, string> = {
   low_stage2: '귀가 아파요',
   low_stage3: '기다려주기',
   low_stage4: '쉽게 말해주기',
+  low_stage5: '다르게 놀아도 괜찮아',
   low_ending: '수료증 발급',
 };
 

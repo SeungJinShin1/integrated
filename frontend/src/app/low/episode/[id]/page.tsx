@@ -488,14 +488,18 @@ const STAGE_COMPONENTS = [LowStage1, LowStage2, LowStage3, LowStage4, LowStage5]
 
 export default function LowStagePage() {
   const params = useParams();
-  const { startStage, state } = useGame();
+  const { startStage, state, dispatch } = useGame();
   const index = parseInt(params.id as string) - 1;
   const isValid = index >= 0 && index < STAGE_COMPONENTS.length;
 
-  // 에피소드에 들어온 순간 교사 대시보드에 "진행 중"으로 표시
+  // 에피소드에 들어온 순간 상단 내비게이션 제목을 현재 단계명으로 갱신하고,
+  // 교사 대시보드에 "진행 중"으로 표시
   useEffect(() => {
-    if (isValid) startStage(`low_stage${index + 1}`);
-  }, [isValid, index, startStage]);
+    if (isValid) {
+      dispatch({ type: 'SET_STAGE', payload: `low_stage${index + 1}` });
+      startStage(`low_stage${index + 1}`);
+    }
+  }, [isValid, index, startStage, dispatch]);
 
   // 선택한 친구의 표정 스프라이트를 미리 받아 대화창 캐릭터 팝인을 없앰
   useEffect(() => {
