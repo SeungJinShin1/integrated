@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGame } from '@/contexts/GameContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -10,6 +11,11 @@ export default function ModeSelectPage() {
   const router = useRouter();
   const { setGradeMode, dispatch } = useGame();
   const { user } = useAuth();
+
+  // 홈 버튼으로 돌아왔을 때 상단 제목/하트 HUD가 직전 단계에 머물지 않도록 초기화
+  useEffect(() => {
+    dispatch({ type: 'SET_STAGE', payload: 'mode_select' });
+  }, [dispatch]);
 
   const handleLowGrade = () => {
     dispatch({ type: 'SET_PLAYER', payload: { name: '나', gender: 'male' } });

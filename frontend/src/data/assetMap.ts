@@ -74,9 +74,9 @@ export const BG_IMAGES = {
   map: '/assets/hiddenpiece/5_CH10_배경_안내도.webp',
   exit: '/assets/hiddenpiece/5_CH11_배경_출구.webp',
   // 새 누적 배경
-  highMap: '/assets/hiddenpiece/고학년 미션 월드맵 배경 (169, 6개 랜드마크 자리 분포).webp',
+  highMap: '/assets/hiddenpiece/고학년_미션_월드맵_배경.webp',
   foggyForest: '/assets/hiddenpiece/Stage 5 - 안개 낀 숲 갈림길 (인트로용).webp',
-  deadEnd: '/assets/hiddenpiece/Stage 5 - 막다른 길 (오답 루트, 선택).webp',
+  deadEnd: '/assets/hiddenpiece/Stage5_막다른_길_오답루트.webp',
   // Stage 3: 운동장 모래에 그려진 지하철 노선도 — 승주의 특별 관심사 장면 배경
   sandPlayground: '/assets/hiddenpiece/Stage_3_-_운동장_모래에_그려진_지하철_노선도__선택.webp',
 } as const;

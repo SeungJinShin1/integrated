@@ -222,7 +222,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       score: status === 'completed'
         ? (s.gradeMode === 'high_grade'
           ? Math.round((s.stats.understanding + s.stats.trust + s.stats.communication + s.stats.patience) / 4)
-          : s.hearts * 25)
+          // 저학년은 하트 5개(에피소드 5개) 만점 기준 — 0~100 스케일 유지
+          : Math.min(100, s.hearts * 20))
         : 0,
       usedTools: s.usedTools,
       stats: s.stats,
